@@ -3,6 +3,10 @@
 
 void main_loop_body() {
   // We can do some input handling here or something else
+  if (Window::IsKeyPressed(GLFW_KEY_ESCAPE)) {
+    Window::Shutdown();
+    exit(0);
+  }
 }
 
 int main() {

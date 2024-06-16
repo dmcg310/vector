@@ -1,12 +1,26 @@
 #include "../include/window.h"
+#include <GLFW/glfw3.h>
 
 int Window::width = 0;
 int Window::height = 0;
+bool Window::isFullscreen = false;
+int Window::windowedPosX = 0;
+int Window::windowedPosY = 0;
+int Window::windowedWidth = 0;
+int Window::windowedHeight = 0;
 
-static GLFWwindow *window = nullptr;
-static bool isFullscreen = false;
-static int windowedWidth = 0, windowedHeight = 0;
-static int windowedPosX = 0, windowedPosY = 0;
+GLFWmonitor *Window::monitor = nullptr;
+const GLFWvidmode *Window::mode = nullptr;
+GLFWwindow *Window::window = nullptr;
+
+double Window::scrollXOffset = 0.0;
+double Window::scrollYOffset = 0.0;
+
+static void scroll_callback(GLFWwindow *window, double xOffset,
+                            double yOffset) {
+  Window::SetScrollXOffset(xOffset);
+  Window::SetScrollYOffset(yOffset);
+}
 
 bool Window::Initialize(int width, int height, const std::string &title) {
   if (!glfwInit()) {
@@ -25,6 +39,8 @@ bool Window::Initialize(int width, int height, const std::string &title) {
   windowedWidth = width;
   windowedHeight = height;
   Window::GetPosition(windowedPosX, windowedPosY);
+
+  glfwSetScrollCallback(window, scroll_callback);
 
   return true;
 }
@@ -113,4 +129,44 @@ void Window::SetFullscreen(bool fullscreen) {
   }
 
   isFullscreen = fullscreen;
+}
+
+bool Window::IsKeyPressed(int key) {
+  return glfwGetKey(window, key) == GLFW_PRESS;
+}
+
+bool Window::IsKeyReleased(int key) {
+  return glfwGetKey(window, key) == GLFW_RELEASE;
+}
+
+bool Window::IsMouseButtonPressed(int button) {
+  return glfwGetMouseButton(window, button) == GLFW_PRESS;
+}
+
+bool Window::IsMouseButtonReleased(int button) {
+  return glfwGetMouseButton(window, button) == GLFW_RELEASE;
+}
+
+void Window::GetMousePosition(double &x, double &y) {
+  glfwGetCursorPos(window, &x, &y);
+}
+
+void Window::SetMousePosition(double x, double y) {
+  glfwSetCursorPos(window, x, y);
+}
+
+void Window::SetScrollXOffset(double xOffset) {
+  Window::scrollXOffset = xOffset;
+}
+
+void Window::SetScrollYOffset(double yOffset) {
+  Window::scrollYOffset = yOffset;
+}
+
+void Window::GetMouseScroll(double &xOffset, double &yOffset) {
+  xOffset = scrollXOffset;
+  yOffset = scrollYOffset;
+
+  Window::SetScrollXOffset(0.0);
+  Window::SetScrollYOffset(0.0);
 }
