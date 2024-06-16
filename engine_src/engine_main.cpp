@@ -1,23 +1,15 @@
 #include "../lib_window/include/window.h"
 #include <iostream>
 
+void main_loop_body() {
+  // We can do some input handling here or something else
+}
+
 int main() {
-  if (!Window::Initialize(1200, 800, "Test Window")) {
+  if (!Window::Create(1200, 800, "Test Window", main_loop_body)) {
     std::cerr << "[FATAL] Failed to initialize window." << std::endl;
     return -1;
   }
-
-  while (!Window::ShouldClose()) {
-    Window::PollEvents();
-
-    Window::SwapBuffers();
-
-    if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-      break;
-    }
-  }
-
-  Window::Shutdown();
 
   return 0;
 }
