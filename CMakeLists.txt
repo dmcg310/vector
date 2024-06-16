@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 project(engine)
 
+# set the policy for finding OpenGL to prefer GLVND if available
+if(POLICY CMP0072)
+  cmake_policy(SET CMP0072 NEW)
+endif()
+
 add_subdirectory(lib_window)
 add_subdirectory(engine_src)
