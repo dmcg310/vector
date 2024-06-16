@@ -4,6 +4,9 @@ int Window::width = 0;
 int Window::height = 0;
 
 static GLFWwindow *window = nullptr;
+static bool isFullscreen = false;
+static int windowedWidth = 0, windowedHeight = 0;
+static int windowedPosX = 0, windowedPosY = 0;
 
 bool Window::Initialize(int width, int height, const std::string &title) {
   if (!glfwInit()) {
@@ -18,6 +21,10 @@ bool Window::Initialize(int width, int height, const std::string &title) {
 
   glfwMakeContextCurrent(window);
   Window::SetSize(width, height);
+
+  windowedWidth = width;
+  windowedHeight = height;
+  Window::GetPosition(windowedPosX, windowedPosY);
 
   return true;
 }
@@ -52,6 +59,37 @@ void Window::GetPosition(int &x, int &y) { glfwGetWindowPos(window, &x, &y); }
 
 void Window::SetPosition(int x, int y) { glfwSetWindowPos(window, x, y); }
 
-bool Window::IsFullscreen() { return true; }
+bool Window::IsFullscreen() { return isFullscreen; }
 
-void Window::SetFullscreen(bool fullscreen) {}
+void Window::SetFullscreen(bool fullscreen) {
+  if (fullscreen == isFullscreen) {
+    return;
+  }
+
+  if (fullscreen) {
+    glfwGetWindowPos(window, &windowedPosX, &windowedPosY);
+    glfwGetWindowSize(window, &windowedWidth, &windowedHeight);
+
+    GLFWmonitor *monitor = glfwGetPrimaryMonitor();
+    if (!monitor) {
+      return;
+    }
+
+    const GLFWvidmode *mode = glfwGetVideoMode(monitor);
+    if (!mode) {
+      return;
+    }
+
+    glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height,
+                         mode->refreshRate);
+
+    Window::SetSize(mode->width, mode->height);
+  } else {
+    glfwSetWindowMonitor(window, nullptr, windowedPosX, windowedPosY,
+                         windowedWidth, windowedHeight, 0);
+
+    Window::SetSize(windowedWidth, windowedHeight);
+  }
+
+  isFullscreen = fullscreen;
+}
