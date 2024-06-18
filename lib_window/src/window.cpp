@@ -60,17 +60,6 @@ void Window::Run(std::function<void()> loop_body) {
   Shutdown();
 }
 
-bool Window::Create(int width, int height, const std::string &title,
-                    std::function<void()> loop_body) {
-  if (!Initialize(width, height, title)) {
-    return false;
-  }
-
-  Run(loop_body);
-
-  return true;
-}
-
 void Window::PollEvents() { glfwPollEvents(); }
 
 bool Window::ShouldClose() { return glfwWindowShouldClose(window); }
