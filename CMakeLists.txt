@@ -8,3 +8,4 @@ endif()
 
 add_subdirectory(lib_window)
 add_subdirectory(engine_src)
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/glfw)

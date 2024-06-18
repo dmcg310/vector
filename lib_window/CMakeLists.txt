@@ -3,6 +3,10 @@ add_library(lib_window
 )
 
 target_include_directories(lib_window PUBLIC include)
-find_package(glfw3 REQUIRED)
+
+if (APPLE OR UNIX)
+	find_package(glfw3 REQUIRED)
+endif()
+
 find_package(OpenGL REQUIRED)
 target_link_libraries(lib_window glfw OpenGL::GL)
