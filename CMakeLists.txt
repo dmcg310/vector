@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(engine)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 # set the policy for finding OpenGL to prefer GLVND if available
 if(POLICY CMP0072)
   cmake_policy(SET CMP0072 NEW)
