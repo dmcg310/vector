@@ -1,8 +1,11 @@
 #include "../include/application.h"
+#include "../../lib_log/include/log.h"
 
 Application::Application() {}
 
 bool Application::Initialize() {
+  Log::Write(Log::INFO, "Initializing application");
+
   if (!Window::Initialize(settings.windowWidth, settings.windowHeight,
                           settings.windowTitle)) {
     return false;
