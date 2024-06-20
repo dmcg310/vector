@@ -4,10 +4,10 @@
 Application::Application() {}
 
 bool Application::Initialize() {
-  Log::Write(Log::INFO, "Initializing application");
-
   if (!Window::Initialize(settings.windowWidth, settings.windowHeight,
                           settings.windowTitle)) {
+    Log::Write(Log::FATAL, "Cannot initialize application window");
+
     return false;
   }
 
@@ -39,12 +39,16 @@ void Application::Run() {
    * other member functions.
    */
 
+  Log::Write(Log::INFO, "Application started successfully");
+
   Window::Run(std::bind(&Application::MainLoopBody, this));
 }
 
 void Application::Shutdown() {
   // Shutdown other systsems here
   Window::Shutdown();
+
+  Log::Write(Log::INFO, "Application shut down successfully");
 
   exit(0);
 }

@@ -1,4 +1,5 @@
 #include "../include/window.h"
+#include "../../lib_log/include/log.h"
 #include <GLFW/glfw3.h>
 
 int Window::width = 0;
@@ -24,12 +25,16 @@ static void scroll_callback(GLFWwindow *window, double xOffset,
 
 bool Window::Initialize(int width, int height, const std::string &title) {
   if (!glfwInit()) {
+    Log::Write(Log::FATAL, "Error running `glfwInit()`");
+
     return false;
   }
 
   window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   if (!window) {
+    Log::Write(Log::FATAL, "`glfwCreateWindow()` returned NULL");
     glfwTerminate();
+
     return false;
   }
 
@@ -98,11 +103,17 @@ void Window::SetFullscreen(bool fullscreen) {
 
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     if (!monitor) {
+      Log::Write(Log::FATAL,
+                 "Error getting primary monitor in `glfwGetPrimaryMonitor()`");
+
       return;
     }
 
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
     if (!mode) {
+      Log::Write(Log::FATAL,
+                 "Error getting video mode in `glfwGetVideoMode()`");
+
       return;
     }
 
