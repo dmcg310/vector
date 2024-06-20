@@ -1,5 +1,11 @@
 #include "../include/settings.h"
 
+// Utility functions
+
+std::string boolToString(bool value) { return value ? "true" : "false"; }
+
+bool stringToBool(const std::string &str) { return str == "true"; }
+
 bool ApplicationSettings::CheckIfConfigExists() {
 #ifdef __APPLE__
   namespace fs = std::__fs::filesystem;
@@ -31,11 +37,12 @@ ApplicationSettings::Config ApplicationSettings::CreateConfig() {
 
   std::ostringstream oss;
   oss << "[Window]" << "\nWidth=" << DEFAULT_WIDTH
-      << "\nHeight=" << DEFAULT_HEIGHT << "\nFullscreen=" << DEFAULT_FULLSCREEN
-      << "\nTitle=\"" << DEFAULT_TITLE << "\"" << "\n\n[Log]"
-      << "\nLogToFile=" << DEFAULT_LOG_TO_FILE
-      << "\nLogToConsole=" << DEFAULT_LOG_TO_CONSOLE
-      << "\nResetLogFile=" << DEFAULT_RESET_LOG_FILE;
+      << "\nHeight=" << DEFAULT_HEIGHT
+      << "\nFullscreen=" << boolToString(DEFAULT_FULLSCREEN) << "\nTitle=\""
+      << DEFAULT_TITLE << "\"" << "\n\n[Log]"
+      << "\nLogToFile=" << boolToString(DEFAULT_LOG_TO_FILE)
+      << "\nLogToConsole=" << boolToString(DEFAULT_LOG_TO_CONSOLE)
+      << "\nResetLogFile=" << boolToString(DEFAULT_RESET_LOG_FILE);
   std::string configString = oss.str();
 
   configFile << configString;
@@ -62,15 +69,14 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
               << std::endl; // Add to WriteLog queue that config couldn't be
                             // opened so made one with defaults
 
-    config = ApplicationSettings::CreateConfig();
-    return config;
+    return ApplicationSettings::CreateConfig();
   }
 
   std::string line;
   std::string currentSection;
   std::unordered_map<std::string, bool> keysPresent;
 
-  bool windowSectionExists, logSectionExists;
+  bool windowSectionExists = false, logSectionExists = false;
 
   while (std::getline(file, line)) {
     if (line.empty()) {
@@ -130,11 +136,11 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
             if (value.empty() || !isBoolean(value)) {
               std::cerr << "Invalid value for Fullscreen: " << value
                         << ". Using default value: "
-                        << (DEFAULT_FULLSCREEN ? "true" : "false") << std::endl;
+                        << boolToString(DEFAULT_FULLSCREEN) << std::endl;
 
               config.window.fullscreen = DEFAULT_FULLSCREEN;
             } else {
-              config.window.fullscreen = (value == "true");
+              config.window.fullscreen = stringToBool(value);
             }
 
           } else if (key == "Title") {
@@ -150,48 +156,48 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
           }
         } else if (currentSection == "Log") {
           logSectionExists = true;
-
           if (key == "LogToFile") {
             if (value.empty() || !isBoolean(value)) {
               std::cerr << "Invalid value for LogToFile: " << value
                         << ". Using default value: "
-                        << (DEFAULT_LOG_TO_FILE ? "true" : "false")
-                        << std::endl;
+                        << boolToString(DEFAULT_LOG_TO_FILE) << std::endl;
 
               config.log.logToFile = DEFAULT_LOG_TO_FILE;
             } else {
-              config.log.logToFile = (value == "true");
+              config.log.logToFile = stringToBool(value);
             }
 
           } else if (key == "LogToConsole") {
             if (value.empty() || !isBoolean(value)) {
               std::cerr << "Invalid value for LogToConsole: " << value
                         << ". Using default value: "
-                        << (DEFAULT_LOG_TO_CONSOLE ? "true" : "false")
-                        << std::endl;
+                        << boolToString(DEFAULT_LOG_TO_CONSOLE) << std::endl;
 
               config.log.logToConsole = DEFAULT_LOG_TO_CONSOLE;
             } else {
-              config.log.logToConsole = (value == "true");
+              config.log.logToConsole = stringToBool(value);
             }
 
           } else if (key == "ResetLogFile") {
             if (value.empty() || !isBoolean(value)) {
               std::cerr << "Invalid value for ResetLogFile: " << value
                         << ". Using default value: "
-                        << (DEFAULT_RESET_LOG_FILE ? "true" : "false")
-                        << std::endl;
+                        << boolToString(DEFAULT_RESET_LOG_FILE) << std::endl;
 
               config.log.resetLogFile = DEFAULT_RESET_LOG_FILE;
             } else {
-              config.log.resetLogFile = (value == "true");
+              config.log.resetLogFile = stringToBool(value);
             }
+
           } else {
-            std::cout << "Key not found" << key << "Ignoring" << std::endl;
+            std::cerr << "Unknown key: " << key
+                      << " in section: " << currentSection << std::endl;
           }
+
+        } else {
+          std::cerr << "Unknown section: " << currentSection << std::endl;
         }
 
-        config.log.logFilePath = LOG_FILE_PATH;
       } else {
         std::cerr << "Invalid line: " << line << std::endl;
       }
@@ -201,7 +207,6 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
   if (!windowSectionExists) {
     std::cerr << "Window section header was not found, using default values."
               << std::endl;
-
     config.window.width = DEFAULT_WIDTH;
     keysPresent["Width"] = true;
 
@@ -218,7 +223,6 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
   if (!logSectionExists) {
     std::cerr << "Log section header was not found, using default values."
               << std::endl;
-
     config.log.logToFile = DEFAULT_LOG_TO_FILE;
     keysPresent["LogToFile"] = true;
 
@@ -247,7 +251,7 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
   if (!keysPresent["Fullscreen"]) {
     config.window.fullscreen = DEFAULT_FULLSCREEN;
     std::cerr << "Fullscreen key missing. Using default value: "
-              << (DEFAULT_FULLSCREEN ? "true" : "false") << std::endl;
+              << boolToString(DEFAULT_FULLSCREEN) << std::endl;
   }
 
   if (!keysPresent["Title"]) {
@@ -259,19 +263,19 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
   if (!keysPresent["LogToFile"]) {
     config.log.logToFile = DEFAULT_LOG_TO_FILE;
     std::cerr << "LogToFile key missing. Using default value: "
-              << (DEFAULT_LOG_TO_FILE ? "true" : "false") << std::endl;
+              << boolToString(DEFAULT_LOG_TO_FILE) << std::endl;
   }
 
   if (!keysPresent["LogToConsole"]) {
     config.log.logToConsole = DEFAULT_LOG_TO_CONSOLE;
     std::cerr << "LogToConsole key missing. Using default value: "
-              << (DEFAULT_LOG_TO_CONSOLE ? "true" : "false") << std::endl;
+              << boolToString(DEFAULT_LOG_TO_CONSOLE) << std::endl;
   }
 
   if (!keysPresent["ResetLogFile"]) {
     config.log.resetLogFile = DEFAULT_RESET_LOG_FILE;
     std::cerr << "ResetLogFile key missing. Using default value: "
-              << (DEFAULT_RESET_LOG_FILE ? "true" : "false") << std::endl;
+              << boolToString(DEFAULT_RESET_LOG_FILE) << std::endl;
   }
 
   file.close();
