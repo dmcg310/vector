@@ -6,6 +6,7 @@
 std::ofstream Log::logFile;
 bool Log::logToFile = true;
 bool Log::logToConsole = true;
+std::mutex Log::logMutex;
 
 void Log::Initialize(const std::string &filename, bool fileOutput,
                      bool consoleOutput, bool resetLogFile) {
@@ -27,6 +28,8 @@ void Log::Initialize(const std::string &filename, bool fileOutput,
 }
 
 void Log::Write(Level level, const std::string &message) {
+  std::lock_guard<std::mutex> guard(logMutex);
+
   std::ostringstream oss;
   oss << GetCurrentDateTime() << " [" << LevelToString(level)
       << "]: " << message << std::endl;
@@ -42,6 +45,8 @@ void Log::Write(Level level, const std::string &message) {
 }
 
 void Log::Shutdown() {
+  std::lock_guard<std::mutex> guard(logMutex);
+
   if (logToFile && logFile) {
     logFile.close();
   }
