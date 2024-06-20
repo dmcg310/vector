@@ -1,5 +1,4 @@
-#ifndef APPLICATION_H
-#define APPLICATION_H
+#pragma once
 
 #include "../../lib_window/include/window.h"
 #include "settings.h"
@@ -24,5 +23,3 @@ private:
 
   // We can put member variables here for other systems in the future
 };
-
-#endif // !APPLICATION_H

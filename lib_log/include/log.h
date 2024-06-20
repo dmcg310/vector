@@ -1,5 +1,4 @@
-#ifndef LOG_H
-#define LOG_H
+#pragma once
 
 #include <string>
 
@@ -15,5 +14,3 @@ private:
   static std::string GetCurrentDateTime();
   static std::string LevelToString(Level level);
 };
-
-#endif // !LOG_H

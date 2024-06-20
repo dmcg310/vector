@@ -1,5 +1,4 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#pragma once
 
 #include <GLFW/glfw3.h>
 #include <functional>
@@ -55,4 +54,3 @@ private:
   static GLFWwindow *window;
   static double scrollXOffset, scrollYOffset;
 };
-#endif // !WINDOW_H

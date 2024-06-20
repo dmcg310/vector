@@ -1,5 +1,4 @@
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#pragma once
 
 #include <string>
 
@@ -17,5 +16,3 @@ struct ApplicationSettings {
       : windowWidth(1200), windowHeight(800), windowTitle("Window title"),
         fullscreen(false) {}
 };
-
-#endif // !SETTINGS_H
