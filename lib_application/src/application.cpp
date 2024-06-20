@@ -17,6 +17,8 @@ bool Application::Initialize() {
     Window::SetFullscreen(true);
   }
 
+  Window::RegisterObserver(this);
+
   // Initialize other systems here
 
   return true;
@@ -49,20 +51,17 @@ void Application::Run() {
 void Application::Shutdown() {
   // Shutdown other systsems here
 
+  Window::UnregisterObserver(this);
+
   Window::Shutdown();
-
   Log::Write(Log::INFO, "Application shut down successfully");
-
   Log::Shutdown();
 
   exit(0);
 }
 
 void Application::HandleEvents() {
-  // Handle events, like key presses etc
-  if (Window::IsKeyPressed(GLFW_KEY_ESCAPE)) {
-    Application::Shutdown();
-  }
+  // Handle events
 }
 
 void Application::Update() {
@@ -77,4 +76,24 @@ void Application::MainLoopBody() {
   HandleEvents();
   Update();
   Render();
+}
+
+void Application::OnKeyPress(int key) {
+  if (key == GLFW_KEY_ESCAPE) {
+    Shutdown();
+  }
+
+  // Handle other key presses
+}
+
+void Application::OnKeyRelease(int key) {
+  // Handle key releases
+}
+
+void Application::OnMouseMove(double x, double y) {
+  // Handle mouse move
+}
+
+void Application::OnMouseClick(int button) {
+  // Handle mouse click
 }
