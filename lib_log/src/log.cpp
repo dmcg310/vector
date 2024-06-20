@@ -1,5 +1,8 @@
 #include "../include/log.h"
+#include <chrono>
+#include <filesystem>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 
@@ -80,12 +83,16 @@ std::string Log::LevelToString(Level level) {
 }
 
 void Log::CreateDirectories(const std::string &filepath) {
-  using namespace std::__fs;
+#ifdef __APPLE__
+  namespace fs = std::__fs::filesystem;
+#else
+  namespace fs = std::filesystem;
+#endif
 
-  filesystem::path path = filepath;
+  fs::path path = filepath;
 
   path.remove_filename();
-  if (!path.empty() && !filesystem::exists(path)) {
-    filesystem::create_directories(path);
+  if (!path.empty() && !fs::exists(path)) {
+    fs::create_directories(path);
   }
 }

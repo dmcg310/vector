@@ -2,6 +2,12 @@
 
 #include <string>
 
+#if defined(__linux__) || defined(__APPLE__)
+const std::string LOG_FILE_PATH = "../logs/application.log";
+#else
+const std::string LOG_FILE_PATH = "../../../logs/application.log";
+#endif
+
 struct ApplicationSettings {
   // We can load this from a config file
 
@@ -18,5 +24,5 @@ struct ApplicationSettings {
   ApplicationSettings()
       : windowWidth(1200), windowHeight(800), windowTitle("Vector Engine"),
         fullscreen(false), logToFile(true), logToConsole(true),
-        logFilePath("../logs/application.log"), resetLogFile(true) {}
+        logFilePath(LOG_FILE_PATH), resetLogFile(true) {}
 };
