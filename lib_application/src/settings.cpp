@@ -202,6 +202,8 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
         std::cerr << "Invalid line: " << line << std::endl;
       }
     }
+  
+    config.log.logFilePath = LOG_FILE_PATH;
   }
 
   if (!windowSectionExists) {
