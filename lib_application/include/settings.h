@@ -1,29 +1,69 @@
 #pragma once
 
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 #include <string>
 
 // CMake will place the logs relative to the 'build' directory
 #if defined(__linux__) || defined(__APPLE__)
 const std::string LOG_FILE_PATH = "../logs/application.log";
+const std::string CONFIG_FILE_PATH = "../config.vector";
 #else
 const std::string LOG_FILE_PATH = "../../../logs/application.log";
+const std::string CONFIG_FILE_PATH = "../../../config.vector";
 #endif
 
-struct ApplicationSettings {
-  // We can load this from a config file
+const int DEFAULT_WIDTH = 1200;
+const int DEFAULT_HEIGHT = 800;
+const bool DEFAULT_FULLSCREEN = false;
+const std::string DEFAULT_TITLE = "Vector Engine";
+const bool DEFAULT_LOG_TO_FILE = true;
+const bool DEFAULT_LOG_TO_CONSOLE = true;
+const bool DEFAULT_RESET_LOG_FILE = true;
 
-  int windowWidth;
-  int windowHeight;
-  std::string windowTitle;
-  bool fullscreen;
+/*
+  config.vector defaults
+  ----------------------
+  [Window]
+  Width=1200
+  Height=800
+  Fullscreen=false
+  Title="Vector Engine"
 
-  bool logToFile;
-  bool logToConsole;
-  std::string logFilePath;
-  bool resetLogFile; // Reset the log file on each startup
+  [Log]
+  LogToFile=true
+  LogToConsole=true
+  ResetLogFile=true
+*/
 
-  ApplicationSettings()
-      : windowWidth(1200), windowHeight(800), windowTitle("Vector Engine"),
-        fullscreen(false), logToFile(true), logToConsole(true),
-        logFilePath(LOG_FILE_PATH), resetLogFile(true) {}
+class ApplicationSettings {
+public:
+  ApplicationSettings() = default;
+
+  struct Config {
+    struct Window {
+      int width;
+      int height;
+      bool fullscreen;
+      std::string title;
+    };
+
+    struct Log {
+      bool logToFile;
+      bool logToConsole;
+      bool resetLogFile;
+      std::string logFilePath;
+    };
+
+    Window window;
+    Log log;
+  };
+
+  bool CheckIfConfigExists();
+  Config CreateConfig();
+  Config LoadConfig();
+
+private:
+  Config config;
 };

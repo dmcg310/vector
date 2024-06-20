@@ -1,0 +1,10 @@
+[Window]
+Width=1200
+Height=800
+Fullscreen=false
+Title="Vector Engine"
+
+[Log]
+LogToFile=true
+LogToConsole=true
+ResetLogFile=true

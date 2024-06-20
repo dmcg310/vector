@@ -3,17 +3,29 @@
 Application::Application() {}
 
 bool Application::Initialize() {
-  Log::Initialize(settings.logFilePath, settings.logToFile,
-                  settings.logToConsole, settings.resetLogFile);
+  ApplicationSettings applicationSettings;
+  ApplicationSettings::Config config;
 
-  if (!Window::Initialize(settings.windowWidth, settings.windowHeight,
-                          settings.windowTitle)) {
+  if (!applicationSettings.CheckIfConfigExists()) {
+    std::cout << "Config file doesnt exist"
+              << std::endl; // Add to WriteLog queue
+
+    config = applicationSettings.CreateConfig();
+  } else {
+    // Read the config file
+  }
+
+  Log::Initialize(config.log.logFilePath, config.log.logToFile,
+                  config.log.logToConsole, config.log.resetLogFile);
+
+  if (!Window::Initialize(config.window.width, config.window.height,
+                          config.window.title)) {
     Log::Write(Log::FATAL, "Cannot initialize application window");
 
     return false;
   }
 
-  if (settings.fullscreen) {
+  if (config.window.fullscreen) {
     Window::SetFullscreen(true);
   }
 

@@ -1,5 +1,6 @@
 add_library(lib_application
 	src/application.cpp
+	src/settings.cpp
 )
 
 target_include_directories(lib_application PUBLIC include)
