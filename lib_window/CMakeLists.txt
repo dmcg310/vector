@@ -1,5 +1,6 @@
 add_library(lib_window
 	src/window.cpp
+	src/event.cpp
 )
 
 target_include_directories(lib_window PUBLIC include)
