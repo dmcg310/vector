@@ -1,9 +1,11 @@
 #pragma once
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 // CMake will place the logs relative to the 'build' directory
 #if defined(__linux__) || defined(__APPLE__)
@@ -66,4 +68,9 @@ public:
 
 private:
   Config config;
+
+  std::string trim(const std::string &str);
+  bool isNumber(const std::string &str);
+  bool isBoolean(const std::string &str);
+  bool isQuotedString(const std::string &str);
 };

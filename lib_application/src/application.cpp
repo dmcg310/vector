@@ -7,12 +7,12 @@ bool Application::Initialize() {
   ApplicationSettings::Config config;
 
   if (!applicationSettings.CheckIfConfigExists()) {
-    std::cout << "Config file doesnt exist"
+    std::cout << "Config file doesnt exist. Creating one with defaults"
               << std::endl; // Add to WriteLog queue
 
     config = applicationSettings.CreateConfig();
   } else {
-    // Read the config file
+    config = applicationSettings.LoadConfig();
   }
 
   Log::Initialize(config.log.logFilePath, config.log.logToFile,
