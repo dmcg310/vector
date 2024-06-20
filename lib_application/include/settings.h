@@ -10,9 +10,13 @@ struct ApplicationSettings {
   std::string windowTitle;
   bool fullscreen;
 
-  // We can add more application settings here
+  bool logToFile;
+  bool logToConsole;
+  std::string logFilePath;
+  bool resetLogFile; // Reset the log file on each startup
 
   ApplicationSettings()
-      : windowWidth(1200), windowHeight(800), windowTitle("Window title"),
-        fullscreen(false) {}
+      : windowWidth(1200), windowHeight(800), windowTitle("Vector Engine"),
+        fullscreen(false), logToFile(true), logToConsole(true),
+        logFilePath("../logs/application.log"), resetLogFile(true) {}
 };

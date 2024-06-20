@@ -1,9 +1,11 @@
 #include "../include/application.h"
-#include "../../lib_log/include/log.h"
 
 Application::Application() {}
 
 bool Application::Initialize() {
+  Log::Initialize(settings.logFilePath, settings.logToFile,
+                  settings.logToConsole, settings.resetLogFile);
+
   if (!Window::Initialize(settings.windowWidth, settings.windowHeight,
                           settings.windowTitle)) {
     Log::Write(Log::FATAL, "Cannot initialize application window");
@@ -46,9 +48,12 @@ void Application::Run() {
 
 void Application::Shutdown() {
   // Shutdown other systsems here
+
   Window::Shutdown();
 
   Log::Write(Log::INFO, "Application shut down successfully");
+
+  Log::Shutdown();
 
   exit(0);
 }
