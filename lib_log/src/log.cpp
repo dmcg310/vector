@@ -1,31 +1,50 @@
 #include "../include/log.h"
-#include <chrono>
-#include <iomanip>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 
-bool Log::Initialize() {
-  // Here we can open the logfile for writing, if the user specifies file based
-  // logging
+std::ofstream Log::logFile;
+bool Log::logToFile = true;
+bool Log::logToConsole = true;
 
-  return true;
+void Log::Initialize(const std::string &filename, bool fileOutput,
+                     bool consoleOutput, bool resetLogFile) {
+  logToFile = fileOutput;
+  logToConsole = consoleOutput;
+
+  if (logToFile) {
+    CreateDirectories(filename);
+
+    // Open file in truncate mode if resetLogFile is true, otherwise append mode
+    std::ios_base::openmode mode =
+        resetLogFile ? std::ios::out : (std::ios::out | std::ios::app);
+
+    logFile.open(filename, mode);
+    if (!logFile) {
+      Log::Write(Log::ERROR, "Error opening provided log file");
+    }
+  }
 }
 
 void Log::Write(Level level, const std::string &message) {
   std::ostringstream oss;
+  oss << GetCurrentDateTime() << " [" << LevelToString(level)
+      << "]: " << message << std::endl;
+  std::string logMessage = oss.str();
 
-  oss << "(" << GetCurrentDateTime() << ")"
-      << "[" << LevelToString(level) << "]"
-      << ": " << message;
+  if (logToFile && logFile) {
+    logFile << logMessage;
+  }
 
-  std::string logMsg = oss.str();
-  std::cout << logMsg << std::endl;
-
-  // Or write to file
+  if (logToConsole) {
+    std::cout << logMessage;
+  }
 }
 
 void Log::Shutdown() {
-  // Here we can close the logfile
+  if (logToFile && logFile) {
+    logFile.close();
+  }
 }
 
 std::string Log::GetCurrentDateTime() {
@@ -52,5 +71,16 @@ std::string Log::LevelToString(Level level) {
 
   default:
     return "UNKNOWN";
+  }
+}
+
+void Log::CreateDirectories(const std::string &filepath) {
+  using namespace std::__fs;
+
+  filesystem::path path = filepath;
+
+  path.remove_filename();
+  if (!path.empty() && !filesystem::exists(path)) {
+    filesystem::create_directories(path);
   }
 }

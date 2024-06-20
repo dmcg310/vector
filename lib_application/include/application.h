@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../lib_log/include/log.h"
 #include "../../lib_window/include/window.h"
 #include "settings.h"
 
@@ -18,7 +19,6 @@ private:
 
   void MainLoopBody();
 
-  Window window;
   ApplicationSettings settings;
 
   // We can put member variables here for other systems in the future
