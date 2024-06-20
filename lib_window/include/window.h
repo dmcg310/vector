@@ -8,29 +8,28 @@
 class Window {
 public:
   static bool Initialize(int width, int height, const std::string &title);
-  static void Shutdown();
   static void Run(std::function<void()> loop_body);
+  static void Shutdown();
 
   static void PollEvents();
   static bool ShouldClose();
   static void SwapBuffers();
 
   static void SetTitle(const std::string &title);
+
   static int GetWidth();
   static int GetHeight();
+
   static void SetSize(int width, int height);
+
   static void GetPosition(int &x, int &y);
   static void SetPosition(int x, int y);
+
   static bool IsFullscreen();
   static void SetFullscreen(bool fullscreen);
 
-  static bool IsKeyPressed(int key);
-  static bool IsKeyReleased(int key);
-  static bool IsMouseButtonPressed(int button);
-  static bool IsMouseButtonReleased(int button);
   static void GetMousePosition(double &x, double &y);
   static void SetMousePosition(double x, double y);
-  static void GetMouseScroll(double &xOffset, double &yOffset);
 
   static void RegisterObserver(IEventObserver *observer);
   static void UnregisterObserver(IEventObserver *observer);
@@ -41,15 +40,12 @@ private:
   static int width, height;
   static bool isFullscreen;
   static int windowedPosX, windowedPosY, windowedWidth, windowedHeight;
-  static double scrollXOffset, scrollYOffset;
 
   static void KeyCallback(GLFWwindow *window, int key, int scancode, int action,
                           int mods);
   static void MouseCallback(GLFWwindow *window, double xpos, double ypos);
   static void MouseButtonCallback(GLFWwindow *window, int button, int action,
                                   int mods);
-  static void ScrollCallback(GLFWwindow *window, double xOffset,
-                             double yOffset);
 
   static void NotifyKeyPress(int key);
   static void NotifyKeyRelease(int key);

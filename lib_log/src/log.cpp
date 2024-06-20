@@ -1,10 +1,4 @@
 #include "../include/log.h"
-#include <chrono>
-#include <filesystem>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
 
 std::ofstream Log::logFile;
 bool Log::logToFile = true;

@@ -2,6 +2,7 @@
 
 #include <string>
 
+// CMake will place the logs relative to the 'build' directory
 #if defined(__linux__) || defined(__APPLE__)
 const std::string LOG_FILE_PATH = "../logs/application.log";
 #else

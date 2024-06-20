@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <algorithm>
+#include <vector>
 
 enum class EventType { KeyPress, KeyRelease, MouseMove, MouseClick };
 

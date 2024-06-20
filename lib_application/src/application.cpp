@@ -60,24 +60,6 @@ void Application::Shutdown() {
   exit(0);
 }
 
-void Application::HandleEvents() {
-  // Handle events
-}
-
-void Application::Update() {
-  // Update game logic
-}
-
-void Application::Render() {
-  // Render the frame
-}
-
-void Application::MainLoopBody() {
-  HandleEvents();
-  Update();
-  Render();
-}
-
 void Application::OnKeyPress(int key) {
   if (key == GLFW_KEY_ESCAPE) {
     Shutdown();
@@ -96,4 +78,22 @@ void Application::OnMouseMove(double x, double y) {
 
 void Application::OnMouseClick(int button) {
   // Handle mouse click
+}
+
+void Application::HandleEvents() {
+  // Handle events
+}
+
+void Application::Update() {
+  // Update game logic
+}
+
+void Application::Render() {
+  // Render the frame
+}
+
+void Application::MainLoopBody() {
+  HandleEvents();
+  Update();
+  Render();
 }

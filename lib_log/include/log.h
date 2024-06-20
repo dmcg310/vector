@@ -1,6 +1,12 @@
 #pragma once
 
+#include <chrono>
+#include <filesystem>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <mutex>
+#include <sstream>
 #include <string>
 
 class Log {
