@@ -5,12 +5,21 @@ Build GLFW only windows
 Windows:
 `.\build_scripts\build_glfw.bat` from cwd: vector/
 
+Install glad all platforms
+
+Windows:
+`.\build_scripts\setup_glad.bat` from cwd: vector/
+
+Unix:
+`./build_scripts/setup_glad.sh`
+
+
 Building the engine
 
 Windows:
 `mkdir build`
 `cd build`
-`cmake -S .. -B .`
+`cmake ..`
 Debug - `cmake --build . --config Debug` Exe found in vector\build\engine_src\Debug\engine_main.exe
 Release - `cmake --build . --config Release` Exe found in vector\build\engine_src\Release\engine_main.exe
 
