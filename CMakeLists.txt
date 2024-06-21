@@ -14,6 +14,7 @@ add_subdirectory(lib_application)
 add_subdirectory(lib_log)
 add_subdirectory(lib_imgui)
 add_subdirectory(engine_src)
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/glad)
 
 if (WIN32)
   add_subdirectory(${CMAKE_SOURCE_DIR}/external/glfw)

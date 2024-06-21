@@ -45,8 +45,8 @@ echo Extracting glad...
 tar -xf %GLAD_ZIP% -C %GLAD_DIR%
 
 echo Creating CMakeLists.txt for glad...
-echo add_library\(glad STATIC src/glad.c\) > %GLAD_CMAKE%
-echo target_include_directories\(glad PUBLIC include\) >> %GLAD_CMAKE%
+echo add_library(glad STATIC src/glad.c) > %GLAD_CMAKE%
+echo target_include_directories(glad PUBLIC include) >> %GLAD_CMAKE%
 
 echo Glad setup complete.
 
