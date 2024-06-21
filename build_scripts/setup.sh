@@ -2,6 +2,8 @@
 
 # https://glad.dav1d.de/#language=c&specification=gl&api=gl%3D4.6&api=gles1%3Dnone&api=gles2%3Dnone&api=glsc2%3Dnone&profile=compatibility&loader=on
 
+INITIAL_DIR=$(pwd)
+
 # --- Setup glad ---
 EXTERNAL_DIR="external"
 GLAD_DIR="${EXTERNAL_DIR}/glad"
@@ -27,6 +29,8 @@ echo "Glad setup complete."
 # --- Setup ImGui ---
 IMGUI_DIR="lib_imgui"
 IMGUI_REPO="https://github.com/ocornut/imgui.git"
+OTHER_DIR="${INITIAL_DIR}/other"
+TEMP_CMAKE_FILE="${OTHER_DIR}/CMakeLists.txt"
 
 if [ -d "${IMGUI_DIR}" ] && [ -f "${IMGUI_DIR}/.git" ]; then
     echo "Updating ImGui submodule..."
@@ -38,20 +42,18 @@ else
 fi
 
 echo "Creating CMakeLists.txt for ImGui..."
-cat <<EOL > ${IMGUI_DIR}/CMakeLists.txt
-cmake_minimum_required(VERSION 3.10)
-project(ImGui)
+if [ ! -f "${TEMP_CMAKE_FILE}" ]; then
+    echo "Error: Temporary CMakeLists.txt file does not exist."
+    exit 1
+fi
 
-set(IMGUI_DIR \${CMAKE_CURRENT_SOURCE_DIR})
+cp ${TEMP_CMAKE_FILE} ${IMGUI_DIR}/CMakeLists.txt
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to move CMakeLists.txt for ImGui."
+    exit 1
+fi
 
-file(GLOB IMGUI_SOURCES
-    \${IMGUI_DIR}/*.cpp
-    \${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
-    \${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp)
-
-add_library(imgui STATIC \${IMGUI_SOURCES})
-target_include_directories(imgui PUBLIC \${IMGUI_DIR} \${IMGUI_DIR}/backends)
-EOL
+echo "ImGui Setup complete."
 
 echo "Setup complete."
 
