@@ -7,8 +7,8 @@ bool Application::Initialize() {
   ApplicationSettings::Config config;
 
   if (!applicationSettings.CheckIfConfigExists()) {
-    std::cout << "Config file doesnt exist. Creating one with defaults"
-              << std::endl; // Add to WriteLog queue
+    Log::Write(Log::ERROR,
+               "Config file was not found. Creating one with defaults");
 
     config = applicationSettings.CreateConfig();
   } else {

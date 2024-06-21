@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../lib_log/include/log.h"
 #include <algorithm>
 #include <filesystem>
 #include <fstream>

@@ -4,6 +4,8 @@ std::ofstream Log::logFile;
 bool Log::logToFile = true;
 bool Log::logToConsole = true;
 std::mutex Log::logMutex;
+bool Log::initialized = false;
+std::queue<std::pair<Log::Level, std::string>> Log::logQueue;
 
 void Log::Initialize(const std::string &filename, bool fileOutput,
                      bool consoleOutput, bool resetLogFile) {
@@ -22,10 +24,20 @@ void Log::Initialize(const std::string &filename, bool fileOutput,
       Log::Write(Log::ERROR, "Error opening provided log file");
     }
   }
+
+  initialized = true;
+  FlushQueue();
 }
 
 void Log::Write(Level level, const std::string &message) {
   std::lock_guard<std::mutex> guard(logMutex);
+
+  if (!initialized) {
+    // Store logs that happen before the logger has initialized
+    logQueue.emplace(level, message);
+
+    return;
+  }
 
   std::ostringstream oss;
   oss << GetCurrentDateTime() << " [" << LevelToString(level)
@@ -46,6 +58,15 @@ void Log::Shutdown() {
 
   if (logToFile && logFile) {
     logFile.close();
+  }
+}
+
+void Log::FlushQueue() {
+  while (!logQueue.empty()) {
+    auto [level, message] = logQueue.front();
+    logQueue.pop();
+
+    Write(level, message);
   }
 }
 

@@ -25,8 +25,7 @@ ApplicationSettings::Config ApplicationSettings::CreateConfig() {
 
   std::ofstream createFile(CONFIG_FILE_PATH);
   if (!createFile) {
-    std::cout << "Error creating file"
-              << std::endl; // Add to WriteLog queue, FATAL maybe
+    Log::Write(Log::ERROR, "Error creating config file");
   }
 
   createFile.close();
@@ -65,9 +64,8 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
 
   std::ifstream file(CONFIG_FILE_PATH);
   if (!file.is_open()) {
-    std::cout << "Error reading file"
-              << std::endl; // Add to WriteLog queue that config couldn't be
-                            // opened so made one with defaults
+    Log::Write(Log::ERROR,
+               "Error reading config file, creating one with defaults");
 
     return ApplicationSettings::CreateConfig();
   }
@@ -101,20 +99,18 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
         keysPresent[key] = true;
 
         if (value.empty()) {
-          std::cerr << "Empty value for key: " << key
-                    << ". Using default value." << std::endl;
+          Log::Write(Log::ERROR,
+                     "Empty value found in config file, using default");
         }
-
-        // Add below errors to WriteLog queue
 
         if (currentSection == "Window") {
           windowSectionExists = true;
 
           if (key == "Width") {
             if (value.empty() || !isNumber(value)) {
-              std::cerr << "Invalid value for Width: " << value
-                        << ". Using default value: " << DEFAULT_WIDTH
-                        << std::endl;
+              Log::Write(
+                  Log::ERROR,
+                  "Invalid window width value in config file, using default");
 
               config.window.width = DEFAULT_WIDTH;
             } else {
@@ -123,9 +119,9 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
 
           } else if (key == "Height") {
             if (value.empty() || !isNumber(value)) {
-              std::cerr << "Invalid value for Height: " << value
-                        << ". Using default value: " << DEFAULT_HEIGHT
-                        << std::endl;
+              Log::Write(
+                  Log::ERROR,
+                  "Invalid window height value in config file, using default");
 
               config.window.height = DEFAULT_HEIGHT;
             } else {
@@ -134,9 +130,8 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
 
           } else if (key == "Fullscreen") {
             if (value.empty() || !isBoolean(value)) {
-              std::cerr << "Invalid value for Fullscreen: " << value
-                        << ". Using default value: "
-                        << boolToString(DEFAULT_FULLSCREEN) << std::endl;
+              Log::Write(Log::ERROR, "Invalid window fullscreen value in "
+                                     "config file, using default");
 
               config.window.fullscreen = DEFAULT_FULLSCREEN;
             } else {
@@ -145,9 +140,9 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
 
           } else if (key == "Title") {
             if (value.empty() || !isQuotedString(value)) {
-              std::cerr << "Invalid or empty value for Title: " << value
-                        << ". Using default value: " << DEFAULT_TITLE
-                        << std::endl;
+              Log::Write(
+                  Log::ERROR,
+                  "Invalid window title value in config file, using default");
 
               config.window.title = DEFAULT_TITLE;
             } else {
@@ -158,9 +153,9 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
           logSectionExists = true;
           if (key == "LogToFile") {
             if (value.empty() || !isBoolean(value)) {
-              std::cerr << "Invalid value for LogToFile: " << value
-                        << ". Using default value: "
-                        << boolToString(DEFAULT_LOG_TO_FILE) << std::endl;
+              Log::Write(
+                  Log::ERROR,
+                  "Invalid log to file value in config file, using default");
 
               config.log.logToFile = DEFAULT_LOG_TO_FILE;
             } else {
@@ -169,9 +164,9 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
 
           } else if (key == "LogToConsole") {
             if (value.empty() || !isBoolean(value)) {
-              std::cerr << "Invalid value for LogToConsole: " << value
-                        << ". Using default value: "
-                        << boolToString(DEFAULT_LOG_TO_CONSOLE) << std::endl;
+              Log::Write(
+                  Log::ERROR,
+                  "Invalid log to console value in config file, using default");
 
               config.log.logToConsole = DEFAULT_LOG_TO_CONSOLE;
             } else {
@@ -180,9 +175,9 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
 
           } else if (key == "ResetLogFile") {
             if (value.empty() || !isBoolean(value)) {
-              std::cerr << "Invalid value for ResetLogFile: " << value
-                        << ". Using default value: "
-                        << boolToString(DEFAULT_RESET_LOG_FILE) << std::endl;
+              Log::Write(
+                  Log::ERROR,
+                  "Invalid reset log file value in config file, using default");
 
               config.log.resetLogFile = DEFAULT_RESET_LOG_FILE;
             } else {
@@ -190,25 +185,26 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
             }
 
           } else {
-            std::cerr << "Unknown key: " << key
-                      << " in section: " << currentSection << std::endl;
+            Log::Write(Log::ERROR, "Unknown key found in config file");
           }
 
         } else {
-          std::cerr << "Unknown section: " << currentSection << std::endl;
+          Log::Write(Log::ERROR, "Unknown section found in config file");
         }
 
       } else {
-        std::cerr << "Invalid line: " << line << std::endl;
+        Log::Write(Log::ERROR, "Invalid line found in config file");
       }
     }
-  
+
     config.log.logFilePath = LOG_FILE_PATH;
   }
 
   if (!windowSectionExists) {
-    std::cerr << "Window section header was not found, using default values."
-              << std::endl;
+    Log::Write(
+        Log::ERROR,
+        "Window section was not found in config file, using default values");
+
     config.window.width = DEFAULT_WIDTH;
     keysPresent["Width"] = true;
 
@@ -223,8 +219,10 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
   }
 
   if (!logSectionExists) {
-    std::cerr << "Log section header was not found, using default values."
-              << std::endl;
+    Log::Write(
+        Log::ERROR,
+        "Log section was not found in config file, using default values");
+
     config.log.logToFile = DEFAULT_LOG_TO_FILE;
     keysPresent["LogToFile"] = true;
 
@@ -240,44 +238,46 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
 
   if (!keysPresent["Width"]) {
     config.window.width = DEFAULT_WIDTH;
-    std::cerr << "Width key missing. Using default value: " << DEFAULT_WIDTH
-              << std::endl;
+    Log::Write(Log::ERROR,
+               "Width key missing from config file, using default value");
   }
 
   if (!keysPresent["Height"]) {
     config.window.height = DEFAULT_HEIGHT;
-    std::cerr << "Height key missing. Using default value: " << DEFAULT_HEIGHT
-              << std::endl;
+    Log::Write(Log::ERROR,
+               "Height key missing from config file, using default value");
   }
 
   if (!keysPresent["Fullscreen"]) {
     config.window.fullscreen = DEFAULT_FULLSCREEN;
-    std::cerr << "Fullscreen key missing. Using default value: "
-              << boolToString(DEFAULT_FULLSCREEN) << std::endl;
+    Log::Write(Log::ERROR,
+               "Fullscreen key missing from config file, using default value");
   }
 
   if (!keysPresent["Title"]) {
     config.window.title = DEFAULT_TITLE;
-    std::cerr << "Title key missing. Using default value: " << DEFAULT_TITLE
-              << std::endl;
+    Log::Write(Log::ERROR,
+               "Title key missing from config file, using default value");
   }
 
   if (!keysPresent["LogToFile"]) {
     config.log.logToFile = DEFAULT_LOG_TO_FILE;
-    std::cerr << "LogToFile key missing. Using default value: "
-              << boolToString(DEFAULT_LOG_TO_FILE) << std::endl;
+    Log::Write(Log::ERROR,
+               "Log to file key missing from config file, using default value");
   }
 
   if (!keysPresent["LogToConsole"]) {
     config.log.logToConsole = DEFAULT_LOG_TO_CONSOLE;
-    std::cerr << "LogToConsole key missing. Using default value: "
-              << boolToString(DEFAULT_LOG_TO_CONSOLE) << std::endl;
+    Log::Write(
+        Log::ERROR,
+        "Log to console key missing from config file, using default value");
   }
 
   if (!keysPresent["ResetLogFile"]) {
     config.log.resetLogFile = DEFAULT_RESET_LOG_FILE;
-    std::cerr << "ResetLogFile key missing. Using default value: "
-              << boolToString(DEFAULT_RESET_LOG_FILE) << std::endl;
+    Log::Write(
+        Log::ERROR,
+        "Reset log file key missing from config file, using default value");
   }
 
   file.close();

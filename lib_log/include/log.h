@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <iostream>
 #include <mutex>
+#include <queue>
 #include <sstream>
 #include <string>
 
@@ -18,12 +19,18 @@ public:
   static void Write(Level level, const std::string &message);
   static void Shutdown();
 
+  static void FlushQueue();
+
 private:
   static std::ofstream logFile;
   static bool logToFile;
   static bool logToConsole;
 
   static std::mutex logMutex;
+
+  static bool initialized;
+
+  static std::queue<std::pair<Level, std::string>> logQueue;
 
   static std::string GetCurrentDateTime();
   static std::string LevelToString(Level level);
