@@ -1,6 +1,9 @@
 @echo off
 setlocal
 
+REM --- Save the initial directory ---
+set INITIAL_DIR=%cd%
+
 REM --- Setup GLFW ---
 set GLFW_VERSION=3.4
 set EXTERNAL_DIR=%cd%\external
@@ -24,6 +27,9 @@ echo Building and installing GLFW...
 cmake -S %GLFW_SOURCE_DIR% -B %GLFW_BUILD_DIR% -DCMAKE_INSTALL_PREFIX=%GLFW_INSTALL_DIR% -DBUILD_SHARED_LIBS=ON
 cmake --build %GLFW_BUILD_DIR% --config Release --target install
 
+REM Return to the initial directory
+cd %INITIAL_DIR%
+
 REM --- Setup glad ---
 set GLAD_DIR=%EXTERNAL_DIR%\glad
 set GLAD_INCLUDE_DIR=%GLAD_DIR%\include
@@ -45,8 +51,18 @@ echo target_include_directories\(glad PUBLIC include\) >> %GLAD_CMAKE%
 echo Glad setup complete.
 
 REM --- Add ImGui as submodule and setup CMakeLists.txt ---
+cd %INITIAL_DIR%
+
 set IMGUI_DIR=lib_imgui
 set IMGUI_REPO=https://github.com/ocornut/imgui.git
+set OTHER_DIR=%cd%\other
+set TEMP_CMAKE_FILE=%OTHER_DIR%\CMakeLists.txt
+
+REM Ensure the temporary CMakeLists.txt exists
+if not exist %TEMP_CMAKE_FILE% (
+    echo Error: Temporary CMakeLists.txt file does not exist.
+    exit /b 1
+)
 
 if exist %IMGUI_DIR% (
     echo Updating ImGui submodule...
@@ -57,16 +73,13 @@ if exist %IMGUI_DIR% (
     git submodule update --init --recursive
 )
 
-echo Creating CMakeLists.txt for ImGui...
-echo cmake_minimum_required\(VERSION 3.10\) > %IMGUI_DIR%\CMakeLists.txt
-echo project\(ImGui\) >> %IMGUI_DIR%\CMakeLists.txt
-echo set\(IMGUI_DIR \${CMAKE_CURRENT_SOURCE_DIR}\) >> %IMGUI_DIR%\CMakeLists.txt
-echo file\(GLOB IMGUI_SOURCES >> %IMGUI_DIR%\CMakeLists.txt
-echo \    \${IMGUI_DIR}/*.cpp >> %IMGUI_DIR%\CMakeLists.txt
-echo \    \${IMGUI_DIR}/backends/imgui_impl_glfw.cpp >> %IMGUI_DIR%\CMakeLists.txt
-echo \    \${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp\) >> %IMGUI_DIR%\CMakeLists.txt
-echo add_library\(imgui STATIC \${IMGUI_SOURCES}\) >> %IMGUI_DIR%\CMakeLists.txt
-echo target_include_directories\(imgui PUBLIC \${IMGUI_DIR} \${IMGUI_DIR}/backends\) >> %IMGUI_DIR%\CMakeLists.txt
+REM Move the temporary CMakeLists.txt to lib_imgui directory
+copy %TEMP_CMAKE_FILE% %IMGUI_DIR%\CMakeLists.txt
+
+if %ERRORLEVEL% neq 0 (
+    echo Error: Failed to move CMakeLists.txt for ImGui.
+    exit /b 1
+)
 
 echo Imgui Setup Complete
 
