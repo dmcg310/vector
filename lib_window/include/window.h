@@ -1,6 +1,8 @@
 #pragma once
 
 #include "event.h"
+#include "../../external/glad/include/glad/glad.h"
+#include "../../lib_log/include/log.h"
 #include <GLFW/glfw3.h>
 #include <functional>
 #include <string>

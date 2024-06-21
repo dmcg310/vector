@@ -1,5 +1,4 @@
 #include "../include/window.h"
-#include "../../lib_log/include/log.h"
 
 EventManager Window::eventManager;
 GLFWwindow *Window::window = nullptr;
@@ -13,19 +12,29 @@ int Window::windowedHeight = 0;
 
 bool Window::Initialize(int width, int height, const std::string &title) {
   if (!glfwInit()) {
-    Log::Write(Log::FATAL, "Error running `glfwInit()`");
+    Log::Write(Log::FATAL,
+               "Failed to initialize glfw. Error running `glfwInit()`");
     return false;
   }
 
   window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   if (!window) {
-    Log::Write(Log::FATAL, "`glfwCreateWindow()` returned NULL");
+    Log::Write(Log::FATAL,
+               "Failed to create window. `glfwCreateWindow()` returned NULL");
     glfwTerminate();
+
     return false;
   }
 
   glfwMakeContextCurrent(window);
   glfwSetWindowUserPointer(window, nullptr);
+
+  // if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+  //   Log::Write(Log::FATAL,
+  //              "Failed to initialize glad. `gladLoadGLLoader()` returned NULL");
+  //
+  //   return false;
+  // }
 
   Window::SetSize(width, height);
   windowedWidth = width;
