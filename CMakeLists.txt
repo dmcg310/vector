@@ -12,6 +12,7 @@ endif()
 add_subdirectory(lib_window)
 add_subdirectory(lib_application)
 add_subdirectory(lib_log)
+add_subdirectory(lib_imgui)
 add_subdirectory(engine_src)
 
 if (WIN32)
