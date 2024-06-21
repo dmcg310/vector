@@ -3,7 +3,8 @@ out/
 logs/
 
 # Ignore external dependencies
-external/
+external/*
+!external/glad.zip
 
 # Prerequisites
 *.d
