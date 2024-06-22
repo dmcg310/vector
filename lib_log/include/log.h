@@ -19,7 +19,9 @@ public:
   static void Write(Level level, const std::string &message);
   static void Shutdown();
 
-  static void FlushQueue();
+#ifdef _DEBUG
+  static std::deque<std::pair<Level, std::string>> GetLogBuffer(); // For forwarding logs to ImGui debug menu
+#endif
 
 private:
   static std::ofstream logFile;
@@ -31,6 +33,11 @@ private:
   static bool initialized;
 
   static std::queue<std::pair<Level, std::string>> logQueue;
+#ifdef _DEBUG
+  static std::deque<std::pair<Level, std::string>> logBuffer;
+#endif
+
+  static void FlushQueue();
 
   static std::string GetCurrentDateTime();
   static std::string LevelToString(Level level);

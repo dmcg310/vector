@@ -138,7 +138,21 @@ void Application::Render() {
 #ifdef _DEBUG
 void Application::RenderDebugMenu() {
   ImGui::Begin("Debug Menu");
-  ImGui::Text("This is the debug menu.");
+
+  static float fps = 0.0f;
+  fps = 0.9f * fps + 0.1f * ImGui::GetIO().Framerate;
+  ImGui::Text("FPS: %.1f", fps);
+
+  if (ImGui::CollapsingHeader("Logs")) {
+    ImGui::BeginChild("LogWindow", ImVec2(0, 300), true);
+
+    for (const auto& log : Log::GetLogBuffer()) {
+      ImGui::TextUnformatted(log.second.c_str());
+    }
+
+    ImGui::EndChild();
+  }
+
   ImGui::End();
 }
 #endif

@@ -6,6 +6,9 @@ bool Log::logToConsole = true;
 std::mutex Log::logMutex;
 bool Log::initialized = false;
 std::queue<std::pair<Log::Level, std::string>> Log::logQueue;
+#ifdef _DEBUG
+std::deque<std::pair<Log::Level, std::string>> Log::logBuffer;
+#endif
 
 void Log::Initialize(const std::string &filename, bool fileOutput,
                      bool consoleOutput, bool resetLogFile) {
@@ -51,6 +54,13 @@ void Log::Write(Level level, const std::string &message) {
   if (logToConsole) {
     std::cout << logMessage;
   }
+
+#ifdef _DEBUG
+  logBuffer.emplace_back(level, logMessage);
+  if (logBuffer.size() > 50) {
+    logBuffer.pop_front();
+  }
+#endif
 }
 
 void Log::Shutdown() {
@@ -60,6 +70,12 @@ void Log::Shutdown() {
     logFile.close();
   }
 }
+
+#ifdef _DEBUG
+std::deque<std::pair<Log::Level, std::string>> Log::GetLogBuffer() {
+  return logBuffer;
+}
+#endif
 
 void Log::FlushQueue() {
   while (!logQueue.empty()) {
