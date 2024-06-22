@@ -1,6 +1,8 @@
 add_library(lib_window
 	src/window.cpp
 	src/event.cpp
+	src/imgui_impl_glfw.cpp
+	src/imgui_impl_opengl3.cpp
 )
 
 target_include_directories(lib_window PUBLIC include)
