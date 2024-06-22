@@ -1,4 +1,5 @@
 #include "../include/application.h"
+#include <imgui_internal.h>
 
 Application::Application() {}
 
@@ -34,7 +35,19 @@ bool Application::Initialize() {
 #ifdef _DEBUG
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
+
+  ImGuiIO& io = ImGui::GetIO();
+  io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+  io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
   ImGui::StyleColorsDark();
+
+  ImGuiStyle style = ImGui::GetStyle();
+  if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    style.WindowRounding = 0.0f;
+    style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+  }
+
   ImGui_ImplGlfw_InitForOpenGL(Window::GetGLFWWindow(), true);
   ImGui_ImplOpenGL3_Init("#version 330");
 #endif
@@ -90,11 +103,10 @@ void Application::OnKeyPress(int key) {
     return;
   }
 #endif
+
   if (key == GLFW_KEY_ESCAPE) {
     Shutdown();
   }
-
-  // Handle other key presses
 }
 
 void Application::OnKeyRelease(int key) {
@@ -121,27 +133,74 @@ void Application::Render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 #ifdef _DEBUG
-  ImGui_ImplOpenGL3_NewFrame();
-  ImGui_ImplGlfw_NewFrame();
-  ImGui::NewFrame();
-
   if (isDebugMenuOpen) {
-    RenderDebugMenu();
-  }
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+    ImGuiIO& io = ImGui::GetIO();
 
-  ImGui::Render();
-  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+    ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+    ImGui::SetNextWindowSize(io.DisplaySize);
+    ImGui::SetNextWindowBgAlpha(0.0f);
+
+    ImGui::Begin("Vector Engine Debug Menu", nullptr, windowFlags);
+
+    ImGuiID dockspaceId = ImGui::GetID("VectorDockSpace");
+    ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+
+    ImGui::End();
+
+    RenderDebugMenu();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+      GLFWwindow* backupCurrentContext = glfwGetCurrentContext();
+      ImGui::UpdatePlatformWindows();
+      ImGui::RenderPlatformWindowsDefault();
+
+      glfwMakeContextCurrent(backupCurrentContext);
+    }
+  }
 #endif
   // Swap buffers (handled by Window::SwapBuffers)
 }
 
 #ifdef _DEBUG
 void Application::RenderDebugMenu() {
-  ImGui::Begin("Debug Menu");
+  static bool initialized = false;
+
+  if (!initialized) {
+    ImGui::DockBuilderRemoveNode(ImGui::GetID("VectorDockSpace")); // Clear existing layout
+    ImGui::DockBuilderAddNode(ImGui::GetID("VectorDockSpace"), ImGuiDockNodeFlags_DockSpace);
+    ImGui::DockBuilderSetNodeSize(ImGui::GetID("VectorDockSpace"), ImGui::GetIO().DisplaySize);
+
+    ImGuiID dockMainId = ImGui::GetID("VectorDockSpace");
+    ImGuiID dockLeftId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Left, 0.2f, nullptr, &dockMainId);
+    ImGuiID dockBottomId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Down, 0.3f, nullptr, &dockMainId);
+
+    ImGui::DockBuilderDockWindow("Options", dockLeftId);
+    ImGui::DockBuilderDockWindow("Logs", dockBottomId);
+    ImGui::DockBuilderFinish(dockMainId);
+
+    initialized = true;
+  }
+
+  ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_FirstUseEver);
+  ImGui::SetNextWindowSize(ImVec2(300.0f, ImGui::GetIO().DisplaySize.y), ImGuiCond_FirstUseEver);
+  ImGui::Begin("Options");
 
   static float fps = 0.0f;
   fps = 0.9f * fps + 0.1f * ImGui::GetIO().Framerate;
   ImGui::Text("FPS: %.1f", fps);
+
+  ImGui::End();
+
+  ImGui::SetNextWindowPos(ImVec2(0.0f, ImGui::GetIO().DisplaySize.y * 0.7f), ImGuiCond_FirstUseEver);
+  ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.3f), ImGuiCond_FirstUseEver);
+  ImGui::Begin("Logs");
 
   if (ImGui::CollapsingHeader("Logs")) {
     ImGui::BeginChild("LogWindow", ImVec2(0, 300), true);
