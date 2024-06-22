@@ -1,7 +1,9 @@
 #include "../include/application.h"
 
 #ifdef _DEBUG
-Application::Application() : frameCount(0), startTime(std::chrono::steady_clock::now()) {}
+Application::Application() : frameCount(0), startTime(std::chrono::steady_clock::now()), 
+                             accumulatedTime(0.0), accumulatedFPS(0.0), sampleFrames(100), 
+                             frameSamples(0) {}
 #else
 Application::Application() {}
 #endif
@@ -130,18 +132,41 @@ void Application::HandleEvents() {
 
 void Application::Update() {
 #ifdef _DEBUG
+  // Increment the frame count
   frameCount++;
 
+  // Calculate the elapsed time since the application started
   auto currentTime = std::chrono::steady_clock::now();
   std::chrono::duration<double> elapsedTime = currentTime - startTime;
 
-  double averageFPS = frameCount / elapsedTime.count();
+  // Calculate frame time (delta time)
+  static auto lastTime = std::chrono::steady_clock::now();
+  auto deltaTime = std::chrono::duration<double>(currentTime - lastTime).count();
+  lastTime = currentTime;
 
-  std::ostringstream oss;
-  oss << "Frame: " << frameCount << ", Average FPS: " << averageFPS;
+  // Accumulate values
+  accumulatedTime += deltaTime;
+  accumulatedFPS += 1.0 / deltaTime;
+  frameSamples++;
 
-  Log::WriteFrameLog(oss.str());
+  if (frameSamples >= sampleFrames) {
+    double averageFPS = accumulatedFPS / frameSamples;
+    double averageFrameTime = accumulatedTime / frameSamples;
+
+    // Log average frame information to ImGui buffer
+    std::ostringstream oss;
+    oss << "Frames: " << frameSamples
+      << ", Average FPS: " << averageFPS
+      << ", Average Frame Time: " << averageFrameTime << "s";
+    Log::WriteFrameLog(oss.str());
+
+    // Reset accumulators
+    accumulatedTime = 0.0;
+    accumulatedFPS = 0.0;
+    frameSamples = 0;
+  }
 #endif
+  // Update game logic here...
 }
 
 void Application::Render() {
@@ -218,7 +243,7 @@ void Application::RenderDebugMenu() {
   ImGui::Begin("Logs");
 
   if (ImGui::CollapsingHeader("Logs")) {
-    ImGui::BeginChild("LogWindow", ImVec2(0, 300), true);
+    ImGui::BeginChild("LogWindow", ImVec2(0, 200), true);
 
     // Display normal logs
     for (const auto& log : Log::GetLogBuffer()) {
@@ -230,13 +255,14 @@ void Application::RenderDebugMenu() {
       ImGui::TextUnformatted(frameLog.c_str());
     }
 
+    ImGui::SetScrollHereY(1.0f);
+
     ImGui::EndChild();
   }
 
   ImGui::End();
 }
 #endif
-
 
 void Application::MainLoopBody() {
   HandleEvents();

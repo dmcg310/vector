@@ -4,6 +4,9 @@ std::ofstream Log::logFile;
 bool Log::logToFile = true;
 bool Log::logToConsole = true;
 std::mutex Log::logMutex;
+std::condition_variable Log::logCondition;
+std::thread Log::logThread;
+bool Log::stopLogging = false;
 bool Log::initialized = false;
 std::queue<std::pair<Log::Level, std::string>> Log::logQueue;
 #ifdef _DEBUG
@@ -31,6 +34,10 @@ void Log::Initialize(const std::string &filename, bool fileOutput,
 
   initialized = true;
   FlushQueue();
+
+  // Start logging thread
+  stopLogging = false;
+  logThread = std::thread(Log::LogThreadFunction);
 }
 
 void Log::Write(Level level, const std::string &message) {
@@ -70,14 +77,24 @@ void Log::WriteFrameLog(const std::string& message) {
 
   frameLogBuffer.emplace_back(message);
 
-  if (frameLogBuffer.size() > 100) {
+  if (frameLogBuffer.size() > 50) {
     frameLogBuffer.pop_front();
   }
+
+  logCondition.notify_one();
 #endif
 }
 
 void Log::Shutdown() {
-  std::lock_guard<std::mutex> guard(logMutex);
+  {
+    std::lock_guard<std::mutex> guard(logMutex);
+    stopLogging = true;
+  }
+
+  logCondition.notify_all();
+  if (logThread.joinable()) {
+    logThread.join();
+  }
 
   if (logToFile && logFile) {
     logFile.close();
@@ -142,5 +159,19 @@ void Log::CreateDirectories(const std::string &filepath) {
   path.remove_filename();
   if (!path.empty() && !fs::exists(path)) {
     fs::create_directories(path);
+  }
+}
+
+void Log::LogThreadFunction() {
+  while (true) {
+    std::unique_lock<std::mutex> lock(logMutex);
+
+    logCondition.wait_for(lock, std::chrono::milliseconds(100), [] { return stopLogging; });
+
+    if (stopLogging) {
+      break;
+    }
+
+    // No need to empty frameLogBuffer here since it's updated directly in the main thread.
   }
 }

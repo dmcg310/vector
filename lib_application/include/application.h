@@ -34,6 +34,10 @@ private:
   bool isDebugMenuOpen = false;
   std::chrono::steady_clock::time_point startTime;
   unsigned int frameCount;
+  double accumulatedTime;
+  double accumulatedFPS;
+  unsigned int sampleFrames;
+  unsigned int frameSamples;
 #endif
 
   ApplicationSettings settings;
