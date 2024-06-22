@@ -29,5 +29,8 @@ private:
 
   ApplicationSettings settings;
 
-  // We can put member variables here for other systems in the future
+#ifdef _DEBUG
+  void RenderDebugMenu();
+  bool isDebugMenuOpen = false;
+#endif
 };

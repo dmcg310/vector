@@ -31,11 +31,13 @@ bool Application::Initialize() {
 
   Window::RegisterObserver(this);
 
+#ifdef _DEBUG
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGui::StyleColorsDark();
   ImGui_ImplGlfw_InitForOpenGL(Window::GetGLFWWindow(), true);
   ImGui_ImplOpenGL3_Init("#version 330");
+#endif
 
   return true;
 }
@@ -65,9 +67,11 @@ void Application::Run() {
 }
 
 void Application::Shutdown() {
+#ifdef _DEBUG
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
+#endif
 
   Window::UnregisterObserver(this);
 
@@ -79,6 +83,13 @@ void Application::Shutdown() {
 }
 
 void Application::OnKeyPress(int key) {
+#ifdef _DEBUG
+  if (key == GLFW_KEY_F1) {
+    isDebugMenuOpen = !isDebugMenuOpen;
+
+    return;
+  }
+#endif
   if (key == GLFW_KEY_ESCAPE) {
     Shutdown();
   }
@@ -107,19 +118,30 @@ void Application::Update() {
 }
 
 void Application::Render() {
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+#ifdef _DEBUG
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
-  ImGui::Begin("Hello, World!");
-  ImGui::Text("This is some text.");
-  ImGui::End();
+  if (isDebugMenuOpen) {
+    RenderDebugMenu();
+  }
 
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+#endif
   // Swap buffers (handled by Window::SwapBuffers)
 }
+
+#ifdef _DEBUG
+void Application::RenderDebugMenu() {
+  ImGui::Begin("Debug Menu");
+  ImGui::Text("This is the debug menu.");
+  ImGui::End();
+}
+#endif
 
 void Application::MainLoopBody() {
   HandleEvents();
