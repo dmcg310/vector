@@ -8,6 +8,7 @@ bool Log::initialized = false;
 std::queue<std::pair<Log::Level, std::string>> Log::logQueue;
 #ifdef _DEBUG
 std::deque<std::pair<Log::Level, std::string>> Log::logBuffer;
+std::deque<std::string> Log::frameLogBuffer;
 #endif
 
 void Log::Initialize(const std::string &filename, bool fileOutput,
@@ -63,6 +64,18 @@ void Log::Write(Level level, const std::string &message) {
 #endif
 }
 
+void Log::WriteFrameLog(const std::string& message) {
+#ifdef _DEBUG
+  std::lock_guard<std::mutex> guard(logMutex);
+
+  frameLogBuffer.emplace_back(message);
+
+  if (frameLogBuffer.size() > 100) {
+    frameLogBuffer.pop_front();
+  }
+#endif
+}
+
 void Log::Shutdown() {
   std::lock_guard<std::mutex> guard(logMutex);
 
@@ -74,6 +87,10 @@ void Log::Shutdown() {
 #ifdef _DEBUG
 std::deque<std::pair<Log::Level, std::string>> Log::GetLogBuffer() {
   return logBuffer;
+}
+
+std::deque<std::string> Log::GetFrameLogBuffer() {
+  return frameLogBuffer;
 }
 #endif
 

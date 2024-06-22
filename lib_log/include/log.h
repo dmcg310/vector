@@ -17,10 +17,12 @@ public:
   static void Initialize(const std::string &filename, bool logToFile,
                          bool logToConsole, bool resetLogFile);
   static void Write(Level level, const std::string &message);
+  static void WriteFrameLog(const std::string& message);
   static void Shutdown();
 
 #ifdef _DEBUG
   static std::deque<std::pair<Level, std::string>> GetLogBuffer(); // For forwarding logs to ImGui debug menu
+  static std::deque<std::string> GetFrameLogBuffer();
 #endif
 
 private:
@@ -35,6 +37,7 @@ private:
   static std::queue<std::pair<Level, std::string>> logQueue;
 #ifdef _DEBUG
   static std::deque<std::pair<Level, std::string>> logBuffer;
+  static std::deque<std::string> frameLogBuffer;
 #endif
 
   static void FlushQueue();

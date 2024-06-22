@@ -1,7 +1,10 @@
 #include "../include/application.h"
-#include <imgui_internal.h>
 
+#ifdef _DEBUG
+Application::Application() : frameCount(0), startTime(std::chrono::steady_clock::now()) {}
+#else
 Application::Application() {}
+#endif
 
 bool Application::Initialize() {
   ApplicationSettings applicationSettings;
@@ -126,7 +129,19 @@ void Application::HandleEvents() {
 }
 
 void Application::Update() {
-  // Update game logic
+#ifdef _DEBUG
+  frameCount++;
+
+  auto currentTime = std::chrono::steady_clock::now();
+  std::chrono::duration<double> elapsedTime = currentTime - startTime;
+
+  double averageFPS = frameCount / elapsedTime.count();
+
+  std::ostringstream oss;
+  oss << "Frame: " << frameCount << ", Average FPS: " << averageFPS;
+
+  Log::WriteFrameLog(oss.str());
+#endif
 }
 
 void Application::Render() {
@@ -205,8 +220,14 @@ void Application::RenderDebugMenu() {
   if (ImGui::CollapsingHeader("Logs")) {
     ImGui::BeginChild("LogWindow", ImVec2(0, 300), true);
 
+    // Display normal logs
     for (const auto& log : Log::GetLogBuffer()) {
       ImGui::TextUnformatted(log.second.c_str());
+    }
+
+    // Display frame logs
+    for (const auto& frameLog : Log::GetFrameLogBuffer()) {
+      ImGui::TextUnformatted(frameLog.c_str());
     }
 
     ImGui::EndChild();
@@ -215,6 +236,7 @@ void Application::RenderDebugMenu() {
   ImGui::End();
 }
 #endif
+
 
 void Application::MainLoopBody() {
   HandleEvents();

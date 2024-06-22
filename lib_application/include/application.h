@@ -6,6 +6,8 @@
 #include "../../lib_window/include/imgui_impl_glfw.h"
 #include "../../lib_window/include/imgui_impl_opengl3.h"
 #include <imgui.h>
+#include <imgui_internal.h>
+#include <chrono>
 
 class Application : public IEventObserver {
 public:
@@ -27,10 +29,12 @@ private:
 
   void MainLoopBody();
 
-  ApplicationSettings settings;
-
 #ifdef _DEBUG
   void RenderDebugMenu();
   bool isDebugMenuOpen = false;
+  std::chrono::steady_clock::time_point startTime;
+  unsigned int frameCount;
 #endif
+
+  ApplicationSettings settings;
 };
