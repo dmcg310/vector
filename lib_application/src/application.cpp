@@ -38,23 +38,7 @@ bool Application::Initialize() {
   Window::RegisterObserver(this);
 
 #ifdef _DEBUG
-  IMGUI_CHECKVERSION();
-  ImGui::CreateContext();
-
-  ImGuiIO& io = ImGui::GetIO();
-  io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-  io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
-  ImGui::StyleColorsDark();
-
-  ImGuiStyle style = ImGui::GetStyle();
-  if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-    style.WindowRounding = 0.0f;
-    style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-  }
-
-  ImGui_ImplGlfw_InitForOpenGL(Window::GetGLFWWindow(), true);
-  ImGui_ImplOpenGL3_Init("#version 330");
+  imguiManager.Initialize(Window::GetGLFWWindow());
 #endif
 
   return true;
@@ -86,14 +70,12 @@ void Application::Run() {
 
 void Application::Shutdown() {
 #ifdef _DEBUG
-  ImGui_ImplOpenGL3_Shutdown();
-  ImGui_ImplGlfw_Shutdown();
-  ImGui::DestroyContext();
+  imguiManager.Shutdown();
 #endif
 
   Window::UnregisterObserver(this);
-
   Window::Shutdown();
+
   Log::Write(Log::INFO, "Application shut down successfully");
   Log::Shutdown();
 
@@ -166,7 +148,8 @@ void Application::Update() {
     frameSamples = 0;
   }
 #endif
-  // Update game logic here...
+
+  // Update game logic here
 }
 
 void Application::Render() {
@@ -174,95 +157,16 @@ void Application::Render() {
 
 #ifdef _DEBUG
   if (isDebugMenuOpen) {
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-    ImGuiIO& io = ImGui::GetIO();
-
-    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-    ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
-    ImGui::SetNextWindowSize(io.DisplaySize);
-    ImGui::SetNextWindowBgAlpha(0.0f);
-
-    ImGui::Begin("Vector Engine Debug Menu", nullptr, windowFlags);
-
-    ImGuiID dockspaceId = ImGui::GetID("VectorDockSpace");
-    ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
-
-    ImGui::End();
-
-    RenderDebugMenu();
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-      GLFWwindow* backupCurrentContext = glfwGetCurrentContext();
-      ImGui::UpdatePlatformWindows();
-      ImGui::RenderPlatformWindowsDefault();
-
-      glfwMakeContextCurrent(backupCurrentContext);
-    }
+    imguiManager.Render();
+  } else {
+    // Normal rendering when debug menu is closed
   }
+
+#else
+  // Normal rendering for release mode
 #endif
   // Swap buffers (handled by Window::SwapBuffers)
 }
-
-#ifdef _DEBUG
-void Application::RenderDebugMenu() {
-  static bool initialized = false;
-
-  if (!initialized) {
-    ImGui::DockBuilderRemoveNode(ImGui::GetID("VectorDockSpace")); // Clear existing layout
-    ImGui::DockBuilderAddNode(ImGui::GetID("VectorDockSpace"), ImGuiDockNodeFlags_DockSpace);
-    ImGui::DockBuilderSetNodeSize(ImGui::GetID("VectorDockSpace"), ImGui::GetIO().DisplaySize);
-
-    ImGuiID dockMainId = ImGui::GetID("VectorDockSpace");
-    ImGuiID dockLeftId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Left, 0.2f, nullptr, &dockMainId);
-    ImGuiID dockBottomId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Down, 0.3f, nullptr, &dockMainId);
-
-    ImGui::DockBuilderDockWindow("Options", dockLeftId);
-    ImGui::DockBuilderDockWindow("Logs", dockBottomId);
-    ImGui::DockBuilderFinish(dockMainId);
-
-    initialized = true;
-  }
-
-  ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_FirstUseEver);
-  ImGui::SetNextWindowSize(ImVec2(300.0f, ImGui::GetIO().DisplaySize.y), ImGuiCond_FirstUseEver);
-  ImGui::Begin("Options");
-
-  static float fps = 0.0f;
-  fps = 0.9f * fps + 0.1f * ImGui::GetIO().Framerate;
-  ImGui::Text("FPS: %.1f", fps);
-
-  ImGui::End();
-
-  ImGui::SetNextWindowPos(ImVec2(0.0f, ImGui::GetIO().DisplaySize.y * 0.7f), ImGuiCond_FirstUseEver);
-  ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.3f), ImGuiCond_FirstUseEver);
-  ImGui::Begin("Logs");
-
-  if (ImGui::CollapsingHeader("Logs")) {
-    ImGui::BeginChild("LogWindow", ImVec2(0, 200), true);
-
-    // Display normal logs
-    for (const auto& log : Log::GetLogBuffer()) {
-      ImGui::TextUnformatted(log.second.c_str());
-    }
-
-    // Display frame logs
-    for (const auto& frameLog : Log::GetFrameLogBuffer()) {
-      ImGui::TextUnformatted(frameLog.c_str());
-    }
-
-    ImGui::SetScrollHereY(1.0f);
-
-    ImGui::EndChild();
-  }
-
-  ImGui::End();
-}
-#endif
 
 void Application::MainLoopBody() {
   HandleEvents();
