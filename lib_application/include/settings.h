@@ -9,15 +9,6 @@
 #include <string>
 #include <unordered_map>
 
-// CMake will place the logs relative to the 'build' directory
-#if defined(__linux__) || defined(__APPLE__)
-const std::string LOG_FILE_PATH = "../logs/application.log";
-const std::string CONFIG_FILE_PATH = "../config.vector";
-#else
-const std::string LOG_FILE_PATH = "../../../logs/application.log";
-const std::string CONFIG_FILE_PATH = "../../../config.vector";
-#endif
-
 const int DEFAULT_WIDTH = 1200;
 const int DEFAULT_HEIGHT = 800;
 const bool DEFAULT_FULLSCREEN = false;
@@ -43,7 +34,7 @@ const bool DEFAULT_RESET_LOG_FILE = true;
 
 class ApplicationSettings {
 public:
-  ApplicationSettings() = default;
+  ApplicationSettings();
 
   struct Config {
     struct Window {
@@ -75,4 +66,8 @@ private:
   bool isNumber(const std::string &str);
   bool isBoolean(const std::string &str);
   bool isQuotedString(const std::string &str);
+
+  std::string GetBaseDirectory();
+  std::string GetAbsoluteLogFilePath();
+  std::string GetAbsoluteConfigFilePath();
 };

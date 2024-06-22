@@ -6,6 +6,41 @@ std::string boolToString(bool value) { return value ? "true" : "false"; }
 
 bool stringToBool(const std::string &str) { return str == "true"; }
 
+std::string ApplicationSettings::GetBaseDirectory() {
+  std::filesystem::path executablePath = std::filesystem::current_path();
+  std::filesystem::path basePath = executablePath;
+
+  // Traverse upwards to find the 'vector' directory
+  while (basePath.has_parent_path() && basePath.filename() != "vector") {
+    basePath = basePath.parent_path();
+  }
+
+  if (basePath.filename() == "vector") {
+    return basePath.string();
+  } else {
+    // Should never throw
+    throw std::runtime_error("Could not find the 'vector' directory in the path hierarchy.");
+  }
+}
+
+std::string ApplicationSettings::GetAbsoluteLogFilePath() {
+  std::string baseDirectory = GetBaseDirectory();
+  std::filesystem::path logFilePath = std::filesystem::path(baseDirectory) / "logs" / "application.log";
+
+  return logFilePath.string();
+}
+
+std::string ApplicationSettings::GetAbsoluteConfigFilePath() {
+  std::string baseDirectory = GetBaseDirectory();
+  std::filesystem::path configFilePath = std::filesystem::path(baseDirectory) / "config.vector";
+
+  return configFilePath.string();
+}
+
+ApplicationSettings::ApplicationSettings() {
+  config.log.logFilePath = GetAbsoluteLogFilePath();
+}
+
 bool ApplicationSettings::CheckIfConfigExists() {
 #ifdef __APPLE__
   namespace fs = std::__fs::filesystem;
@@ -13,7 +48,8 @@ bool ApplicationSettings::CheckIfConfigExists() {
   namespace fs = std::filesystem;
 #endif
 
-  if (!fs::exists(CONFIG_FILE_PATH)) {
+  std::string configFilePath = GetAbsoluteConfigFilePath();
+  if (!fs::exists(configFilePath)) {
     return false;
   }
 
@@ -23,7 +59,8 @@ bool ApplicationSettings::CheckIfConfigExists() {
 ApplicationSettings::Config ApplicationSettings::CreateConfig() {
   Config config;
 
-  std::ofstream createFile(CONFIG_FILE_PATH);
+  std::string configFilePath = GetAbsoluteConfigFilePath();
+  std::ofstream createFile(configFilePath);
   if (!createFile) {
     Log::Write(Log::ERROR, "Error creating config file");
   }
@@ -32,16 +69,16 @@ ApplicationSettings::Config ApplicationSettings::CreateConfig() {
 
   std::ofstream configFile;
   std::ios_base::openmode mode = std::ios::out;
-  configFile.open(CONFIG_FILE_PATH, mode);
+  configFile.open(configFilePath, mode);
 
   std::ostringstream oss;
   oss << "[Window]" << "\nWidth=" << DEFAULT_WIDTH
-      << "\nHeight=" << DEFAULT_HEIGHT
-      << "\nFullscreen=" << boolToString(DEFAULT_FULLSCREEN) << "\nTitle=\""
-      << DEFAULT_TITLE << "\"" << "\n\n[Log]"
-      << "\nLogToFile=" << boolToString(DEFAULT_LOG_TO_FILE)
-      << "\nLogToConsole=" << boolToString(DEFAULT_LOG_TO_CONSOLE)
-      << "\nResetLogFile=" << boolToString(DEFAULT_RESET_LOG_FILE);
+    << "\nHeight=" << DEFAULT_HEIGHT
+    << "\nFullscreen=" << boolToString(DEFAULT_FULLSCREEN) << "\nTitle=\""
+    << DEFAULT_TITLE << "\"" << "\n\n[Log]"
+    << "\nLogToFile=" << boolToString(DEFAULT_LOG_TO_FILE)
+    << "\nLogToConsole=" << boolToString(DEFAULT_LOG_TO_CONSOLE)
+    << "\nResetLogFile=" << boolToString(DEFAULT_RESET_LOG_FILE);
   std::string configString = oss.str();
 
   configFile << configString;
@@ -54,7 +91,7 @@ ApplicationSettings::Config ApplicationSettings::CreateConfig() {
   config.log.logToFile = DEFAULT_LOG_TO_FILE;
   config.log.logToConsole = DEFAULT_LOG_TO_CONSOLE;
   config.log.resetLogFile = DEFAULT_RESET_LOG_FILE;
-  config.log.logFilePath = LOG_FILE_PATH;
+  config.log.logFilePath = GetAbsoluteLogFilePath();
 
   return config;
 }
@@ -62,10 +99,11 @@ ApplicationSettings::Config ApplicationSettings::CreateConfig() {
 ApplicationSettings::Config ApplicationSettings::LoadConfig() {
   Config config;
 
-  std::ifstream file(CONFIG_FILE_PATH);
+  std::string configFilePath = GetAbsoluteConfigFilePath();
+  std::ifstream file(configFilePath);
   if (!file.is_open()) {
     Log::Write(Log::ERROR,
-               "Error reading config file, creating one with defaults");
+      "Error reading config file, creating one with defaults");
 
     return ApplicationSettings::CreateConfig();
   }
@@ -100,7 +138,7 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
 
         if (value.empty()) {
           Log::Write(Log::ERROR,
-                     "Empty value found in config file, using default");
+            "Empty value found in config file, using default");
         }
 
         if (currentSection == "Window") {
@@ -109,8 +147,8 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
           if (key == "Width") {
             if (value.empty() || !isNumber(value)) {
               Log::Write(
-                  Log::ERROR,
-                  "Invalid window width value in config file, using default");
+                Log::ERROR,
+                "Invalid window width value in config file, using default");
 
               config.window.width = DEFAULT_WIDTH;
             } else {
@@ -120,8 +158,8 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
           } else if (key == "Height") {
             if (value.empty() || !isNumber(value)) {
               Log::Write(
-                  Log::ERROR,
-                  "Invalid window height value in config file, using default");
+                Log::ERROR,
+                "Invalid window height value in config file, using default");
 
               config.window.height = DEFAULT_HEIGHT;
             } else {
@@ -131,7 +169,7 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
           } else if (key == "Fullscreen") {
             if (value.empty() || !isBoolean(value)) {
               Log::Write(Log::ERROR, "Invalid window fullscreen value in "
-                                     "config file, using default");
+                "config file, using default");
 
               config.window.fullscreen = DEFAULT_FULLSCREEN;
             } else {
@@ -141,8 +179,8 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
           } else if (key == "Title") {
             if (value.empty() || !isQuotedString(value)) {
               Log::Write(
-                  Log::ERROR,
-                  "Invalid window title value in config file, using default");
+                Log::ERROR,
+                "Invalid window title value in config file, using default");
 
               config.window.title = DEFAULT_TITLE;
             } else {
@@ -154,8 +192,8 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
           if (key == "LogToFile") {
             if (value.empty() || !isBoolean(value)) {
               Log::Write(
-                  Log::ERROR,
-                  "Invalid log to file value in config file, using default");
+                Log::ERROR,
+                "Invalid log to file value in config file, using default");
 
               config.log.logToFile = DEFAULT_LOG_TO_FILE;
             } else {
@@ -165,8 +203,8 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
           } else if (key == "LogToConsole") {
             if (value.empty() || !isBoolean(value)) {
               Log::Write(
-                  Log::ERROR,
-                  "Invalid log to console value in config file, using default");
+                Log::ERROR,
+                "Invalid log to console value in config file, using default");
 
               config.log.logToConsole = DEFAULT_LOG_TO_CONSOLE;
             } else {
@@ -176,8 +214,8 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
           } else if (key == "ResetLogFile") {
             if (value.empty() || !isBoolean(value)) {
               Log::Write(
-                  Log::ERROR,
-                  "Invalid reset log file value in config file, using default");
+                Log::ERROR,
+                "Invalid reset log file value in config file, using default");
 
               config.log.resetLogFile = DEFAULT_RESET_LOG_FILE;
             } else {
@@ -197,13 +235,13 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
       }
     }
 
-    config.log.logFilePath = LOG_FILE_PATH;
+    config.log.logFilePath = GetAbsoluteLogFilePath();
   }
 
   if (!windowSectionExists) {
     Log::Write(
-        Log::ERROR,
-        "Window section was not found in config file, using default values");
+      Log::ERROR,
+      "Window section was not found in config file, using default values");
 
     config.window.width = DEFAULT_WIDTH;
     keysPresent["Width"] = true;
@@ -220,8 +258,8 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
 
   if (!logSectionExists) {
     Log::Write(
-        Log::ERROR,
-        "Log section was not found in config file, using default values");
+      Log::ERROR,
+      "Log section was not found in config file, using default values");
 
     config.log.logToFile = DEFAULT_LOG_TO_FILE;
     keysPresent["LogToFile"] = true;
@@ -232,52 +270,52 @@ ApplicationSettings::Config ApplicationSettings::LoadConfig() {
     config.log.resetLogFile = DEFAULT_RESET_LOG_FILE;
     keysPresent["ResetLogFile"] = true;
 
-    config.log.logFilePath = LOG_FILE_PATH;
+    config.log.logFilePath = GetAbsoluteLogFilePath();
     keysPresent["LogFilePath"] = true;
   }
 
   if (!keysPresent["Width"]) {
     config.window.width = DEFAULT_WIDTH;
     Log::Write(Log::ERROR,
-               "Width key missing from config file, using default value");
+      "Width key missing from config file, using default value");
   }
 
   if (!keysPresent["Height"]) {
     config.window.height = DEFAULT_HEIGHT;
     Log::Write(Log::ERROR,
-               "Height key missing from config file, using default value");
+      "Height key missing from config file, using default value");
   }
 
   if (!keysPresent["Fullscreen"]) {
     config.window.fullscreen = DEFAULT_FULLSCREEN;
     Log::Write(Log::ERROR,
-               "Fullscreen key missing from config file, using default value");
+      "Fullscreen key missing from config file, using default value");
   }
 
   if (!keysPresent["Title"]) {
     config.window.title = DEFAULT_TITLE;
     Log::Write(Log::ERROR,
-               "Title key missing from config file, using default value");
+      "Title key missing from config file, using default value");
   }
 
   if (!keysPresent["LogToFile"]) {
     config.log.logToFile = DEFAULT_LOG_TO_FILE;
     Log::Write(Log::ERROR,
-               "Log to file key missing from config file, using default value");
+      "Log to file key missing from config file, using default value");
   }
 
   if (!keysPresent["LogToConsole"]) {
     config.log.logToConsole = DEFAULT_LOG_TO_CONSOLE;
     Log::Write(
-        Log::ERROR,
-        "Log to console key missing from config file, using default value");
+      Log::ERROR,
+      "Log to console key missing from config file, using default value");
   }
 
   if (!keysPresent["ResetLogFile"]) {
     config.log.resetLogFile = DEFAULT_RESET_LOG_FILE;
     Log::Write(
-        Log::ERROR,
-        "Reset log file key missing from config file, using default value");
+      Log::ERROR,
+      "Reset log file key missing from config file, using default value");
   }
 
   file.close();
