@@ -1,8 +1,8 @@
 #pragma once
 
 #include "event.h"
-#include "../../external/glad/include/glad/glad.h"
 #include "../../lib_log/include/log.h"
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <functional>
 #include <string>
@@ -12,6 +12,8 @@ public:
   static bool Initialize(int width, int height, const std::string &title);
   static void Run(std::function<void()> loop_body);
   static void Shutdown();
+
+  static GLFWwindow* GetGLFWWindow();
 
   static void PollEvents();
   static bool ShouldClose();

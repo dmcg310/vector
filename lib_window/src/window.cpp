@@ -29,12 +29,12 @@ bool Window::Initialize(int width, int height, const std::string &title) {
   glfwMakeContextCurrent(window);
   glfwSetWindowUserPointer(window, nullptr);
 
-  // if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-  //   Log::Write(Log::FATAL,
-  //              "Failed to initialize glad. `gladLoadGLLoader()` returned NULL");
-  //
-  //   return false;
-  // }
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    Log::Write(Log::FATAL,
+              "Failed to initialize glad. `gladLoadGLLoader()` returned NULL");
+  
+    return false;
+  }
 
   Window::SetSize(width, height);
   windowedWidth = width;
@@ -61,6 +61,10 @@ void Window::Run(std::function<void()> loop_body) {
 void Window::Shutdown() {
   glfwDestroyWindow(window);
   glfwTerminate();
+}
+
+GLFWwindow* Window::GetGLFWWindow() {
+  return window;
 }
 
 void Window::PollEvents() { glfwPollEvents(); }

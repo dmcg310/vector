@@ -31,7 +31,11 @@ bool Application::Initialize() {
 
   Window::RegisterObserver(this);
 
-  // Initialize other systems here
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGui::StyleColorsDark();
+  ImGui_ImplGlfw_InitForOpenGL(Window::GetGLFWWindow(), true);
+  ImGui_ImplOpenGL3_Init("#version 330");
 
   return true;
 }
@@ -61,7 +65,9 @@ void Application::Run() {
 }
 
 void Application::Shutdown() {
-  // Shutdown other systsems here
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
 
   Window::UnregisterObserver(this);
 
@@ -101,7 +107,18 @@ void Application::Update() {
 }
 
 void Application::Render() {
-  // Render the frame
+  ImGui_ImplOpenGL3_NewFrame();
+  ImGui_ImplGlfw_NewFrame();
+  ImGui::NewFrame();
+
+  ImGui::Begin("Hello, World!");
+  ImGui::Text("This is some text.");
+  ImGui::End();
+
+  ImGui::Render();
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+  // Swap buffers (handled by Window::SwapBuffers)
 }
 
 void Application::MainLoopBody() {

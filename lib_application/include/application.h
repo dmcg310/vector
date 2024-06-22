@@ -1,8 +1,11 @@
 #pragma once
 
+#include "settings.h"
 #include "../../lib_log/include/log.h"
 #include "../../lib_window/include/window.h"
-#include "settings.h"
+#include "../../lib_window/include/imgui_impl_glfw.h"
+#include "../../lib_window/include/imgui_impl_opengl3.h"
+#include <imgui.h>
 
 class Application : public IEventObserver {
 public:
