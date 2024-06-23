@@ -6,7 +6,7 @@
 class OpenGLShader : public Shader {
 public:
   OpenGLShader();
-  ~OpenGLShader();
+  ~OpenGLShader() override;
 
   void Compile(const std::string &source, GLenum shaderType) override;
   void Link() override;
@@ -19,5 +19,5 @@ private:
   GLuint shaderProgram;
   std::unordered_map<std::string, GLint> uniformLocations;
 
-  GLint GetUniformLocation(const std::string& name);
+  static GLint GetUniformLocation(const std::string &name);
 };
