@@ -9,8 +9,8 @@
 
 // TESTING PURPOSES
 #include "../../lib_renderer/include/buffer.h"
-#include "../../lib_renderer/src/concrete/opengl/opengl_indexbuffer.h"
-#include "../../lib_renderer/src/concrete/opengl/opengl_vertexbuffer.h"
+#include "../../lib_renderer/src/concrete/opengl/buffers/opengl_indexbuffer.h"
+#include "../../lib_renderer/src/concrete/opengl/buffers/opengl_vertexbuffer.h"
 
 #ifdef _DEBUG
 #include "imgui_manager.h"

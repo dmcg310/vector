@@ -1,5 +1,5 @@
 #include "opengl_indexbuffer.h"
-#include "../../../../lib_log/include/log.h"
+#include "../../../../../lib_log/include/log.h"
 
 void OpenGLIndexBuffer::Create(size_t size, const void *data) {
   glGenBuffers(1, &bufferID);

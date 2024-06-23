@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../include/buffer.h"
+#include "../../../../include/buffer.h"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
