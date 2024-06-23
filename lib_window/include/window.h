@@ -1,11 +1,13 @@
 #pragma once
 
-#include "event.h"
 #include "../../lib_log/include/log.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "event.h"
 #include <functional>
 #include <string>
+
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 class Window {
 public:
@@ -13,7 +15,7 @@ public:
   static void Run(std::function<void()> loop_body);
   static void Shutdown();
 
-  static GLFWwindow* GetGLFWWindow();
+  static GLFWwindow *GetGLFWWindow();
 
   static void PollEvents();
   static bool ShouldClose();

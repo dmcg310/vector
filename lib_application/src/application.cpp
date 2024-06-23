@@ -1,9 +1,10 @@
 #include "../include/application.h"
 
 #ifdef _DEBUG
-Application::Application() : frameCount(0), startTime(std::chrono::steady_clock::now()), 
-                             accumulatedTime(0.0), accumulatedFPS(0.0), sampleFrames(100), 
-                             frameSamples(0), context(nullptr), isDebugMode(true) {}
+Application::Application()
+    : frameCount(0), startTime(std::chrono::steady_clock::now()),
+      accumulatedTime(0.0), accumulatedFPS(0.0), sampleFrames(100),
+      frameSamples(0), context(nullptr), isDebugMode(true) {}
 #else
 Application::Application() : context(nullptr) {}
 #endif
@@ -37,14 +38,16 @@ bool Application::Initialize() {
 
   Window::RegisterObserver(this);
 
-  API selectedAPI = API::OpenGL; // This could definitely be loaded from our config.vector
-  context = RenderAPIFactory::CreateContext(selectedAPI, Window::GetGLFWWindow());
+  API selectedAPI =
+      API::OpenGL; // This could definitely be loaded from our config.vector
+  context =
+      RenderAPIFactory::CreateContext(selectedAPI, Window::GetGLFWWindow());
 
   try {
     context->Initialize();
-  } catch (const std::runtime_error& e) {
+  } catch (const std::runtime_error &e) {
     Log::Write(Log::FATAL, e.what());
-    
+
     return false;
   }
 
@@ -53,24 +56,22 @@ bool Application::Initialize() {
     buffer = new OpenGLVertexBuffer();
 
     float vertices[] = {
-      -0.5f, -0.5f, 0.0f,  // Vertex 0: Bottom-left
-       0.5f, -0.5f, 0.0f,  // Vertex 1: Bottom-right
-       0.5f,  0.5f, 0.0f,  // Vertex 2: Top-right
-      -0.5f,  0.5f, 0.0f   // Vertex 3: Top-left
+        -0.5f, -0.5f, 0.0f, // Vertex 0: Bottom-left
+        0.5f,  -0.5f, 0.0f, // Vertex 1: Bottom-right
+        0.5f,  0.5f,  0.0f, // Vertex 2: Top-right
+        -0.5f, 0.5f,  0.0f  // Vertex 3: Top-left
     };
 
     buffer->Create(sizeof(vertices), vertices);
     buffer->Bind();
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
+                          (void *)0);
 
     indexBuffer = new OpenGLIndexBuffer();
 
-    unsigned int indices[] = {
-      0, 1, 2,
-      2, 3, 0
-    };
+    unsigned int indices[] = {0, 1, 2, 2, 3, 0};
 
     indexBuffer->Create(sizeof(indices), indices);
   }
@@ -167,7 +168,8 @@ void Application::Update() {
 
   // Calculate frame time (delta time)
   static auto lastTime = std::chrono::steady_clock::now();
-  auto deltaTime = std::chrono::duration<double>(currentTime - lastTime).count();
+  auto deltaTime =
+      std::chrono::duration<double>(currentTime - lastTime).count();
   lastTime = currentTime;
 
   // Accumulate values
@@ -181,9 +183,8 @@ void Application::Update() {
 
     // Log average frame information to ImGui buffer
     std::ostringstream oss;
-    oss << "Frames: " << frameSamples
-      << ", Average FPS: " << averageFPS
-      << ", Average Frame Time: " << averageFrameTime << "s";
+    oss << "Frames: " << frameSamples << ", Average FPS: " << averageFPS
+        << ", Average Frame Time: " << averageFrameTime << "s";
     Log::WriteFrameLog(oss.str());
 
     // Reset accumulators
@@ -203,7 +204,8 @@ void Application::Render() {
   if (buffer) {
     buffer->Bind();
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
+                          (void *)0);
   }
 
   if (indexBuffer) {

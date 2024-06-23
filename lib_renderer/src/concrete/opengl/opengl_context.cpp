@@ -1,7 +1,7 @@
 #include "opengl_context.h"
 #include <stdexcept>
 
-OpenGLContext::OpenGLContext(GLFWwindow* window) : window(window) {}
+OpenGLContext::OpenGLContext(GLFWwindow *window) : window(window) {}
 
 void OpenGLContext::Initialize() {
   // Most of the stuff that should be in here is already handled in lib_window
@@ -14,6 +14,4 @@ void OpenGLContext::Initialize() {
   }
 }
 
-void OpenGLContext::SwapBuffers() {
-  glfwSwapBuffers(window);
-}
+void OpenGLContext::SwapBuffers() { glfwSwapBuffers(window); }

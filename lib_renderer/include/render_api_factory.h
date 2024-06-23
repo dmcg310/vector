@@ -1,7 +1,7 @@
 #pragma once
 
-#include "context.h"
 #include "../../lib_window/include/window.h" // Workaround for now
+#include "context.h"
 
 enum class API {
   OpenGL,
@@ -9,5 +9,5 @@ enum class API {
 
 class RenderAPIFactory {
 public:
-  static Context* CreateContext(API api, GLFWwindow* window);
+  static Context *CreateContext(API api, GLFWwindow *window);
 };

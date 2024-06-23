@@ -71,7 +71,7 @@ void Log::Write(Level level, const std::string &message) {
 #endif
 }
 
-void Log::WriteFrameLog(const std::string& message) {
+void Log::WriteFrameLog(const std::string &message) {
 #ifdef _DEBUG
   std::lock_guard<std::mutex> guard(logMutex);
 
@@ -106,9 +106,7 @@ std::deque<std::pair<Log::Level, std::string>> Log::GetLogBuffer() {
   return logBuffer;
 }
 
-std::deque<std::string> Log::GetFrameLogBuffer() {
-  return frameLogBuffer;
-}
+std::deque<std::string> Log::GetFrameLogBuffer() { return frameLogBuffer; }
 #endif
 
 void Log::FlushQueue() {
@@ -166,12 +164,14 @@ void Log::LogThreadFunction() {
   while (true) {
     std::unique_lock<std::mutex> lock(logMutex);
 
-    logCondition.wait_for(lock, std::chrono::milliseconds(100), [] { return stopLogging; });
+    logCondition.wait_for(lock, std::chrono::milliseconds(100),
+                          [] { return stopLogging; });
 
     if (stopLogging) {
       break;
     }
 
-    // No need to empty frameLogBuffer here since it's updated directly in the main thread.
+    // No need to empty frameLogBuffer here since it's updated directly in the
+    // main thread.
   }
 }

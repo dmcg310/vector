@@ -1,16 +1,16 @@
 #pragma once
 
-#include "settings.h"
 #include "../../lib_log/include/log.h"
-#include "../../lib_window/include/window.h"
 #include "../../lib_renderer/include/context.h"
 #include "../../lib_renderer/include/render_api_factory.h"
+#include "../../lib_window/include/window.h"
+#include "settings.h"
 #include <chrono>
 
 // TESTING PURPOSES
 #include "../../lib_renderer/include/buffer.h"
-#include "../../lib_renderer/src/concrete/opengl/opengl_vertexbuffer.h" 
-#include "../../lib_renderer/src/concrete/opengl/opengl_indexbuffer.h" 
+#include "../../lib_renderer/src/concrete/opengl/opengl_indexbuffer.h"
+#include "../../lib_renderer/src/concrete/opengl/opengl_vertexbuffer.h"
 
 #ifdef _DEBUG
 #include "imgui_manager.h"
@@ -49,9 +49,9 @@ private:
 #endif
 
   ApplicationSettings settings;
-  Context* context;
+  Context *context;
 
   // TESTING CODE BELOW
-  Buffer* buffer;
-  Buffer* indexBuffer;
+  Buffer *buffer;
+  Buffer *indexBuffer;
 };

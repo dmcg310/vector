@@ -2,16 +2,16 @@
 
 #include "../include/imgui_manager.h"
 
-void ImGuiManager::Initialize(GLFWwindow* window) {
+void ImGuiManager::Initialize(GLFWwindow *window) {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
-  ImGuiIO& io = ImGui::GetIO();
+  ImGuiIO &io = ImGui::GetIO();
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
   io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
   ImGui::StyleColorsDark();
 
-  ImGuiStyle& style = ImGui::GetStyle();
+  ImGuiStyle &style = ImGui::GetStyle();
   if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
     style.WindowRounding = 0.0f;
     style.Colors[ImGuiCol_WindowBg].w = 1.0f;
@@ -27,7 +27,8 @@ void ImGuiManager::Render() {
   ImGui::NewFrame();
 
   ImGuiID dockspaceID = ImGui::GetID("MyDockspace");
-  ImGui::DockSpaceOverViewport(dockspaceID, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+  ImGui::DockSpaceOverViewport(dockspaceID, ImGui::GetMainViewport(),
+                               ImGuiDockNodeFlags_PassthruCentralNode);
 
   RenderDebugMenu();
 
@@ -39,9 +40,9 @@ void ImGuiManager::Render() {
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-  ImGuiIO& io = ImGui::GetIO();
+  ImGuiIO &io = ImGui::GetIO();
   if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-    GLFWwindow* backup_current_context = glfwGetCurrentContext();
+    GLFWwindow *backup_current_context = glfwGetCurrentContext();
     ImGui::UpdatePlatformWindows();
     ImGui::RenderPlatformWindowsDefault();
     glfwMakeContextCurrent(backup_current_context);
@@ -50,13 +51,18 @@ void ImGuiManager::Render() {
 
 void ImGuiManager::RenderDebugMenu() {
   if (!initialized) {
-    ImGui::DockBuilderRemoveNode(ImGui::GetID("VectorDockSpace")); // Clear existing layout
-    ImGui::DockBuilderAddNode(ImGui::GetID("VectorDockSpace"), ImGuiDockNodeFlags_DockSpace);
-    ImGui::DockBuilderSetNodeSize(ImGui::GetID("VectorDockSpace"), ImGui::GetIO().DisplaySize);
+    ImGui::DockBuilderRemoveNode(
+        ImGui::GetID("VectorDockSpace")); // Clear existing layout
+    ImGui::DockBuilderAddNode(ImGui::GetID("VectorDockSpace"),
+                              ImGuiDockNodeFlags_DockSpace);
+    ImGui::DockBuilderSetNodeSize(ImGui::GetID("VectorDockSpace"),
+                                  ImGui::GetIO().DisplaySize);
 
     ImGuiID dockMainId = ImGui::GetID("VectorDockSpace");
-    ImGuiID dockLeftId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Left, 0.2f, nullptr, &dockMainId);
-    ImGuiID dockBottomId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Down, 0.3f, nullptr, &dockMainId);
+    ImGuiID dockLeftId = ImGui::DockBuilderSplitNode(
+        dockMainId, ImGuiDir_Left, 0.2f, nullptr, &dockMainId);
+    ImGuiID dockBottomId = ImGui::DockBuilderSplitNode(
+        dockMainId, ImGuiDir_Down, 0.3f, nullptr, &dockMainId);
 
     ImGui::DockBuilderDockWindow("Options", dockLeftId);
     ImGui::DockBuilderDockWindow("Logs", dockBottomId);
@@ -66,7 +72,8 @@ void ImGuiManager::RenderDebugMenu() {
   }
 
   ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_FirstUseEver);
-  ImGui::SetNextWindowSize(ImVec2(300.0f, ImGui::GetIO().DisplaySize.y), ImGuiCond_FirstUseEver);
+  ImGui::SetNextWindowSize(ImVec2(300.0f, ImGui::GetIO().DisplaySize.y),
+                           ImGuiCond_FirstUseEver);
   ImGui::Begin("Options");
 
   static float fps = 0.0f;
@@ -75,20 +82,23 @@ void ImGuiManager::RenderDebugMenu() {
 
   ImGui::End();
 
-  ImGui::SetNextWindowPos(ImVec2(0.0f, ImGui::GetIO().DisplaySize.y * 0.7f), ImGuiCond_FirstUseEver);
-  ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.3f), ImGuiCond_FirstUseEver);
+  ImGui::SetNextWindowPos(ImVec2(0.0f, ImGui::GetIO().DisplaySize.y * 0.7f),
+                          ImGuiCond_FirstUseEver);
+  ImGui::SetNextWindowSize(
+      ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.3f),
+      ImGuiCond_FirstUseEver);
   ImGui::Begin("Logs");
 
   if (ImGui::CollapsingHeader("Logs")) {
     ImGui::BeginChild("LogWindow", ImVec2(0, 200), true);
 
     // Display normal logs
-    for (const auto& log : Log::GetLogBuffer()) {
+    for (const auto &log : Log::GetLogBuffer()) {
       ImGui::TextUnformatted(log.second.c_str());
     }
 
     // Display frame logs
-    for (const auto& frameLog : Log::GetFrameLogBuffer()) {
+    for (const auto &frameLog : Log::GetFrameLogBuffer()) {
       ImGui::TextUnformatted(frameLog.c_str());
     }
 

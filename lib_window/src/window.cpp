@@ -31,8 +31,8 @@ bool Window::Initialize(int width, int height, const std::string &title) {
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     Log::Write(Log::FATAL,
-              "Failed to initialize glad. `gladLoadGLLoader()` returned NULL");
-  
+               "Failed to initialize glad. `gladLoadGLLoader()` returned NULL");
+
     return false;
   }
 
@@ -62,9 +62,7 @@ void Window::Shutdown() {
   glfwTerminate();
 }
 
-GLFWwindow* Window::GetGLFWWindow() {
-  return window;
-}
+GLFWwindow *Window::GetGLFWWindow() { return window; }
 
 void Window::PollEvents() { glfwPollEvents(); }
 

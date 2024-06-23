@@ -24,7 +24,8 @@ public:
   static void Shutdown();
 
 #ifdef _DEBUG
-  static std::deque<std::pair<Level, std::string>> GetLogBuffer(); // For forwarding logs to ImGui debug menu
+  static std::deque<std::pair<Level, std::string>>
+  GetLogBuffer(); // For forwarding logs to ImGui debug menu
   static std::deque<std::string> GetFrameLogBuffer(); // For frame logs
 #endif
 
