@@ -9,6 +9,17 @@ if (APPLE OR UNIX)
 	find_package(glfw3 REQUIRED)
 endif()
 
+# GLM
+include(FetchContent)
+
+FetchContent_Declare(
+	glm
+	GIT_REPOSITORY	https://github.com/g-truc/glm.git
+	GIT_TAG 	bf71a834948186f4097caa076cd2663c69a10e1e #refs/tags/1.0.1
+)
+
+FetchContent_MakeAvailable(glm)
+
 target_include_directories(lib_renderer PUBLIC include)
 
 if(ENABLE_OPENGL)
@@ -18,5 +29,5 @@ if(ENABLE_OPENGL)
     target_compile_definitions(lib_renderer PRIVATE ENABLE_OPENGL)
 
     find_package(OpenGL REQUIRED)
-    target_link_libraries(lib_renderer PRIVATE OpenGL::GL glad glfw)
+    target_link_libraries(lib_renderer PRIVATE OpenGL::GL glad glm glfw)
 endif()

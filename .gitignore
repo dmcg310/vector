@@ -5,6 +5,7 @@ logs/
 # Ignore external dependencies
 external/*
 !external/glad.zip
+!external/stb_image.h
 lib_imgui
 
 # Prerequisites
