@@ -59,6 +59,7 @@ public:
   Config CreateConfig();
   Config LoadConfig();
 
+  std::string GetBaseDirectory();
 private:
   Config config;
 
@@ -67,7 +68,6 @@ private:
   bool isBoolean(const std::string &str);
   bool isQuotedString(const std::string &str);
 
-  std::string GetBaseDirectory();
   std::string GetAbsoluteLogFilePath();
   std::string GetAbsoluteConfigFilePath();
 };

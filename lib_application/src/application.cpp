@@ -4,7 +4,7 @@
 Application::Application()
     : frameCount(0), startTime(std::chrono::steady_clock::now()),
       accumulatedTime(0.0), accumulatedFPS(0.0), sampleFrames(100),
-      frameSamples(0), context(nullptr), isDebugMode(true) {}
+      frameSamples(0), context(nullptr), isDebugMode(true), buffer(nullptr), indexBuffer(nullptr) {}
 #else
 Application::Application() : context(nullptr) {}
 #endif
