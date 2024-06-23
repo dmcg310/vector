@@ -1,10 +1,12 @@
 #pragma once
 
+#include <string>
+
 class Texture {
 public:
-  viurtal void LoadFromFile(const std::string& filePath);
-  viurtal void Bind(unsigned int unit);
+  virtual void LoadFromFile(const std::string& filePath);
+  virtual void Bind(unsigned int unit) = 0;
   virtual unsigned int GetID() const = 0;
-  virtual void SetParameters();
+  virtual void SetParameters() = 0;
   virtual ~Texture() = default;
 };

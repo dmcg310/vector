@@ -1,5 +1,8 @@
 #pragma once
 
+class Texture;
+class Renderbuffer;
+
 class Framebuffer {
 public:
   virtual void Create() = 0;
