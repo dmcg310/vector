@@ -17,6 +17,7 @@ add_subdirectory(lib_window)
 add_subdirectory(lib_application)
 add_subdirectory(lib_log)
 add_subdirectory(lib_imgui)
+add_subdirectory(lib_renderer)
 add_subdirectory(engine_src)
 add_subdirectory(${CMAKE_SOURCE_DIR}/external/glad)
 
