@@ -11,12 +11,10 @@ void OpenGLFramebuffer::Bind() {
 }
 
 void OpenGLFramebuffer::AttachTexture(Texture* texture) {
-  // Placholder code below, may change
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->GetID(), 0);
 }
 
 void OpenGLFramebuffer::AttachRenderbuffer(Renderbuffer* renderbuffer) {
-  // Placholder code below, may change
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuffer->GetID());
 }
 

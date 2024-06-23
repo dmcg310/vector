@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../../../include/frambuffer.h"
+#include "../../../include/texture.h"
+#include "../../../include/renderbuffer.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
