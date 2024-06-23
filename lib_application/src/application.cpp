@@ -53,12 +53,26 @@ bool Application::Initialize() {
     buffer = new OpenGLVertexBuffer();
 
     float vertices[] = {
-      -0.5f, -0.5f, 0.0f,
-      0.5f, -0.5f, 0.0f,
-      0.0f,  0.5f, 0.0f
+      -0.5f, -0.5f, 0.0f,  // Vertex 0: Bottom-left
+       0.5f, -0.5f, 0.0f,  // Vertex 1: Bottom-right
+       0.5f,  0.5f, 0.0f,  // Vertex 2: Top-right
+      -0.5f,  0.5f, 0.0f   // Vertex 3: Top-left
     };
 
     buffer->Create(sizeof(vertices), vertices);
+    buffer->Bind();
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    indexBuffer = new OpenGLIndexBuffer();
+
+    unsigned int indices[] = {
+      0, 1, 2,
+      2, 3, 0
+    };
+
+    indexBuffer->Create(sizeof(indices), indices);
   }
 
 #ifdef _DEBUG
@@ -185,10 +199,15 @@ void Application::Update() {
 void Application::Render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  // TESTING CODE
   if (buffer) {
     buffer->Bind();
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+  }
+
+  if (indexBuffer) {
+    indexBuffer->Bind();
   }
 
 #ifdef _DEBUG
@@ -198,7 +217,7 @@ void Application::Render() {
     // Normal rendering when debug menu is closed
 
     // TESTING CODE BELOW
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
   }
 
 #else

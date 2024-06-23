@@ -10,6 +10,7 @@
 // TESTING PURPOSES
 #include "../../lib_renderer/include/buffer.h"
 #include "../../lib_renderer/src/concrete/opengl/opengl_vertexbuffer.h" 
+#include "../../lib_renderer/src/concrete/opengl/opengl_indexbuffer.h" 
 
 #ifdef _DEBUG
 #include "imgui_manager.h"
@@ -52,4 +53,5 @@ private:
 
   // TESTING CODE BELOW
   Buffer* buffer;
+  Buffer* indexBuffer;
 };
