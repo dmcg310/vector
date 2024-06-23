@@ -48,6 +48,19 @@ bool Application::Initialize() {
     return false;
   }
 
+  // TESTING CODE
+  if (selectedAPI == API::OpenGL) {
+    buffer = new OpenGLVertexBuffer();
+
+    float vertices[] = {
+      -0.5f, -0.5f, 0.0f,
+      0.5f, -0.5f, 0.0f,
+      0.0f,  0.5f, 0.0f
+    };
+
+    buffer->Create(sizeof(vertices), vertices);
+  }
+
 #ifdef _DEBUG
   imguiManager.Initialize(Window::GetGLFWWindow());
 #endif
@@ -83,6 +96,10 @@ void Application::Shutdown() {
 #ifdef _DEBUG
   imguiManager.Shutdown();
 #endif
+
+  if (buffer) {
+    delete buffer;
+  }
 
   delete context;
 
@@ -168,21 +185,20 @@ void Application::Update() {
 void Application::Render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  if (buffer) {
+    buffer->Bind();
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+  }
+
 #ifdef _DEBUG
   if (isDebugMenuOpen) {
     imguiManager.Render();
   } else {
     // Normal rendering when debug menu is closed
 
-    // Below is some testing code
-    glBegin(GL_TRIANGLES);
-    glColor3f(1.0f, 0.0f, 0.0f); // Red
-    glVertex2f(-0.5f, -0.5f);
-    glColor3f(0.0f, 1.0f, 0.0f); // Green
-    glVertex2f(0.5f, -0.5f);
-    glColor3f(0.0f, 0.0f, 1.0f); // Blue
-    glVertex2f(0.0f, 0.5f);
-    glEnd();
+    // TESTING CODE BELOW
+    glDrawArrays(GL_TRIANGLES, 0, 3);
   }
 
 #else

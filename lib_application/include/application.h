@@ -7,6 +7,10 @@
 #include "../../lib_renderer/include/render_api_factory.h"
 #include <chrono>
 
+// TESTING PURPOSES
+#include "../../lib_renderer/include/buffer.h"
+#include "../../lib_renderer/src/concrete/opengl/opengl_vertexbuffer.h" 
+
 #ifdef _DEBUG
 #include "imgui_manager.h"
 #endif
@@ -45,4 +49,7 @@ private:
 
   ApplicationSettings settings;
   Context* context;
+
+  // TESTING CODE BELOW
+  Buffer* buffer;
 };
