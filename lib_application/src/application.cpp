@@ -3,9 +3,9 @@
 #ifdef _DEBUG
 Application::Application() : frameCount(0), startTime(std::chrono::steady_clock::now()), 
                              accumulatedTime(0.0), accumulatedFPS(0.0), sampleFrames(100), 
-                             frameSamples(0) {}
+                             frameSamples(0), context(nullptr), isDebugMode(true) {}
 #else
-Application::Application() {}
+Application::Application() : context(nullptr) {}
 #endif
 
 bool Application::Initialize() {
@@ -36,6 +36,17 @@ bool Application::Initialize() {
   }
 
   Window::RegisterObserver(this);
+
+  API selectedAPI = API::OpenGL; // This could definitely be loaded from our config.vector
+  context = RenderAPIFactory::CreateContext(selectedAPI, Window::GetGLFWWindow());
+
+  try {
+    context->Initialize();
+  } catch (const std::runtime_error& e) {
+    Log::Write(Log::FATAL, e.what());
+    
+    return false;
+  }
 
 #ifdef _DEBUG
   imguiManager.Initialize(Window::GetGLFWWindow());
@@ -72,6 +83,8 @@ void Application::Shutdown() {
 #ifdef _DEBUG
   imguiManager.Shutdown();
 #endif
+
+  delete context;
 
   Window::UnregisterObserver(this);
   Window::Shutdown();
@@ -160,12 +173,22 @@ void Application::Render() {
     imguiManager.Render();
   } else {
     // Normal rendering when debug menu is closed
+
+    // Below is some testing code
+    glBegin(GL_TRIANGLES);
+    glColor3f(1.0f, 0.0f, 0.0f); // Red
+    glVertex2f(-0.5f, -0.5f);
+    glColor3f(0.0f, 1.0f, 0.0f); // Green
+    glVertex2f(0.5f, -0.5f);
+    glColor3f(0.0f, 0.0f, 1.0f); // Blue
+    glVertex2f(0.0f, 0.5f);
+    glEnd();
   }
 
 #else
   // Normal rendering for release mode
 #endif
-  // Swap buffers (handled by Window::SwapBuffers)
+  context->SwapBuffers();
 }
 
 void Application::MainLoopBody() {

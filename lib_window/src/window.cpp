@@ -52,7 +52,6 @@ void Window::Run(std::function<void()> loop_body) {
   while (!ShouldClose()) {
     PollEvents();
     loop_body();
-    SwapBuffers();
   }
 
   Shutdown();
@@ -70,8 +69,6 @@ GLFWwindow* Window::GetGLFWWindow() {
 void Window::PollEvents() { glfwPollEvents(); }
 
 bool Window::ShouldClose() { return glfwWindowShouldClose(window); }
-
-void Window::SwapBuffers() { glfwSwapBuffers(window); }
 
 void Window::SetTitle(const std::string &title) {
   glfwSetWindowTitle(window, title.c_str());

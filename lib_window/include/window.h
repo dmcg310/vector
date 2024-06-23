@@ -17,7 +17,6 @@ public:
 
   static void PollEvents();
   static bool ShouldClose();
-  static void SwapBuffers();
 
   static void SetTitle(const std::string &title);
 

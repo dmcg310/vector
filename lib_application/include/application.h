@@ -3,6 +3,8 @@
 #include "settings.h"
 #include "../../lib_log/include/log.h"
 #include "../../lib_window/include/window.h"
+#include "../../lib_renderer/include/context.h"
+#include "../../lib_renderer/include/render_api_factory.h"
 #include <chrono>
 
 #ifdef _DEBUG
@@ -42,4 +44,5 @@ private:
 #endif
 
   ApplicationSettings settings;
+  Context* context;
 };

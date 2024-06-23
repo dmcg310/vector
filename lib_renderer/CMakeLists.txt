@@ -5,6 +5,10 @@ file(GLOB_RECURSE SOURCES src/*.cpp)
 
 add_library(lib_renderer ${HEADERS} ${SOURCES})
 
+if (APPLE OR UNIX)
+	find_package(glfw3 REQUIRED)
+endif()
+
 target_include_directories(lib_renderer PUBLIC include)
 
 if(ENABLE_OPENGL)
@@ -14,5 +18,5 @@ if(ENABLE_OPENGL)
     target_compile_definitions(lib_renderer PRIVATE ENABLE_OPENGL)
 
     find_package(OpenGL REQUIRED)
-    target_link_libraries(lib_renderer PRIVATE OpenGL::GL)
+    target_link_libraries(lib_renderer PRIVATE OpenGL::GL glad glfw)
 endif()

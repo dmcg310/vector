@@ -1,2 +1,2 @@
 add_executable(engine_main engine_main.cpp)
-target_link_libraries(engine_main lib_window lib_application)
+target_link_libraries(engine_main lib_window lib_application lib_renderer)
