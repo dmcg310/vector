@@ -6,7 +6,9 @@ void OpenGLVertexBuffer::Create(size_t size, const void *data) {
   glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
 
-void OpenGLVertexBuffer::Bind() { glBindBuffer(GL_ARRAY_BUFFER, bufferID); }
+void OpenGLVertexBuffer::Bind(uint32_t bindingPoint) { 
+  glBindBuffer(GL_ARRAY_BUFFER, bufferID); 
+}
 
 void OpenGLVertexBuffer::SetData(size_t size, const void *data) {
   glBindBuffer(GL_ARRAY_BUFFER, bufferID);

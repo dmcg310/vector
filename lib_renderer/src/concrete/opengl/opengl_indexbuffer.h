@@ -9,7 +9,7 @@
 class OpenGLIndexBuffer : public Buffer {
 public:
   void Create(size_t size, const void *data) override;
-  void Bind() override;
+  void Bind(uint32_t bindingPoint) override;
   void SetData(size_t size, const void *data) override;
   ~OpenGLIndexBuffer() override;
 

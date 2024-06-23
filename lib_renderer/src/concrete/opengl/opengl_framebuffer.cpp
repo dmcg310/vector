@@ -3,7 +3,7 @@
 
 void OpenGLFramebuffer::Create() {
   glGenFramebuffers(1, &fbo);
-  Bind();
+  glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 }
 
 void OpenGLFramebuffer::Bind() { glBindFramebuffer(GL_FRAMEBUFFER, fbo); }

@@ -6,7 +6,7 @@ void OpenGLIndexBuffer::Create(size_t size, const void *data) {
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
 
-void OpenGLIndexBuffer::Bind() {
+void OpenGLIndexBuffer::Bind(uint32_t bindingPoint) {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID);
 }
 

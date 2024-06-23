@@ -63,7 +63,7 @@ bool Application::Initialize() {
     };
 
     buffer->Create(sizeof(vertices), vertices);
-    buffer->Bind();
+    buffer->Bind(0);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
@@ -114,6 +114,10 @@ void Application::Shutdown() {
 
   if (buffer) {
     delete buffer;
+  }
+
+  if (indexBuffer) {
+    delete indexBuffer;
   }
 
   delete context;
@@ -202,14 +206,14 @@ void Application::Render() {
 
   // TESTING CODE
   if (buffer) {
-    buffer->Bind();
+    buffer->Bind(0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
                           (void *)0);
   }
 
   if (indexBuffer) {
-    indexBuffer->Bind();
+    indexBuffer->Bind(0);
   }
 
 #ifdef _DEBUG
