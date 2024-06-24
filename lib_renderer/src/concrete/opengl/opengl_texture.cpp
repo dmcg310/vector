@@ -74,6 +74,18 @@ void OpenGLTexture::LoadFromFile(const std::string &filePath) {
   }
 }
 
+void OpenGLTexture::Create(int width, int height, GLenum format) {
+  glGenTextures(1, &textureID);
+  glBindTexture(GL_TEXTURE_2D, textureID);
+  glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+  SetParameters();
+
+  GLenum error = glGetError();
+  if (error != GL_NO_ERROR) {
+    Log::Write(Log::ERROR, "Error creating framebuffer texture: " + std::to_string(error));
+  }
+}
+
 void OpenGLTexture::Bind(unsigned int unit) {
   glActiveTexture(GL_TEXTURE0 + unit);
   glBindTexture(GL_TEXTURE_2D, textureID);
