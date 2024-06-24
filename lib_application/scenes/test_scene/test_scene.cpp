@@ -31,6 +31,9 @@ void TestScene::Initialize() {
   shader->LoadFromFile("assets/shaders/vertex_shader.glsl", ShaderType::Vertex);
   shader->LoadFromFile("assets/shaders/fragment_shader.glsl", ShaderType::Fragment);
   shader->Link();
+
+  renderPass = new OpenGLRenderPass();
+  renderPass->SetClearColor(0.8f, 0.3f, 0.3f, 1.0f);
 }
 
 void TestScene::Update(float deltaTime) {
@@ -53,6 +56,8 @@ void TestScene::Render() {
   }
 
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+  renderPass->End();
 }
 
 void TestScene::Shutdown() {
@@ -79,5 +84,10 @@ void TestScene::Shutdown() {
   if (shader) {
     delete shader;
     shader = nullptr;
+  }
+
+  if (renderPass) {
+    delete renderPass;
+    renderPass = nullptr;
   }
 }

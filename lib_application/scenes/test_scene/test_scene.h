@@ -11,6 +11,7 @@
 #include "../../lib_renderer/src/concrete/opengl/opengl_vertex_array.h"
 #include "../../lib_renderer/src/concrete/opengl/opengl_shader.h"
 #include "../../lib_renderer/src/concrete/opengl/opengl_texture.h"
+#include "../../lib_renderer/src/concrete/opengl/opengl_render_pass.h"
 #include <glad/gl.h>
 
 class TestScene : public Scene {
@@ -26,4 +27,5 @@ private:
   Buffer* indexBuffer;
   Texture* texture;
   Shader* shader;
+  RenderPass* renderPass;
 };
