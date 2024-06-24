@@ -4,9 +4,11 @@
 Application::Application()
     : frameCount(0), startTime(std::chrono::steady_clock::now()), accumulatedTime(0.0),
       accumulatedFPS(0.0), sampleFrames(100), frameSamples(0), context(nullptr),
-      isDebugMode(true), buffer(nullptr), indexBuffer(nullptr), texture(nullptr) {}
+      buffer(nullptr), indexBuffer(nullptr), texture(nullptr), shader(nullptr), vao(0) {}
 #else
-Application::Application() : context(nullptr) {}
+Application::Application()
+    : context(nullptr), buffer(nullptr), indexBuffer(nullptr), texture(nullptr),
+      shader(nullptr), vao(0) {}
 #endif
 
 bool Application::Initialize() {
@@ -24,7 +26,6 @@ bool Application::Initialize() {
   Log::Initialize(config.log.logFilePath, config.log.logToFile, config.log.logToConsole,
                   config.log.resetLogFile);
 
-
   if (!Window::Initialize(config.window.width, config.window.height,
                           config.window.title)) {
     Log::Write(Log::FATAL, "Cannot initialize application window");
@@ -36,28 +37,29 @@ bool Application::Initialize() {
 
   Window::RegisterObserver(this);
 
-  API selectedAPI = API::OpenGL;// This could definitely be loaded from our config.vector
+  API selectedAPI = API::OpenGL;
   context = RenderAPIFactory::CreateContext(selectedAPI, Window::GetGLFWWindow());
 
   try {
     context->Initialize();
   } catch (const std::runtime_error &e) {
     Log::Write(Log::FATAL, e.what());
-
     return false;
   }
 
-
   // TESTING CODE
   if (selectedAPI == API::OpenGL) {
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
     buffer = new OpenGLVertexBuffer();
 
     float vertices[] = {
             // positions        // texture coords
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,// bottom-left
-            0.5f,  -0.5f, 0.0f, 1.0f, 0.0f,// bottom-right
-            0.5f,  0.5f,  0.0f, 1.0f, 1.0f,// top-right
-            -0.5f, 0.5f,  0.0f, 0.0f, 1.0f // top-left
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom-left
+            0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, // bottom-right
+            0.5f,  0.5f,  0.0f, 1.0f, 1.0f, // top-right
+            -0.5f, 0.5f,  0.0f, 0.0f, 1.0f  // top-left
     };
 
     buffer->Create(sizeof(vertices), vertices);
@@ -72,8 +74,8 @@ bool Application::Initialize() {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
                           (void *) (3 * sizeof(float)));
 
-    indexBuffer = new OpenGLIndexBuffer();
     unsigned int indices[] = {0, 1, 2, 2, 3, 0};
+    indexBuffer = new OpenGLIndexBuffer();
     indexBuffer->Create(sizeof(indices), indices);
 
     texture = new OpenGLTexture();
@@ -121,6 +123,9 @@ void Application::Shutdown() {
 #ifdef _DEBUG
   imguiManager.Shutdown();
 #endif
+
+  // TESTING CODE
+  if (vao) { glDeleteVertexArrays(1, &vao); }
 
   if (buffer) { delete buffer; }
 
@@ -213,6 +218,9 @@ void Application::Render() {
 
   // TESTING CODE
 
+  // Bind the VAO
+  glBindVertexArray(vao);
+
   // Bind the shader
   if (shader) { shader->Bind(); }
 
@@ -223,23 +231,27 @@ void Application::Render() {
   if (buffer) {
     buffer->Bind(0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) 0);
   }
 
   // Bind the index buffer
-  if (indexBuffer) { indexBuffer->Bind(0); }
+  if (indexBuffer) {
+    indexBuffer->Bind(0);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+  }
 
 #ifdef _DEBUG
   if (isDebugMenuOpen) {
     imguiManager.Render();
   } else {
-    // Normal rendering when debug menu is closed
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
   }
 #else
-  // Normal rendering for release mode
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 #endif
+
+  glBindVertexArray(0);
+
   context->SwapBuffers();
 }
 

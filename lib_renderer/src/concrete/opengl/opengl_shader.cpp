@@ -1,6 +1,5 @@
 #include "opengl_shader.h"
 #include "../../../../lib_application/include/settings.h"// For filesystem operations
-#include "../../../../lib_log/include/log.h"
 
 OpenGLShader::OpenGLShader() {
   shaderProgram = glCreateProgram();

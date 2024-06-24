@@ -42,7 +42,6 @@ private:
 
 #ifdef _DEBUG
   ImGuiManager imguiManager;
-  bool isDebugMode;
   bool isDebugMenuOpen = false;
   std::chrono::steady_clock::time_point startTime;
   unsigned int frameCount;
@@ -56,6 +55,7 @@ private:
   Context *context;
 
   // TESTING CODE BELOW
+  GLuint vao; // Can change after we get VAO API
   Buffer *buffer;
   Buffer *indexBuffer;
   Texture *texture;

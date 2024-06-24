@@ -12,15 +12,20 @@ int Window::windowedHeight = 0;
 
 bool Window::Initialize(int width, int height, const std::string &title) {
   if (!glfwInit()) {
-    Log::Write(Log::FATAL,
-               "Failed to initialize glfw. Error running `glfwInit()`");
+    Log::Write(Log::FATAL, "Failed to initialize glfw. Error running `glfwInit()`");
     return false;
   }
 
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
   window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   if (!window) {
-    Log::Write(Log::FATAL,
-               "Failed to create window. `glfwCreateWindow()` returned NULL");
+    Log::Write(Log::FATAL, "Failed to create window. `glfwCreateWindow()` returned NULL");
     glfwTerminate();
 
     return false;
@@ -89,9 +94,7 @@ void Window::SetPosition(int x, int y) { glfwSetWindowPos(window, x, y); }
 bool Window::IsFullscreen() { return isFullscreen; }
 
 void Window::SetFullscreen(bool fullscreen) {
-  if (fullscreen == isFullscreen) {
-    return;
-  }
+  if (fullscreen == isFullscreen) { return; }
 
   if (fullscreen) {
     glfwGetWindowPos(window, &windowedPosX, &windowedPosY);
@@ -107,8 +110,7 @@ void Window::SetFullscreen(bool fullscreen) {
 
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
     if (!mode) {
-      Log::Write(Log::FATAL,
-                 "Error getting video mode in `glfwGetVideoMode()`");
+      Log::Write(Log::FATAL, "Error getting video mode in `glfwGetVideoMode()`");
 
       return;
     }
@@ -117,21 +119,17 @@ void Window::SetFullscreen(bool fullscreen) {
                          mode->refreshRate);
     Window::SetSize(mode->width, mode->height);
   } else {
-    glfwSetWindowMonitor(window, nullptr, windowedPosX, windowedPosY,
-                         windowedWidth, windowedHeight, 0);
+    glfwSetWindowMonitor(window, nullptr, windowedPosX, windowedPosY, windowedWidth,
+                         windowedHeight, 0);
     Window::SetSize(windowedWidth, windowedHeight);
   }
 
   isFullscreen = fullscreen;
 }
 
-void Window::GetMousePosition(double &x, double &y) {
-  glfwGetCursorPos(window, &x, &y);
-}
+void Window::GetMousePosition(double &x, double &y) { glfwGetCursorPos(window, &x, &y); }
 
-void Window::SetMousePosition(double x, double y) {
-  glfwSetCursorPos(window, x, y);
-}
+void Window::SetMousePosition(double x, double y) { glfwSetCursorPos(window, x, y); }
 
 void Window::RegisterObserver(IEventObserver *observer) {
   eventManager.RegisterObserver(observer);
@@ -154,9 +152,6 @@ void Window::MouseCallback(GLFWwindow *window, double xpos, double ypos) {
   Window::eventManager.NotifyMouseMove(xpos, ypos);
 }
 
-void Window::MouseButtonCallback(GLFWwindow *window, int button, int action,
-                                 int mods) {
-  if (action == GLFW_PRESS) {
-    Window::eventManager.NotifyMouseClick(button);
-  }
+void Window::MouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
+  if (action == GLFW_PRESS) { Window::eventManager.NotifyMouseClick(button); }
 }
