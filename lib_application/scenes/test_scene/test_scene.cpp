@@ -2,11 +2,6 @@
 #include "../../lib_log/include/log.h"
 
 void TestScene::Initialize() {
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-
-  buffer = new OpenGLVertexBuffer();
-
   float vertices[] = {
           // positions        // texture coords
           -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom-left
@@ -15,21 +10,18 @@ void TestScene::Initialize() {
           -0.5f, 0.5f,  0.0f, 0.0f, 1.0f  // top-left
   };
 
-  buffer->Create(sizeof(vertices), vertices);
-  buffer->Bind(0);
-
-  // Position attribute
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-
-  // Texture coordinate attribute
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-
   unsigned int indices[] = { 0, 1, 2, 2, 3, 0 };
+
+  vao = new OpenGLVertexArray();
+  vao->Create();
+
+  buffer = new OpenGLVertexBuffer();
+  buffer->Create(sizeof(vertices), vertices);
+  vao->AddVertexBuffer(buffer);
 
   indexBuffer = new OpenGLIndexBuffer();
   indexBuffer->Create(sizeof(indices), indices);
+  vao->SetIndexBuffer(indexBuffer);
 
   texture = new OpenGLTexture();
   texture->LoadFromFile("assets/textures/container.jpg");
@@ -48,7 +40,9 @@ void TestScene::Update(float deltaTime) {
 void TestScene::Render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glBindVertexArray(vao);
+  if (vao) {
+    vao->Bind();
+  }
 
   if (shader) {
     shader->Bind();
@@ -58,25 +52,13 @@ void TestScene::Render() {
     texture->Bind(0);
   }
 
-  if (buffer) {
-    buffer->Bind(0);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-  }
-
-  if (indexBuffer) {
-    indexBuffer->Bind(0);
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-  }
-
-  glBindVertexArray(0);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void TestScene::Shutdown() {
   if (vao) {
-    glDeleteVertexArrays(1, &vao);
+    delete vao;
+    vao = nullptr;
   }
 
   if (buffer) {

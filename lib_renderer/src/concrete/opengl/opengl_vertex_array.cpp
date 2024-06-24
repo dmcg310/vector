@@ -1,9 +1,6 @@
 #include "opengl_vertex_array.h"
 #include "../../../../lib_log/include/log.h"
 
-// std::vector<Buffer*> vertexBuffers;
-// Buffer* indexBuffer;
-
 void OpenGLVertexArray::Create() {
   glGenVertexArrays(1, &vaoID);
   glBindVertexArray(vaoID);

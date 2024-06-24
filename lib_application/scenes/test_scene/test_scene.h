@@ -5,8 +5,10 @@
 #include "../../lib_renderer/include/buffer.h"
 #include "../../lib_renderer/include/texture.h"
 #include "../../lib_renderer/include/shader.h"
+#include "../../lib_renderer/include/vertex_array.h"
 #include "../../lib_renderer/src/concrete/opengl/buffers/opengl_indexbuffer.h"
 #include "../../lib_renderer/src/concrete/opengl/buffers/opengl_vertexbuffer.h"
+#include "../../lib_renderer/src/concrete/opengl/opengl_vertex_array.h"
 #include "../../lib_renderer/src/concrete/opengl/opengl_shader.h"
 #include "../../lib_renderer/src/concrete/opengl/opengl_texture.h"
 #include <glad/gl.h>
@@ -23,5 +25,5 @@ private:
   Buffer* indexBuffer;
   Texture* texture;
   Shader* shader;
-  unsigned int vao;
+  VertexArray* vao;
 };
