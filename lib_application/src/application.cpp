@@ -2,9 +2,9 @@
 
 #ifdef _DEBUG
 Application::Application()
-    : frameCount(0), startTime(std::chrono::steady_clock::now()),
-      accumulatedTime(0.0), accumulatedFPS(0.0), sampleFrames(100),
-      frameSamples(0), context(nullptr), isDebugMode(true), buffer(nullptr), indexBuffer(nullptr) {}
+    : frameCount(0), startTime(std::chrono::steady_clock::now()), accumulatedTime(0.0),
+      accumulatedFPS(0.0), sampleFrames(100), frameSamples(0), context(nullptr),
+      isDebugMode(true), buffer(nullptr), indexBuffer(nullptr), texture(nullptr) {}
 #else
 Application::Application() : context(nullptr) {}
 #endif
@@ -14,16 +14,15 @@ bool Application::Initialize() {
   ApplicationSettings::Config config;
 
   if (!applicationSettings.CheckIfConfigExists()) {
-    Log::Write(Log::ERROR,
-               "Config file was not found. Creating one with defaults");
+    Log::Write(Log::ERROR, "Config file was not found. Creating one with defaults");
 
     config = applicationSettings.CreateConfig();
   } else {
     config = applicationSettings.LoadConfig();
   }
 
-  Log::Initialize(config.log.logFilePath, config.log.logToFile,
-                  config.log.logToConsole, config.log.resetLogFile);
+  Log::Initialize(config.log.logFilePath, config.log.logToFile, config.log.logToConsole,
+                  config.log.resetLogFile);
 
   if (!Window::Initialize(config.window.width, config.window.height,
                           config.window.title)) {
@@ -32,16 +31,12 @@ bool Application::Initialize() {
     return false;
   }
 
-  if (config.window.fullscreen) {
-    Window::SetFullscreen(true);
-  }
+  if (config.window.fullscreen) { Window::SetFullscreen(true); }
 
   Window::RegisterObserver(this);
 
-  API selectedAPI =
-      API::OpenGL; // This could definitely be loaded from our config.vector
-  context =
-      RenderAPIFactory::CreateContext(selectedAPI, Window::GetGLFWWindow());
+  API selectedAPI = API::OpenGL;// This could definitely be loaded from our config.vector
+  context = RenderAPIFactory::CreateContext(selectedAPI, Window::GetGLFWWindow());
 
   try {
     context->Initialize();
@@ -56,24 +51,30 @@ bool Application::Initialize() {
     buffer = new OpenGLVertexBuffer();
 
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // Vertex 0: Bottom-left
-        0.5f,  -0.5f, 0.0f, // Vertex 1: Bottom-right
-        0.5f,  0.5f,  0.0f, // Vertex 2: Top-right
-        -0.5f, 0.5f,  0.0f  // Vertex 3: Top-left
+            -0.5f, -0.5f, 0.0f,// Vertex 0: Bottom-left
+            0.5f,  -0.5f, 0.0f,// Vertex 1: Bottom-right
+            0.5f,  0.5f,  0.0f,// Vertex 2: Top-right
+            -0.5f, 0.5f,  0.0f // Vertex 3: Top-left
     };
 
     buffer->Create(sizeof(vertices), vertices);
     buffer->Bind(0);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
-                          (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
 
     indexBuffer = new OpenGLIndexBuffer();
-
     unsigned int indices[] = {0, 1, 2, 2, 3, 0};
-
     indexBuffer->Create(sizeof(indices), indices);
+
+    texture = new OpenGLTexture();
+    texture->LoadFromFile("assets/textures/asphalt_02_diff_4k.jpg");
+    texture->SetParameters();
+
+    shader = new OpenGLShader();
+    shader->LoadFromFile("assets/shaders/vertex_shader.glsl", ShaderType::Vertex);
+    shader->LoadFromFile("assets/shaders/fragment_shader.glsl", ShaderType::Fragment);
+    shader->Link();
   }
 
 #ifdef _DEBUG
@@ -112,13 +113,13 @@ void Application::Shutdown() {
   imguiManager.Shutdown();
 #endif
 
-  if (buffer) {
-    delete buffer;
-  }
+  if (buffer) { delete buffer; }
 
-  if (indexBuffer) {
-    delete indexBuffer;
-  }
+  if (indexBuffer) { delete indexBuffer; }
+
+  if (texture) { delete texture; }
+
+  if (shader) { delete shader; }
 
   delete context;
 
@@ -140,9 +141,7 @@ void Application::OnKeyPress(int key) {
   }
 #endif
 
-  if (key == GLFW_KEY_ESCAPE) {
-    Shutdown();
-  }
+  if (key == GLFW_KEY_ESCAPE) { Shutdown(); }
 }
 
 void Application::OnKeyRelease(int key) {
@@ -172,8 +171,7 @@ void Application::Update() {
 
   // Calculate frame time (delta time)
   static auto lastTime = std::chrono::steady_clock::now();
-  auto deltaTime =
-      std::chrono::duration<double>(currentTime - lastTime).count();
+  auto deltaTime = std::chrono::duration<double>(currentTime - lastTime).count();
   lastTime = currentTime;
 
   // Accumulate values
@@ -205,29 +203,33 @@ void Application::Render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // TESTING CODE
+
+  // Bind the shader
+  if (shader) { shader->Bind(); }
+
+  // Bind the texture
+  if (texture) { texture->Bind(0); }
+
+  // Bind and configure the vertex buffer
   if (buffer) {
     buffer->Bind(0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
-                          (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
   }
 
-  if (indexBuffer) {
-    indexBuffer->Bind(0);
-  }
+  // Bind the index buffer
+  if (indexBuffer) { indexBuffer->Bind(0); }
 
 #ifdef _DEBUG
   if (isDebugMenuOpen) {
     imguiManager.Render();
   } else {
     // Normal rendering when debug menu is closed
-
-    // TESTING CODE BELOW
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
   }
-
 #else
   // Normal rendering for release mode
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 #endif
   context->SwapBuffers();
 }
