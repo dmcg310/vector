@@ -1,4 +1,5 @@
 #include "opengl_shader.h"
+#include "../../../../lib_application/include/settings.h"// For filesystem operations
 #include "../../../../lib_log/include/log.h"
 
 OpenGLShader::OpenGLShader() {
@@ -115,6 +116,26 @@ GLint OpenGLShader::GetUniformLocation(const std::string &name) {
 
   uniformLocations[name] = location;
   return location;
+}
+
+void OpenGLShader::LoadFromFile(const std::string &filePath, ShaderType shaderType) {
+  ApplicationSettings appSettings;
+  std::string baseDirectory = appSettings.GetBaseDirectory();
+  std::string fullPath = baseDirectory + "/" + filePath;
+
+  std::ifstream file(fullPath);
+  if (!file.is_open()) {
+    Log::Write(Log::ERROR, "Failed to open shader file: " + fullPath);
+    return;
+  }
+
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  std::string source = buffer.str();
+
+  file.close();
+
+  Compile(source, shaderType);
 }
 
 OpenGLShader::~OpenGLShader() {
