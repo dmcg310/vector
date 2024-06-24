@@ -51,17 +51,23 @@ bool Application::Initialize() {
     buffer = new OpenGLVertexBuffer();
 
     float vertices[] = {
-            -0.5f, -0.5f, 0.0f,// Vertex 0: Bottom-left
-            0.5f,  -0.5f, 0.0f,// Vertex 1: Bottom-right
-            0.5f,  0.5f,  0.0f,// Vertex 2: Top-right
-            -0.5f, 0.5f,  0.0f // Vertex 3: Top-left
+      // positions        // texture coords
+      -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // bottom-left
+      0.5f, -0.5f, 0.0f,  1.0f, 0.0f, // bottom-right
+      0.5f,  0.5f, 0.0f,  1.0f, 1.0f, // top-right
+      -0.5f,  0.5f, 0.0f,  0.0f, 1.0f  // top-left
     };
 
     buffer->Create(sizeof(vertices), vertices);
     buffer->Bind(0);
 
+    // Position attribute
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+
+    // Texture coordinate attribute
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
     indexBuffer = new OpenGLIndexBuffer();
     unsigned int indices[] = {0, 1, 2, 2, 3, 0};
