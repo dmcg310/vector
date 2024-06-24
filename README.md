@@ -3,10 +3,10 @@
 ## Setup
 
 Windows:
-`.\build_scripts\setup.bat` from cwd: vector/
+`.\build_scripts\imgui.bat` from cwd: vector/
 
 Unix:
-`./build_scripts/setup.sh` from cwd: vector/
+`./build_scripts/imgui.sh` from cwd: vector/
 
 ## Building the engine
 
