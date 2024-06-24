@@ -21,6 +21,7 @@ void OpenGLRenderbuffer::Bind() {
 }
 
 void OpenGLRenderbuffer::SetStorage(GLenum internalFormat, int width, int height) {
+  glBindRenderbuffer(GL_RENDERBUFFER, renderbufferID);
   glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height);
 
   GLenum error = glGetError();
