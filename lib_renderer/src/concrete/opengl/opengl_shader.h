@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../include/shader.h"
+#include <glm/gtc/type_ptr.hpp>
 #include <unordered_map>
 
 class OpenGLShader : public Shader {
@@ -19,5 +20,5 @@ private:
   GLuint shaderProgram;
   std::unordered_map<std::string, GLint> uniformLocations;
 
-  static GLint GetUniformLocation(const std::string &name);
+  GLint GetUniformLocation(const std::string &name);
 };
