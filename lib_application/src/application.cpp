@@ -3,12 +3,9 @@
 #ifdef _DEBUG
 Application::Application()
     : frameCount(0), startTime(std::chrono::steady_clock::now()), accumulatedTime(0.0),
-      accumulatedFPS(0.0), sampleFrames(100), frameSamples(0), context(nullptr),
-      buffer(nullptr), indexBuffer(nullptr), texture(nullptr), shader(nullptr), vao(0) {}
+      accumulatedFPS(0.0), sampleFrames(100), frameSamples(0), context(nullptr) {}
 #else
-Application::Application()
-    : context(nullptr), buffer(nullptr), indexBuffer(nullptr), texture(nullptr),
-      shader(nullptr), vao(0) {}
+Application::Application() : context(nullptr) {}
 #endif
 
 bool Application::Initialize() {
@@ -35,6 +32,7 @@ bool Application::Initialize() {
 
   if (config.window.fullscreen) { Window::SetFullscreen(true); }
 
+  // Input event observer
   Window::RegisterObserver(this);
 
   API selectedAPI = API::OpenGL;
@@ -47,46 +45,9 @@ bool Application::Initialize() {
     return false;
   }
 
-  // TESTING CODE
-  if (selectedAPI == API::OpenGL) {
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    buffer = new OpenGLVertexBuffer();
-
-    float vertices[] = {
-            // positions        // texture coords
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom-left
-            0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, // bottom-right
-            0.5f,  0.5f,  0.0f, 1.0f, 1.0f, // top-right
-            -0.5f, 0.5f,  0.0f, 0.0f, 1.0f  // top-left
-    };
-
-    buffer->Create(sizeof(vertices), vertices);
-    buffer->Bind(0);
-
-    // Position attribute
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) 0);
-
-    // Texture coordinate attribute
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
-                          (void *) (3 * sizeof(float)));
-
-    unsigned int indices[] = {0, 1, 2, 2, 3, 0};
-    indexBuffer = new OpenGLIndexBuffer();
-    indexBuffer->Create(sizeof(indices), indices);
-
-    texture = new OpenGLTexture();
-    texture->LoadFromFile("assets/textures/container.jpg");
-    texture->SetParameters();
-
-    shader = new OpenGLShader();
-    shader->LoadFromFile("assets/shaders/vertex_shader.glsl", ShaderType::Vertex);
-    shader->LoadFromFile("assets/shaders/fragment_shader.glsl", ShaderType::Fragment);
-    shader->Link();
-  }
+  auto testScene = std::make_shared<TestScene>();
+  sceneManager.AddScene("TestScene", testScene);
+  sceneManager.SetActiveScene("TestScene");
 
 #ifdef _DEBUG
   imguiManager.Initialize(Window::GetGLFWWindow());
@@ -124,17 +85,6 @@ void Application::Shutdown() {
   imguiManager.Shutdown();
 #endif
 
-  // TESTING CODE
-  if (vao) { glDeleteVertexArrays(1, &vao); }
-
-  if (buffer) { delete buffer; }
-
-  if (indexBuffer) { delete indexBuffer; }
-
-  if (texture) { delete texture; }
-
-  if (shader) { delete shader; }
-
   delete context;
 
   Window::UnregisterObserver(this);
@@ -170,93 +120,56 @@ void Application::OnMouseClick(int button) {
   // Handle mouse click
 }
 
-void Application::HandleEvents() {
-  // Handle events
-}
-
 void Application::Update() {
-#ifdef _DEBUG
-  // Increment the frame count
-  frameCount++;
-
-  // Calculate the elapsed time since the application started
   auto currentTime = std::chrono::steady_clock::now();
-  std::chrono::duration<double> elapsedTime = currentTime - startTime;
-
-  // Calculate frame time (delta time)
   static auto lastTime = std::chrono::steady_clock::now();
-  auto deltaTime = std::chrono::duration<double>(currentTime - lastTime).count();
+  float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
   lastTime = currentTime;
 
-  // Accumulate values
+  sceneManager.Update(deltaTime);
+
+#ifdef _DEBUG
+  LogFrameInfo(deltaTime);
+#endif
+}
+
+void Application::Render() {
+  sceneManager.Render();
+
+#ifdef _DEBUG
+  if (isDebugMenuOpen) {
+    imguiManager.Render();
+  }
+#endif
+
+  context->SwapBuffers();
+}
+
+void Application::MainLoopBody() {
+  Update();
+  Render();
+}
+
+void Application::LogFrameInfo(float deltaTime) {
+  frameCount++;
+
   accumulatedTime += deltaTime;
   accumulatedFPS += 1.0 / deltaTime;
+
   frameSamples++;
 
   if (frameSamples >= sampleFrames) {
     double averageFPS = accumulatedFPS / frameSamples;
     double averageFrameTime = accumulatedTime / frameSamples;
 
-    // Log average frame information to ImGui buffer
     std::ostringstream oss;
     oss << "Frames: " << frameSamples << ", Average FPS: " << averageFPS
         << ", Average Frame Time: " << averageFrameTime << "s";
+
     Log::WriteFrameLog(oss.str());
 
-    // Reset accumulators
     accumulatedTime = 0.0;
     accumulatedFPS = 0.0;
     frameSamples = 0;
   }
-#endif
-
-  // Update game logic here
-}
-
-void Application::Render() {
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  // TESTING CODE
-
-  // Bind the VAO
-  glBindVertexArray(vao);
-
-  // Bind the shader
-  if (shader) { shader->Bind(); }
-
-  // Bind the texture
-  if (texture) { texture->Bind(0); }
-
-  // Bind and configure the vertex buffer
-  if (buffer) {
-    buffer->Bind(0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) 0);
-  }
-
-  // Bind the index buffer
-  if (indexBuffer) {
-    indexBuffer->Bind(0);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-  }
-
-#ifdef _DEBUG
-  if (isDebugMenuOpen) {
-    imguiManager.Render();
-  } else {
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-  }
-#else
-  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-#endif
-
-  glBindVertexArray(0);
-
-  context->SwapBuffers();
-}
-
-void Application::MainLoopBody() {
-  HandleEvents();
-  Update();
-  Render();
 }

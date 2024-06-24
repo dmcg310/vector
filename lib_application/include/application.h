@@ -1,20 +1,14 @@
 #pragma once
 
+#include "settings.h"
+#include "scene_manager.h"
+#include "../scenes/test_scene/test_scene.h"
 #include "../../lib_log/include/log.h"
 #include "../../lib_renderer/include/context.h"
 #include "../../lib_renderer/include/render_api_factory.h"
 #include "../../lib_window/include/window.h"
-#include "settings.h"
 #include <chrono>
-
-// TESTING PURPOSES
-#include "../../lib_renderer/include/buffer.h"
-#include "../../lib_renderer/include/shader.h"
-#include "../../lib_renderer/include/texture.h"
-#include "../../lib_renderer/src/concrete/opengl/buffers/opengl_indexbuffer.h"
-#include "../../lib_renderer/src/concrete/opengl/buffers/opengl_vertexbuffer.h"
-#include "../../lib_renderer/src/concrete/opengl/opengl_shader.h"
-#include "../../lib_renderer/src/concrete/opengl/opengl_texture.h"
+#include <memory>
 
 #ifdef _DEBUG
 #include "imgui_manager.h"
@@ -34,11 +28,12 @@ public:
   void OnMouseClick(int button) override;
 
 private:
-  void HandleEvents();
   void Update();
   void Render();
 
   void MainLoopBody();
+
+  void LogFrameInfo(float deltaTime);
 
 #ifdef _DEBUG
   ImGuiManager imguiManager;
@@ -52,12 +47,6 @@ private:
 #endif
 
   ApplicationSettings settings;
+  SceneManager sceneManager;
   Context *context;
-
-  // TESTING CODE BELOW
-  GLuint vao; // Can change after we get VAO API
-  Buffer *buffer;
-  Buffer *indexBuffer;
-  Texture *texture;
-  Shader *shader;
 };
