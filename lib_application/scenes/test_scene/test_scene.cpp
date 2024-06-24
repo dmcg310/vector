@@ -79,8 +79,23 @@ void TestScene::Shutdown() {
     glDeleteVertexArrays(1, &vao);
   }
 
-  delete buffer;
-  delete indexBuffer;
-  delete texture;
-  delete shader;
+  if (buffer) {
+    delete buffer;
+    buffer = nullptr;
+  }
+
+  if (indexBuffer) {
+    delete indexBuffer;
+    indexBuffer = nullptr;
+  }
+
+  if (texture) {
+    delete texture;
+    texture = nullptr;
+  }
+
+  if (shader) {
+    delete shader;
+    shader = nullptr;
+  }
 }

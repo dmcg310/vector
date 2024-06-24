@@ -14,6 +14,8 @@ public:
   void Update(float deltaTime);
   void Render();
 
+  void Shutdown();
+
 private:
   std::unordered_map<std::string, std::shared_ptr<Scene>> scenes;
   std::shared_ptr<Scene> activeScene;

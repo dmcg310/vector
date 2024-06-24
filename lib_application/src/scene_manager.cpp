@@ -9,9 +9,9 @@ void SceneManager::SetActiveScene(const std::string& sceneName) {
 
     activeScene = it->second;
     activeScene->Initialize();
-  }
 
-  Log::Write(Log::INFO, "Scene: " + sceneName + " loaded");
+    Log::Write(Log::INFO, "Scene: " + sceneName + " loaded");
+  }
 }
 
 void SceneManager::AddScene(const std::string& sceneName, std::shared_ptr<Scene> scene) {
@@ -28,4 +28,19 @@ void SceneManager::Render() {
   if (activeScene) {
     activeScene->Render();
   }
+}
+
+void SceneManager::Shutdown() {
+  if (activeScene) {
+    activeScene->Shutdown();
+    activeScene = nullptr;
+  }
+
+  for (auto& pair : scenes) {
+    pair.second->Shutdown();
+  }
+
+  scenes.clear();
+
+  Log::Write(Log::INFO, "Scene Manager shutdown complete");
 }

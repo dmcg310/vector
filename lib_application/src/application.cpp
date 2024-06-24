@@ -85,6 +85,8 @@ void Application::Shutdown() {
   imguiManager.Shutdown();
 #endif
 
+  sceneManager.Shutdown();
+
   delete context;
 
   Window::UnregisterObserver(this);
