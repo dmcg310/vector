@@ -21,9 +21,9 @@ public:
   void Shutdown() override;
 
 private:
+  VertexArray* vao;
   Buffer* buffer;
   Buffer* indexBuffer;
   Texture* texture;
   Shader* shader;
-  VertexArray* vao;
 };

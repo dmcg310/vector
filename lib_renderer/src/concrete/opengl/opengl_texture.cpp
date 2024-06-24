@@ -1,6 +1,5 @@
 #include "opengl_texture.h"
 #include "../../../../lib_application/include/settings.h"// For filesystem operations
-#include "../../../../lib_log/include/log.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "../../../../external/stb_image.h"
