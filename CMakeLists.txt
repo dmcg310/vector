@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 3.11)
-project(vector)
+cmake_minimum_required(VERSION 3.25)
+
+project(vector VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -8,19 +9,21 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   add_definitions(-D_DEBUG)
 endif()
 
-# set the policy for finding OpenGL to prefer GLVND if available
-if(POLICY CMP0072)
-  cmake_policy(SET CMP0072 NEW)
-endif()
+# Enable verbose output
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
+include(FetchContent)
+
+FetchContent_Declare(
+  imgui-glfw-glad-glm
+  GIT_REPOSITORY https://github.com/cmmw/imgui-glfw-glad-glm.git
+)
+FetchContent_MakeAvailable(imgui-glfw-glad-glm)
+
+# Add subdirectories
 add_subdirectory(lib_window)
 add_subdirectory(lib_application)
 add_subdirectory(lib_log)
-add_subdirectory(lib_imgui)
 add_subdirectory(lib_renderer)
+add_subdirectory(lib_imgui)
 add_subdirectory(engine_src)
-add_subdirectory(${CMAKE_SOURCE_DIR}/external/glad)
-
-if (WIN32)
-  add_subdirectory(${CMAKE_SOURCE_DIR}/external/glfw)
-ENDIF()

@@ -8,7 +8,7 @@ void OpenGLContext::Initialize() {
   // though that code will probably need to be rewritten if we want to utilise
   // other APIs from OpenGL in the future
 
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+  if (!gladLoadGL(glfwGetProcAddress)) {
     // We can catch this in lib_application and then log it properly
     throw new std::runtime_error("Failed to initialize GLAD");
   }

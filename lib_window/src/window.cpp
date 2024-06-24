@@ -29,7 +29,7 @@ bool Window::Initialize(int width, int height, const std::string &title) {
   glfwMakeContextCurrent(window);
   glfwSetWindowUserPointer(window, nullptr);
 
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+  if (!gladLoadGL(glfwGetProcAddress)) {
     Log::Write(Log::FATAL,
                "Failed to initialize glad. `gladLoadGLLoader()` returned NULL");
 
