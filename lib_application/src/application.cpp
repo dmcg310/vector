@@ -24,6 +24,7 @@ bool Application::Initialize() {
   Log::Initialize(config.log.logFilePath, config.log.logToFile, config.log.logToConsole,
                   config.log.resetLogFile);
 
+
   if (!Window::Initialize(config.window.width, config.window.height,
                           config.window.title)) {
     Log::Write(Log::FATAL, "Cannot initialize application window");
@@ -46,16 +47,17 @@ bool Application::Initialize() {
     return false;
   }
 
+
   // TESTING CODE
   if (selectedAPI == API::OpenGL) {
     buffer = new OpenGLVertexBuffer();
 
     float vertices[] = {
-      // positions        // texture coords
-      -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // bottom-left
-      0.5f, -0.5f, 0.0f,  1.0f, 0.0f, // bottom-right
-      0.5f,  0.5f, 0.0f,  1.0f, 1.0f, // top-right
-      -0.5f,  0.5f, 0.0f,  0.0f, 1.0f  // top-left
+            // positions        // texture coords
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,// bottom-left
+            0.5f,  -0.5f, 0.0f, 1.0f, 0.0f,// bottom-right
+            0.5f,  0.5f,  0.0f, 1.0f, 1.0f,// top-right
+            -0.5f, 0.5f,  0.0f, 0.0f, 1.0f // top-left
     };
 
     buffer->Create(sizeof(vertices), vertices);
@@ -63,18 +65,19 @@ bool Application::Initialize() {
 
     // Position attribute
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) 0);
 
     // Texture coordinate attribute
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
+                          (void *) (3 * sizeof(float)));
 
     indexBuffer = new OpenGLIndexBuffer();
     unsigned int indices[] = {0, 1, 2, 2, 3, 0};
     indexBuffer->Create(sizeof(indices), indices);
 
     texture = new OpenGLTexture();
-    texture->LoadFromFile("assets/textures/asphalt_02_diff_4k.jpg");
+    texture->LoadFromFile("assets/textures/container.jpg");
     texture->SetParameters();
 
     shader = new OpenGLShader();
