@@ -34,6 +34,8 @@ void TestScene::Initialize() {
 
   renderPass = new OpenGLRenderPass();
   renderPass->SetClearColor(0.8f, 0.3f, 0.3f, 1.0f);
+
+  renderCommandQueue = new OpenGLRenderCommandQueue();
 }
 
 void TestScene::Update(float deltaTime) {
@@ -41,21 +43,27 @@ void TestScene::Update(float deltaTime) {
 }
 
 void TestScene::Render() {
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  renderPass->Begin();
 
-  if (vao) {
-    vao->Bind();
+  if (renderCommandQueue) {
+    renderCommandQueue->Submit([this]() {
+      vao->Bind();
+    });
+
+    renderCommandQueue->Submit([this]() {
+      shader->Bind();
+    });
+
+    renderCommandQueue->Submit([this]() {
+      texture->Bind(0);
+    });
+
+    renderCommandQueue->Submit([]() {
+      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    });
+
+    renderCommandQueue->Execute();
   }
-
-  if (shader) {
-    shader->Bind();
-  }
-
-  if (texture) {
-    texture->Bind(0);
-  }
-
-  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
   renderPass->End();
 }
@@ -89,5 +97,10 @@ void TestScene::Shutdown() {
   if (renderPass) {
     delete renderPass;
     renderPass = nullptr;
+  }
+
+  if (renderCommandQueue) {
+    delete renderCommandQueue;
+    renderCommandQueue = nullptr;
   }
 }
