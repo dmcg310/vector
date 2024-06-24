@@ -1,6 +1,9 @@
 file(GLOB_RECURSE HEADERS include/*.h)
 file(GLOB_RECURSE SOURCES src/*.cpp)
 
+file(GLOB_RECURSE SOURCES scenes/*.cpp)
+file(GLOB_RECURSE SOURCES scenes/*.h)
+
 add_library(lib_application ${HEADERS} ${SOURCES})
 
 # Include directories
