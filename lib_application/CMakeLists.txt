@@ -7,7 +7,11 @@ file(GLOB_RECURSE SCENE_SOURCES scenes/*.cpp)
 list(APPEND HEADERS ${SCENE_HEADERS})
 list(APPEND SOURCES ${SCENE_SOURCES})
 
-add_library(lib_application ${HEADERS} ${SOURCES})
+add_library(lib_application ${HEADERS} ${SOURCES}
+        src/scene_node.cpp
+        include/scene_node.h
+        nodes/triangle_node.h
+        nodes/triangle_node.cpp)
 
 target_include_directories(lib_application PUBLIC include scenes)
 
