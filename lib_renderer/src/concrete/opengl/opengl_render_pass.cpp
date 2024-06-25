@@ -1,7 +1,7 @@
 #include "opengl_render_pass.h"
 
 void OpenGLRenderPass::Begin() {
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 void OpenGLRenderPass::End() {
