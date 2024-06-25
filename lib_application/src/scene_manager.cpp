@@ -1,11 +1,9 @@
 #include "scene_manager.h"
 #include "../../lib_log/include/log.h"
 
-void SceneManager::SetActiveScene(const std::string& sceneName) {
+void SceneManager::SetActiveScene(const std::string &sceneName) {
   if (auto it = scenes.find(sceneName); it != scenes.end()) {
-    if (activeScene) {
-      activeScene->Shutdown();
-    }
+    if (activeScene) { activeScene->Shutdown(); }
 
     activeScene = it->second;
     activeScene->Initialize();
@@ -14,20 +12,16 @@ void SceneManager::SetActiveScene(const std::string& sceneName) {
   }
 }
 
-void SceneManager::AddScene(const std::string& sceneName, std::shared_ptr<Scene> scene) {
+void SceneManager::AddScene(const std::string &sceneName, std::shared_ptr<Scene> scene) {
   scenes[sceneName] = std::move(scene);
 }
 
 void SceneManager::Update(float deltaTime) {
-  if (activeScene) {
-    activeScene->Update(deltaTime);
-  }
+  if (activeScene) { activeScene->Update(deltaTime); }
 }
 
 void SceneManager::Render() {
-  if (activeScene) {
-    activeScene->Render();
-  }
+  if (activeScene) { activeScene->Render(); }
 }
 
 void SceneManager::Shutdown() {
@@ -36,9 +30,7 @@ void SceneManager::Shutdown() {
     activeScene = nullptr;
   }
 
-  for (auto& pair : scenes) {
-    pair.second->Shutdown();
-  }
+  for (auto &pair: scenes) { pair.second->Shutdown(); }
 
   scenes.clear();
 

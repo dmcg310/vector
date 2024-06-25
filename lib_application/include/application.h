@@ -1,23 +1,13 @@
 #pragma once
 
-#include "settings.h"
-#include "scene_manager.h"
-#include "../scenes/test_scene/test_scene.h"
-#include "../../lib_log/include/log.h"
 #include "../../lib_renderer/include/context.h"
-#include "../../lib_renderer/include/render_api_factory.h"
-#include "../../lib_window/include/window.h"
-#include <chrono>
-#include <memory>
-
-#ifdef _DEBUG
-#include "../../../lib_window/include/imgui_manager.h"
-#endif
+#include "event.h"
+#include "renderer.h"
+#include "settings.h"
 
 class Application : public IEventObserver {
 public:
   Application();
-
   bool Initialize();
   void Run();
   void Shutdown();
@@ -43,7 +33,5 @@ private:
   unsigned int frameSamples;
 #endif
 
-  ApplicationSettings settings;
-  SceneManager sceneManager;
-  Context *context;
+  Renderer *renderer;
 };

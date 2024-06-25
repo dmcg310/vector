@@ -1,23 +1,15 @@
 #include "application.h"
-#include "../../lib_log/include/log.h"
-#include "../../lib_renderer/include/context.h"
-#include "../../lib_renderer/include/render_api_factory.h"
-#include "../../lib_window/include/window.h"
 #include "../scenes/test_scene/test_scene.h"
-#include "scene_manager.h"
+#include "renderer.h"
 #include <chrono>
 #include <memory>
-
-#ifdef _DEBUG
-#include "../../../lib_window/include/imgui_manager.h"
-#endif
 
 Application::Application()
 #ifdef _DEBUG
     : frameCount(0), startTime(std::chrono::steady_clock::now()), accumulatedTime(0.0),
-      accumulatedFPS(0.0), sampleFrames(100), frameSamples(0), context(nullptr)
+      accumulatedFPS(0.0), sampleFrames(100), frameSamples(0), renderer(nullptr)
 #else
-    : context(nullptr)
+    : renderer(nullptr)
 #endif
 {
 }
@@ -49,26 +41,12 @@ bool Application::Initialize() {
   // Input event observer
   Window::RegisterObserver(this);
 
-  API selectedAPI = API::OpenGL;
-  context = RenderAPIFactory::CreateContext(selectedAPI, Window::GetGLFWWindow());
-
-  try {
-    context->Initialize();
-  } catch (const std::runtime_error &e) {
-    Log::Write(Log::FATAL, e.what());
-    return false;
-  }
+  renderer = new Renderer();
+  renderer->Initialize(Window::GetGLFWWindow());
 
   auto testScene = std::make_shared<TestScene>();
-  sceneManager.AddScene("TestScene", testScene);
-  sceneManager.SetActiveScene("TestScene");
-
-#ifdef _DEBUG
-  if (!ImGuiManager::GetInstance().Initialize(Window::GetGLFWWindow())) {
-    Log::Write(Log::FATAL, "Failed to initialize ImGuiManager");
-    return false;
-  }
-#endif
+  renderer->GetSceneManager().AddScene("TestScene", testScene);
+  renderer->GetSceneManager().SetActiveScene("TestScene");
 
   return true;
 }
@@ -98,13 +76,12 @@ void Application::Run() {
 }
 
 void Application::Shutdown() {
-#ifdef _DEBUG
-  ImGuiManager::GetInstance().Shutdown();
-#endif
+  if (renderer) {
+    renderer->Shutdown();
 
-  sceneManager.Shutdown();
-
-  delete context;
+    delete renderer;
+    renderer = nullptr;
+  }
 
   Window::UnregisterObserver(this);
   Window::Shutdown();
@@ -145,24 +122,14 @@ void Application::Update() {
   float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
   lastTime = currentTime;
 
-  sceneManager.Update(deltaTime);
+  renderer->Update(deltaTime);
 
 #ifdef _DEBUG
   LogFrameInfo(deltaTime);
 #endif
 }
 
-void Application::Render() {
-  sceneManager.Render();
-
-#ifdef _DEBUG
-  if (ImGuiManager::GetInstance().IsDebugMenuOpen()) {
-    ImGuiManager::GetInstance().Render();
-  }
-#endif
-
-  context->SwapBuffers();
-}
+void Application::Render() { renderer->Render(); }
 
 void Application::MainLoopBody() {
   Update();
