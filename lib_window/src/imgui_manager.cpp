@@ -1,8 +1,13 @@
+#include "imgui_manager.h"
+
 #ifdef _DEBUG
 
-#include "../include/imgui_manager.h"
+bool ImGuiManager::Initialize(GLFWwindow *window, API api) {
+  renderAPI = api;
+  return Setup(window);
+}
 
-bool ImGuiManager::Initialize(GLFWwindow *window) {
+bool ImGuiManager::Setup(GLFWwindow *window) {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO &io = ImGui::GetIO();
@@ -17,30 +22,38 @@ bool ImGuiManager::Initialize(GLFWwindow *window) {
     style.Colors[ImGuiCol_WindowBg].w = 1.0f;
   }
 
-  if (!ImGui_ImplGlfw_InitForOpenGL(window, true)) {
-    Log::Write(Log::FATAL, "Failed to initialize ImGui GLFW implementation");
-    return false;
+  switch (renderAPI) {
+    case API::OpenGL:
+      if (!ImGui_ImplGlfw_InitForOpenGL(window, true)) {
+        Log::Write(Log::FATAL, "Failed to initialize ImGui GLFW implementation");
+        return false;
+      }
+
+      if (!ImGui_ImplOpenGL3_Init("#version 330")) {
+        Log::Write(Log::FATAL, "Failed to initialize ImGui OpenGL3 implementation");
+        return false;
+      }
+
+      texture = new OpenGLTexture();
+      texture->Create(800, 600, GL_RGBA);
+
+      framebuffer = new OpenGLFramebuffer();
+      framebuffer->Create();
+      framebuffer->AttachTexture(texture);
+
+      renderbuffer = new OpenGLRenderbuffer();
+      renderbuffer->Create();
+      renderbuffer->SetStorage(GL_DEPTH24_STENCIL8, 800, 600);
+      framebuffer->AttachRenderbuffer(renderbuffer);
+
+      break;
+
+    default:
+      Log::Write(Log::ERROR, "Unknown Render API provided");
+      return false;
   }
-
-  if (!ImGui_ImplOpenGL3_Init("#version 330")) {
-    Log::Write(Log::FATAL, "Failed to initialize ImGui OpenGL3 implementation");
-    return false;
-  }
-
-  texture = new OpenGLTexture();
-  texture->Create(800, 600, GL_RGBA);
-
-  framebuffer = new OpenGLFramebuffer();
-  framebuffer->Create();
-  framebuffer->AttachTexture(texture);
-
-  renderbuffer = new OpenGLRenderbuffer();
-  renderbuffer->Create();
-  renderbuffer->SetStorage(GL_DEPTH24_STENCIL8, 800, 600);
-  framebuffer->AttachRenderbuffer(renderbuffer);
 
   initialized = true;
-
   return true;
 }
 
@@ -48,17 +61,22 @@ void ImGuiManager::ResizeViewport(uint32_t width, uint32_t height) {
   delete texture;
   delete renderbuffer;
 
-  texture = new OpenGLTexture();
-  texture->Create(width, height, GL_RGBA);
+  switch (renderAPI) {
+    case API::OpenGL:
+      texture = new OpenGLTexture();
+      texture->Create(width, height, GL_RGBA);
 
-  framebuffer->Bind();
-  framebuffer->AttachTexture(texture);
+      framebuffer->Bind();
+      framebuffer->AttachTexture(texture);
 
-  renderbuffer = new OpenGLRenderbuffer();
-  renderbuffer->Create();
-  renderbuffer->SetStorage(GL_DEPTH24_STENCIL8, width, height);
+      renderbuffer = new OpenGLRenderbuffer();
+      renderbuffer->Create();
+      renderbuffer->SetStorage(GL_DEPTH24_STENCIL8, width, height);
 
-  framebuffer->AttachRenderbuffer(renderbuffer);
+      framebuffer->AttachRenderbuffer(renderbuffer);
+
+      break;
+  }
 }
 
 void ImGuiManager::Render() {
@@ -82,9 +100,16 @@ void ImGuiManager::Render() {
     viewportSize = newViewportSize;
   }
 
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  switch (renderAPI) {
+    case API::OpenGL:
+      framebuffer->Unbind();
+
+      RenderPass *renderPass = new OpenGLRenderPass();
+      renderPass->SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+      renderPass->Begin();
+
+      break;
+  }
 
   ImGui::Image(reinterpret_cast<void *>(static_cast<intptr_t>(texture->GetID())),
                viewportScreenSize, ImVec2{0, 1}, ImVec2{1, 0});
@@ -92,7 +117,11 @@ void ImGuiManager::Render() {
   ImGui::End();
   ImGui::Render();
 
-  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+  switch (renderAPI) {
+    case API::OpenGL:
+      ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+      break;
+  }
 
   ImGuiIO const &io = ImGui::GetIO();
   if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
@@ -146,7 +175,12 @@ void ImGuiManager::RenderDebugMenu() {
 }
 
 void ImGuiManager::Shutdown() {
-  ImGui_ImplOpenGL3_Shutdown();
+  switch (renderAPI) {
+    case API::OpenGL:
+      ImGui_ImplOpenGL3_Shutdown();
+      break;
+  }
+
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
 

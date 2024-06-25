@@ -12,11 +12,20 @@ void OpenGLFramebuffer::Create() {
 }
 
 void OpenGLFramebuffer::Bind() {
-  glBindFramebuffer(GL_FRAMEBUFFER, fbo); 
+  glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
   GLenum error = glGetError();
   if (error != GL_NO_ERROR) {
     Log::Write(Log::ERROR, "Error binding framebuffer: " + std::to_string(error));
+  }
+}
+
+void OpenGLFramebuffer::Unbind() {
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  GLenum error = glGetError();
+  if (error != GL_NO_ERROR) {
+    Log::Write(Log::ERROR, "Error unbinding framebuffer: " + std::to_string(error));
   }
 }
 
@@ -39,11 +48,13 @@ void OpenGLFramebuffer::AttachTexture(Texture *texture) {
   this->texture = texture;
 
   Bind();
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->GetID(), 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                         texture->GetID(), 0);
 
   GLenum error = glGetError();
   if (error != GL_NO_ERROR) {
-    Log::Write(Log::ERROR, "Error attaching texture to framebuffer: " + std::to_string(error));
+    Log::Write(Log::ERROR,
+               "Error attaching texture to framebuffer: " + std::to_string(error));
   }
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -53,11 +64,13 @@ void OpenGLFramebuffer::AttachRenderbuffer(Renderbuffer *renderbuffer) {
   this->renderbuffer = renderbuffer;
 
   Bind();
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuffer->GetID());
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+                            renderbuffer->GetID());
 
   GLenum error = glGetError();
   if (error != GL_NO_ERROR) {
-    Log::Write(Log::ERROR, "Error attaching renderbuffer to framebuffer: " + std::to_string(error));
+    Log::Write(Log::ERROR,
+               "Error attaching renderbuffer to framebuffer: " + std::to_string(error));
   }
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);

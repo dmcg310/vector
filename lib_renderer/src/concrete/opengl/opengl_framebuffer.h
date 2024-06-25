@@ -12,6 +12,7 @@ class OpenGLFramebuffer : public Framebuffer {
 public:
   void Create() override;
   void Bind() override;
+  void Unbind() override;
   void Resize(uint32_t width, uint32_t height) override;
   void AttachTexture(Texture *texture) override;
   void AttachRenderbuffer(Renderbuffer *renderbuffer) override;
