@@ -11,7 +11,7 @@
 #include <memory>
 
 #ifdef _DEBUG
-#include "imgui_manager.h"
+#include "../../../lib_window/include/imgui_manager.h"
 #endif
 
 class Application : public IEventObserver {
@@ -30,13 +30,10 @@ public:
 private:
   void Update();
   void Render();
-
   void MainLoopBody();
-
   void LogFrameInfo(float deltaTime);
 
 #ifdef _DEBUG
-  ImGuiManager imguiManager;
   bool isDebugMenuOpen = false;
   std::chrono::steady_clock::time_point startTime;
   unsigned int frameCount;

@@ -1,12 +1,25 @@
-#include "../include/application.h"
+#include "application.h"
+#include "scene_manager.h"
+#include "../scenes/test_scene/test_scene.h"
+#include "../../lib_log/include/log.h"
+#include "../../lib_renderer/include/context.h"
+#include "../../lib_renderer/include/render_api_factory.h"
+#include "../../lib_window/include/window.h"
+#include <chrono>
+#include <memory>
 
 #ifdef _DEBUG
-Application::Application()
-    : frameCount(0), startTime(std::chrono::steady_clock::now()), accumulatedTime(0.0),
-      accumulatedFPS(0.0), sampleFrames(100), frameSamples(0), context(nullptr) {}
-#else
-Application::Application() : context(nullptr) {}
+#include "../../../lib_window/include/imgui_manager.h"
 #endif
+
+Application::Application()
+#ifdef _DEBUG
+    : frameCount(0), startTime(std::chrono::steady_clock::now()), accumulatedTime(0.0),
+      accumulatedFPS(0.0), sampleFrames(100), frameSamples(0), context(nullptr)
+#else
+    : context(nullptr)
+#endif
+{}
 
 bool Application::Initialize() {
   ApplicationSettings applicationSettings;
@@ -50,7 +63,10 @@ bool Application::Initialize() {
   sceneManager.SetActiveScene("TestScene");
 
 #ifdef _DEBUG
-  imguiManager.Initialize(Window::GetGLFWWindow());
+  if (!ImGuiManager::GetInstance().Initialize(Window::GetGLFWWindow())) {
+    Log::Write(Log::FATAL, "Failed to initialize ImGuiManager");
+    return false;
+  }
 #endif
 
   return true;
@@ -82,7 +98,7 @@ void Application::Run() {
 
 void Application::Shutdown() {
 #ifdef _DEBUG
-  imguiManager.Shutdown();
+  ImGuiManager::GetInstance().Shutdown();
 #endif
 
   sceneManager.Shutdown();
@@ -101,7 +117,7 @@ void Application::Shutdown() {
 void Application::OnKeyPress(int key) {
 #ifdef _DEBUG
   if (key == GLFW_KEY_F1) {
-    isDebugMenuOpen = !isDebugMenuOpen;
+    ImGuiManager::GetInstance().ToggleDebugMenu();
 
     return;
   }
@@ -139,8 +155,8 @@ void Application::Render() {
   sceneManager.Render();
 
 #ifdef _DEBUG
-  if (isDebugMenuOpen) {
-    imguiManager.Render();
+  if (ImGuiManager::GetInstance().IsDebugMenuOpen()) {
+    ImGuiManager::GetInstance().Render();
   }
 #endif
 

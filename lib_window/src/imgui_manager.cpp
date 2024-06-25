@@ -2,7 +2,7 @@
 
 #include "../include/imgui_manager.h"
 
-void ImGuiManager::Initialize(GLFWwindow *window) {
+bool ImGuiManager::Initialize(GLFWwindow *window) {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO &io = ImGui::GetIO();
@@ -17,8 +17,48 @@ void ImGuiManager::Initialize(GLFWwindow *window) {
     style.Colors[ImGuiCol_WindowBg].w = 1.0f;
   }
 
-  ImGui_ImplGlfw_InitForOpenGL(window, true);
-  ImGui_ImplOpenGL3_Init("#version 330");
+  if (!ImGui_ImplGlfw_InitForOpenGL(window, true)) {
+    Log::Write(Log::FATAL, "Failed to initialize ImGui GLFW implementation");
+    return false;
+  }
+
+  if (!ImGui_ImplOpenGL3_Init("#version 330")) {
+    Log::Write(Log::FATAL, "Failed to initialize ImGui OpenGL3 implementation");
+    return false;
+  }
+
+  texture = new OpenGLTexture();
+  texture->Create(800, 600, GL_RGBA);
+
+  framebuffer = new OpenGLFramebuffer();
+  framebuffer->Create();
+  framebuffer->AttachTexture(texture);
+
+  renderbuffer = new OpenGLRenderbuffer();
+  renderbuffer->Create();
+  renderbuffer->SetStorage(GL_DEPTH24_STENCIL8, 800, 600);
+  framebuffer->AttachRenderbuffer(renderbuffer);
+
+  initialized = true;
+
+  return true;
+}
+
+void ImGuiManager::ResizeViewport(uint32_t width, uint32_t height) {
+  delete texture;
+  delete renderbuffer;
+
+  texture = new OpenGLTexture();
+  texture->Create(width, height, GL_RGBA);
+
+  framebuffer->Bind();
+  framebuffer->AttachTexture(texture);
+
+  renderbuffer = new OpenGLRenderbuffer();
+  renderbuffer->Create();
+  renderbuffer->SetStorage(GL_DEPTH24_STENCIL8, width, height);
+
+  framebuffer->AttachRenderbuffer(renderbuffer);
 }
 
 void ImGuiManager::Render() {
@@ -27,32 +67,47 @@ void ImGuiManager::Render() {
   ImGui::NewFrame();
 
   ImGuiID dockspaceID = ImGui::GetID("MyDockspace");
-  ImGui::DockSpaceOverViewport(dockspaceID, ImGui::GetMainViewport(),
-                               ImGuiDockNodeFlags_PassthruCentralNode);
+  ImGui::DockSpaceOverViewport(dockspaceID, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 
   RenderDebugMenu();
 
-  // Viewport window
   ImGui::Begin("Viewport");
-  ImGui::Text("This is where the viewport rendering will go.");
-  ImGui::End();
 
+  ImVec2 viewportScreenSize = ImGui::GetContentRegionAvail();
+  if (glm::vec2 newViewportSize = { viewportScreenSize.x, viewportScreenSize.y }; newViewportSize != viewportSize) {
+    ResizeViewport((uint32_t)newViewportSize.x, (uint32_t)newViewportSize.y);
+    viewportSize = newViewportSize;
+  }
+
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+  ImGui::Image((void*)(intptr_t)texture->GetID(),
+               viewportScreenSize, ImVec2{ 0, 1 }, ImVec2{1, 0});
+
+  ImGui::End();
   ImGui::Render();
+
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-  ImGuiIO &io = ImGui::GetIO();
+  ImGuiIO const &io = ImGui::GetIO();
   if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
     GLFWwindow *backup_current_context = glfwGetCurrentContext();
+
     ImGui::UpdatePlatformWindows();
     ImGui::RenderPlatformWindowsDefault();
+
     glfwMakeContextCurrent(backup_current_context);
   }
 }
 
 void ImGuiManager::RenderDebugMenu() {
   if (!initialized) {
+    Log::Write(Log::INFO, "Setting up ImGui docking layout");
+
     ImGui::DockBuilderRemoveNode(
-        ImGui::GetID("VectorDockSpace")); // Clear existing layout
+            ImGui::GetID("VectorDockSpace")); // Clear existing layout
     ImGui::DockBuilderAddNode(ImGui::GetID("VectorDockSpace"),
                               ImGuiDockNodeFlags_DockSpace);
     ImGui::DockBuilderSetNodeSize(ImGui::GetID("VectorDockSpace"),
@@ -60,9 +115,9 @@ void ImGuiManager::RenderDebugMenu() {
 
     ImGuiID dockMainId = ImGui::GetID("VectorDockSpace");
     ImGuiID dockLeftId = ImGui::DockBuilderSplitNode(
-        dockMainId, ImGuiDir_Left, 0.2f, nullptr, &dockMainId);
+            dockMainId, ImGuiDir_Left, 0.2f, nullptr, &dockMainId);
     ImGuiID dockBottomId = ImGui::DockBuilderSplitNode(
-        dockMainId, ImGuiDir_Down, 0.3f, nullptr, &dockMainId);
+            dockMainId, ImGuiDir_Down, 0.3f, nullptr, &dockMainId);
 
     ImGui::DockBuilderDockWindow("Options", dockLeftId);
     ImGui::DockBuilderDockWindow("Logs", dockBottomId);
@@ -84,9 +139,8 @@ void ImGuiManager::RenderDebugMenu() {
 
   ImGui::SetNextWindowPos(ImVec2(0.0f, ImGui::GetIO().DisplaySize.y * 0.7f),
                           ImGuiCond_FirstUseEver);
-  ImGui::SetNextWindowSize(
-      ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.3f),
-      ImGuiCond_FirstUseEver);
+  ImGui::SetNextWindowSize( ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.3f),
+                           ImGuiCond_FirstUseEver);
   ImGui::Begin("Logs");
 
   if (ImGui::CollapsingHeader("Logs")) {
@@ -114,6 +168,10 @@ void ImGuiManager::Shutdown() {
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
+
+  delete texture;
+  delete framebuffer;
+  delete renderbuffer;
 }
 
 #endif
