@@ -1,4 +1,5 @@
 #include "renderer.h"
+#include "../../lib_application/nodes/simple_node.h"
 #include "../../lib_log/include/log.h"
 #include "../../lib_window/include/window.h"
 #include "render_api_factory.h"
@@ -25,18 +26,23 @@ void Renderer::Initialize(GLFWwindow *window) {
     throw;
   }
 
+  node.Initialize();
+
 #ifdef _DEBUG
   if (!imGuiManager.Initialize(window, selectedAPI)) {
     Log::Write(Log::FATAL, "Failed to initialize ImGuiManager");
-    throw std::runtime_error("Failed to initialize ImGuiManager");
   }
 #endif
 }
 
+SimpleNode &Renderer::GetNode() { return node; }
+
 SceneManager &Renderer::GetSceneManager() { return sceneManager; }
 
 void Renderer::Update(float deltaTime) {
-  sceneManager.Update(deltaTime);
+  // sceneManager.Update(deltaTime);
+
+  node.Update(deltaTime);
 
 #ifdef _DEBUG
   if (imGuiManager.IsDebugMenuOpen()) { imGuiManager.Render(); }
@@ -44,7 +50,9 @@ void Renderer::Update(float deltaTime) {
 }
 
 void Renderer::Render() {
-  sceneManager.Render();
+  // sceneManager.Render();
+
+  node.Render();
 
 #ifdef _DEBUG
   if (imGuiManager.IsDebugMenuOpen()) { imGuiManager.Render(); }
@@ -55,7 +63,7 @@ void Renderer::Render() {
 
 void Renderer::Shutdown() {
   if (context) {
-    sceneManager.Shutdown();
+    // sceneManager.Shutdown();
 
 #ifdef _DEBUG
     imGuiManager.Shutdown();

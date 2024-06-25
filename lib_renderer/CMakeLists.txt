@@ -17,5 +17,5 @@ if (ENABLE_OPENGL)
     target_compile_definitions(lib_renderer PRIVATE ENABLE_OPENGL)
 
     find_package(OpenGL REQUIRED)
-    target_link_libraries(lib_renderer glm::glm glad imgui OpenGL::GL glfw)
+    target_link_libraries(lib_renderer lib_application glm::glm glad imgui OpenGL::GL glfw)
 endif ()

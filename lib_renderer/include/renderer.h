@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../lib_application/include/scene_manager.h"
+#include "../../lib_application/nodes/simple_node.h"
 #include "../../lib_window/include/window.h"
 #include "context.h"
 
@@ -19,10 +20,12 @@ public:
   void Shutdown();
 
   SceneManager &GetSceneManager();
+  SimpleNode &GetNode();
 
 private:
   Context *context;
   SceneManager sceneManager;
+  SimpleNode node;
 
 #ifdef _DEBUG
   ImGuiManager &imGuiManager;
