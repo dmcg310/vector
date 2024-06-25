@@ -1,10 +1,10 @@
 #include "application.h"
-#include "scene_manager.h"
-#include "../scenes/test_scene/test_scene.h"
 #include "../../lib_log/include/log.h"
 #include "../../lib_renderer/include/context.h"
 #include "../../lib_renderer/include/render_api_factory.h"
 #include "../../lib_window/include/window.h"
+#include "../scenes/test_scene/test_scene.h"
+#include "scene_manager.h"
 #include <chrono>
 #include <memory>
 
@@ -19,7 +19,8 @@ Application::Application()
 #else
     : context(nullptr)
 #endif
-{}
+{
+}
 
 bool Application::Initialize() {
   ApplicationSettings applicationSettings;
@@ -117,6 +118,7 @@ void Application::Shutdown() {
 void Application::OnKeyPress(int key) {
 #ifdef _DEBUG
   if (key == GLFW_KEY_F1) {
+    Log::Write(Log::INFO, "CAlling dbug menu");
     ImGuiManager::GetInstance().ToggleDebugMenu();
 
     return;
