@@ -67,18 +67,11 @@ void TestScene::Render() {
       renderCommandQueue->Submit([this]() { vao->Bind(); });
 
       renderCommandQueue->Submit([this, fbWidth, fbHeight]() {
+        renderPass->SetViewportSize(fbWidth, fbHeight);
+
         shader->Bind();
-
-        // Update the projection matrix to match the viewport size
-        glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(fbWidth), 0.0f,
-                                          static_cast<float>(fbHeight));
-        shader->SetUniform("u_Projection", projection);
-
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(fbWidth / 2.0f, fbHeight / 2.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(fbWidth / 2.0f, fbHeight / 2.0f, 1.0f));
-
-        shader->SetUniform("u_Model", model);
+        shader->SetUniform("u_Projection", renderPass->GetProjectionMatrix());
+        shader->SetUniform("u_Model", renderPass->GetModelMatrix());
       });
 
       renderCommandQueue->Submit([this]() { texture->Bind(0); });
@@ -98,7 +91,6 @@ void TestScene::Render() {
 
     int windowWidth, windowHeight;
     glfwGetFramebufferSize(Window::GetGLFWWindow(), &windowWidth, &windowHeight);
-
     glViewport(0, 0, windowWidth, windowHeight);
 
     renderPass->SetClearColor(0.8f, 0.3f, 0.3f, 1.0f);
@@ -108,20 +100,11 @@ void TestScene::Render() {
       renderCommandQueue->Submit([this]() { vao->Bind(); });
 
       renderCommandQueue->Submit([this, windowWidth, windowHeight]() {
+        renderPass->SetViewportSize(windowWidth, windowHeight);
+
         shader->Bind();
-
-        // Update the projection matrix to match the window size
-        glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(windowWidth), 0.0f,
-                                          static_cast<float>(windowHeight));
-        shader->SetUniform("u_Projection", projection);
-
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model,
-                               glm::vec3(windowWidth / 2.0f, windowHeight / 2.0f, 0.0f));
-        model = glm::scale(model,
-                           glm::vec3(windowWidth / 2.0f, windowHeight / 2.0f, 1.0f));
-
-        shader->SetUniform("u_Model", model);
+        shader->SetUniform("u_Projection", renderPass->GetProjectionMatrix());
+        shader->SetUniform("u_Model", renderPass->GetModelMatrix());
       });
 
       renderCommandQueue->Submit([this]() { texture->Bind(0); });

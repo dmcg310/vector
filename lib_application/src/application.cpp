@@ -118,7 +118,6 @@ void Application::Shutdown() {
 void Application::OnKeyPress(int key) {
 #ifdef _DEBUG
   if (key == GLFW_KEY_F1) {
-    Log::Write(Log::INFO, "CAlling dbug menu");
     ImGuiManager::GetInstance().ToggleDebugMenu();
 
     return;

@@ -2,14 +2,14 @@
 
 #include "scene.h"
 #include <memory>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 #include <utility>
 
 class SceneManager {
 public:
-  void SetActiveScene(const std::string& sceneName);
-  void AddScene(const std::string& sceneName, std::shared_ptr<Scene> scene);
+  void SetActiveScene(const std::string &sceneName);
+  void AddScene(const std::string &sceneName, std::shared_ptr<Scene> scene);
 
   void Update(float deltaTime);
   void Render();
