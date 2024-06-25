@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../../../include/texture.h"
 
 #define GLFW_INCLUDE_NONE
