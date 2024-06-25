@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../include/frambuffer.h"
+#include "../../../include/framebuffer.h"
 #include "../../../include/renderbuffer.h"
 #include "../../../include/texture.h"
 
