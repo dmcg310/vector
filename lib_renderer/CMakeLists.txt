@@ -5,7 +5,7 @@ file(GLOB_RECURSE SOURCES src/*.cpp)
 
 add_library(lib_renderer ${HEADERS} ${SOURCES}
         include/renderer.h
-        src/concrete/renderer.cpp)
+        src/renderer.cpp)
 
 # Include directories
 target_include_directories(lib_renderer PUBLIC include)

@@ -1,7 +1,7 @@
 #include "renderer.h"
 #include "../../lib_log/include/log.h"
-#include "../../lib_renderer/include/render_api_factory.h"
 #include "../../lib_window/include/window.h"
+#include "render_api_factory.h"
 
 Renderer::Renderer()
     : context(nullptr)
