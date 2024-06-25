@@ -12,30 +12,30 @@ void TestScene::Initialize() {
 
   unsigned int indices[] = {0, 1, 2, 2, 3, 0};
 
-  vao = new OpenGLVertexArray();
+  vao = std::make_shared<OpenGLVertexArray>();
   vao->Create();
 
-  vertexBuffer = new OpenGLVertexBuffer();
+  vertexBuffer = Buffer::CreateBuffer(BufferType::Vertex);
   vertexBuffer->Create(sizeof(vertices), vertices);
   vao->AddVertexBuffer(vertexBuffer);
 
-  indexBuffer = new OpenGLIndexBuffer();
+  indexBuffer = Buffer::CreateBuffer(BufferType::Index);
   indexBuffer->Create(sizeof(indices), indices);
   vao->SetIndexBuffer(indexBuffer);
 
-  texture = new OpenGLTexture();
-  texture->LoadFromFile("assets/textures/container.jpg");
-  texture->SetParameters();
-
-  shader = new OpenGLShader();
+  shader = Shader::CreateShader();
   shader->LoadFromFile("assets/shaders/vertex_shader.glsl", ShaderType::Vertex);
   shader->LoadFromFile("assets/shaders/fragment_shader.glsl", ShaderType::Fragment);
   shader->Link();
 
-  renderPass = new OpenGLRenderPass();
+  texture = Texture::CreateTexture();
+  texture->LoadFromFile("assets/textures/container.jpg");
+  texture->SetParameters();
+
+  renderPass = RenderPass::CreateRenderPass();
   renderPass->SetClearColor(0.8f, 0.3f, 0.3f, 1.0f);
 
-  renderCommandQueue = new OpenGLRenderCommandQueue();
+  renderCommandQueue = RenderCommandQueue::CreateRenderCommandQueue();
 }
 
 void TestScene::Update(float deltaTime) {
@@ -122,38 +122,13 @@ void TestScene::Render() {
 }
 
 void TestScene::Shutdown() {
-  if (vao) {
-    delete vao;
-    vao = nullptr;
-  }
+  if (vao) { vao = nullptr; }
 
-  if (vertexBuffer) {
-    delete vertexBuffer;
-    vertexBuffer = nullptr;
-  }
+  if (vertexBuffer) { vertexBuffer = nullptr; }
 
-  if (indexBuffer) {
-    delete indexBuffer;
-    indexBuffer = nullptr;
-  }
+  if (indexBuffer) { indexBuffer = nullptr; }
 
-  if (texture) {
-    delete texture;
-    texture = nullptr;
-  }
+  if (texture) { texture = nullptr; }
 
-  if (shader) {
-    delete shader;
-    shader = nullptr;
-  }
-
-  if (renderPass) {
-    delete renderPass;
-    renderPass = nullptr;
-  }
-
-  if (renderCommandQueue) {
-    delete renderCommandQueue;
-    renderCommandQueue = nullptr;
-  }
+  if (shader) { shader = nullptr; }
 }
