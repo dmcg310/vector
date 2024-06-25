@@ -13,4 +13,4 @@ if (APPLE OR UNIX)
 endif()
 
 find_package(OpenGL REQUIRED)
-target_link_libraries(lib_window glfw OpenGL::GL glad lib_imgui imgui)
+target_link_libraries(lib_window glfw OpenGL::GL glad glm::glm lib_imgui imgui)

@@ -1,4 +1,3 @@
-// scenes/test_scene.h
 #pragma once
 
 #include "../../include/scene.h"
@@ -14,6 +13,7 @@
 #include "../../lib_renderer/src/concrete/opengl/opengl_texture.h"
 #include "../../lib_renderer/src/concrete/opengl/opengl_render_pass.h"
 #include "../../lib_renderer/src/concrete/opengl/opengl_render_command_queue.h"
+#include "../../lib_window/include/imgui_manager.h"
 #include <glad/gl.h>
 
 class TestScene : public Scene {
@@ -25,7 +25,7 @@ public:
 
 private:
   VertexArray* vao;
-  Buffer* buffer;
+  Buffer* vertexBuffer;
   Buffer* indexBuffer;
   Texture* texture;
   Shader* shader;

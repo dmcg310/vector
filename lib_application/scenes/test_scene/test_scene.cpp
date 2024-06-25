@@ -1,5 +1,5 @@
 #include "test_scene.h"
-#include "../../lib_log/include/log.h"
+#include "../../../lib_window/include/window.h"
 
 void TestScene::Initialize() {
   float vertices[] = {
@@ -15,9 +15,9 @@ void TestScene::Initialize() {
   vao = new OpenGLVertexArray();
   vao->Create();
 
-  buffer = new OpenGLVertexBuffer();
-  buffer->Create(sizeof(vertices), vertices);
-  vao->AddVertexBuffer(buffer);
+  vertexBuffer = new OpenGLVertexBuffer();
+  vertexBuffer->Create(sizeof(vertices), vertices);
+  vao->AddVertexBuffer(vertexBuffer);
 
   indexBuffer = new OpenGLIndexBuffer();
   indexBuffer->Create(sizeof(indices), indices);
@@ -43,6 +43,21 @@ void TestScene::Update(float deltaTime) {
 }
 
 void TestScene::Render() {
+  auto& imGuiManager = ImGuiManager::GetInstance();
+  if (!imGuiManager.IsInitialized()) {
+    Log::Write(Log::ERROR, "ImGuiManager is not initialized");
+    return;
+  }
+
+  // Bind the framebuffer to render the scene
+  imGuiManager.framebuffer->Bind();
+
+  // Can be moved to OpenGLFramebuffer::GetWidth() and OpenGLFramebuffer::GetHeight()
+  int fbWidth, fbHeight;
+  glfwGetFramebufferSize(Window::GetGLFWWindow(), &fbWidth, &fbHeight);
+  glViewport(0, 0, fbWidth, fbHeight);
+
+  renderPass->SetClearColor(0.8f, 0.3f, 0.3f, 1.0f);
   renderPass->Begin();
 
   if (renderCommandQueue) {
@@ -66,6 +81,8 @@ void TestScene::Render() {
   }
 
   renderPass->End();
+
+  ImGuiManager::GetInstance().Render();
 }
 
 void TestScene::Shutdown() {
@@ -74,9 +91,9 @@ void TestScene::Shutdown() {
     vao = nullptr;
   }
 
-  if (buffer) {
-    delete buffer;
-    buffer = nullptr;
+  if (vertexBuffer) {
+    delete vertexBuffer;
+    vertexBuffer = nullptr;
   }
 
   if (indexBuffer) {
