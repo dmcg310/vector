@@ -10,7 +10,7 @@ void TestScene::Initialize() {
           -0.5f, 0.5f,  0.0f, 0.0f, 1.0f  // top-left
   };
 
-  unsigned int indices[] = { 0, 1, 2, 2, 3, 0 };
+  unsigned int indices[] = {0, 1, 2, 2, 3, 0};
 
   vao = new OpenGLVertexArray();
   vao->Create();
@@ -43,7 +43,7 @@ void TestScene::Update(float deltaTime) {
 }
 
 void TestScene::Render() {
-  auto& imGuiManager = ImGuiManager::GetInstance();
+  auto &imGuiManager = ImGuiManager::GetInstance();
   if (!imGuiManager.IsInitialized()) {
     Log::Write(Log::ERROR, "ImGuiManager is not initialized");
     return;
@@ -52,30 +52,36 @@ void TestScene::Render() {
   // Bind the framebuffer to render the scene
   imGuiManager.framebuffer->Bind();
 
-  // Can be moved to OpenGLFramebuffer::GetWidth() and OpenGLFramebuffer::GetHeight()
-  int fbWidth, fbHeight;
-  glfwGetFramebufferSize(Window::GetGLFWWindow(), &fbWidth, &fbHeight);
+  int fbWidth = static_cast<int>(imGuiManager.GetViewportSize().x);
+  int fbHeight = static_cast<int>(imGuiManager.GetViewportSize().y);
+
   glViewport(0, 0, fbWidth, fbHeight);
 
   renderPass->SetClearColor(0.8f, 0.3f, 0.3f, 1.0f);
   renderPass->Begin();
 
   if (renderCommandQueue) {
-    renderCommandQueue->Submit([this]() {
-      vao->Bind();
-    });
+    renderCommandQueue->Submit([this]() { vao->Bind(); });
 
-    renderCommandQueue->Submit([this]() {
+    renderCommandQueue->Submit([this, fbWidth, fbHeight]() {
       shader->Bind();
+
+      // Update the projection matrix to match the viewport size
+      glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(fbWidth), 0.0f,
+                                        static_cast<float>(fbHeight));
+      shader->SetUniform("u_Projection", projection);
+
+      glm::mat4 model = glm::mat4(1.0f);
+      model = glm::translate(model, glm::vec3(fbWidth / 2.0f, fbHeight / 2.0f, 0.0f));
+      model = glm::scale(model, glm::vec3(fbWidth / 2.0f, fbHeight / 2.0f, 1.0f));
+
+      shader->SetUniform("u_Model", model);
     });
 
-    renderCommandQueue->Submit([this]() {
-      texture->Bind(0);
-    });
+    renderCommandQueue->Submit([this]() { texture->Bind(0); });
 
-    renderCommandQueue->Submit([]() {
-      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    });
+    renderCommandQueue->Submit(
+            []() { glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); });
 
     renderCommandQueue->Execute();
   }
