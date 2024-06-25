@@ -53,7 +53,8 @@ void TestScene::Render() {
     }
 
     // Bind the framebuffer to render the scene
-    imGuiManager.framebuffer->Bind();
+    Framebuffer *framebuffer = imGuiManager.GetFramebuffer();
+    framebuffer->Bind();
 
     int fbWidth = static_cast<int>(imGuiManager.GetViewportSize().x);
     int fbHeight = static_cast<int>(imGuiManager.GetViewportSize().y);
@@ -87,7 +88,8 @@ void TestScene::Render() {
     ImGuiManager::GetInstance().Render();
   } else {
     // Bind the default framebuffer to render the scene directly to the window
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    Framebuffer *framebuffer = new OpenGLFramebuffer();
+    framebuffer->Unbind();
 
     int windowWidth, windowHeight;
     glfwGetFramebufferSize(Window::GetGLFWWindow(), &windowWidth, &windowHeight);

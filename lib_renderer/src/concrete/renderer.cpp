@@ -26,7 +26,7 @@ void Renderer::Initialize(GLFWwindow *window) {
   }
 
 #ifdef _DEBUG
-  if (!imGuiManager.Initialize(window)) {
+  if (!imGuiManager.Initialize(window, selectedAPI)) {
     Log::Write(Log::FATAL, "Failed to initialize ImGuiManager");
     throw std::runtime_error("Failed to initialize ImGuiManager");
   }
