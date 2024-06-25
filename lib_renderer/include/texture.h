@@ -10,4 +10,6 @@ public:
   virtual unsigned int GetID() const = 0;
   virtual void SetParameters() = 0;
   virtual ~Texture() = default;
+
+  inline static std::shared_ptr<Texture> CreateTexture();
 };

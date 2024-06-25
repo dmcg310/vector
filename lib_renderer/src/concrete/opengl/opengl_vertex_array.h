@@ -8,12 +8,13 @@ class OpenGLVertexArray : public VertexArray {
 public:
   void Create() override;
   void Bind() override;
-  void AddVertexBuffer(Buffer* vertexBuffer) override;
-  void SetIndexBuffer(Buffer* indexBufferParam) override;
+  void AddVertexBuffer(std::shared_ptr<Buffer> vertexBuffer) override;
+  void SetIndexBuffer(std::shared_ptr<Buffer> indexBufferParam) override;
 
   ~OpenGLVertexArray() override;
+
 private:
   GLuint vaoID;
-  std::vector<Buffer*> vertexBuffers;
-  Buffer* indexBuffer;
+  std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+  std::shared_ptr<Buffer> indexBuffer;
 };

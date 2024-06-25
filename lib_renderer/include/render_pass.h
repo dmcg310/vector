@@ -11,4 +11,6 @@ public:
   virtual glm::mat4 GetProjectionMatrix() const = 0;
   virtual glm::mat4 GetModelMatrix() const = 0;
   virtual ~RenderPass() = default;
+
+  inline static std::shared_ptr<RenderPass> CreateRenderPass();
 };

@@ -22,4 +22,6 @@ public:
   virtual void SetUniform(const std::string &name, float value) = 0;
   virtual void LoadFromFile(const std::string &filePath, ShaderType shaderType) = 0;
   virtual ~Shader() = default;
+
+  inline static std::shared_ptr<Shader> CreateShader();
 };
