@@ -1,6 +1,8 @@
 [Window]
 Width=1920
 Height=1080
+WindowedFullscreen=true
+BorderlessFullscreen=false
 Fullscreen=false
 Title="Vector Engine"
 

@@ -30,6 +30,8 @@ bool Application::Initialize() {
                   config.log.resetLogFile);
 
   if (!Window::Initialize(config.window.width, config.window.height,
+                          config.window.windowedFullscreen,
+                          config.window.borderlessFullscreen, config.window.fullscreen,
                           config.window.title)) {
     Log::Write(Log::FATAL, "Cannot initialize application window");
 

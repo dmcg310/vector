@@ -11,7 +11,9 @@
 
 class Window {
 public:
-  static bool Initialize(int width, int height, const std::string &title);
+  static bool Initialize(int _width, int _height, bool windowedFullscreen,
+                         bool borderlessFullscreen, bool fullscreen,
+                         const std::string &title);
   static void Run(std::function<void()> loop_body);
   static void Shutdown();
 
@@ -31,7 +33,7 @@ public:
   static void SetPosition(int x, int y);
 
   static bool IsFullscreen();
-  static void SetFullscreen(bool fullscreen);
+  static void SetFullscreen(bool fullscreen, bool borderless = false);
 
   static void GetMousePosition(double &x, double &y);
   static void SetMousePosition(double x, double y);
@@ -44,13 +46,13 @@ private:
   static GLFWwindow *window;
   static int width, height;
   static bool isFullscreen;
+  static bool isBorderlessFullscreen;
   static int windowedPosX, windowedPosY, windowedWidth, windowedHeight;
 
   static void KeyCallback(GLFWwindow *window, int key, int scancode, int action,
                           int mods);
   static void MouseCallback(GLFWwindow *window, double xpos, double ypos);
-  static void MouseButtonCallback(GLFWwindow *window, int button, int action,
-                                  int mods);
+  static void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 
   static void NotifyKeyPress(int key);
   static void NotifyKeyRelease(int key);

@@ -9,8 +9,10 @@
 #include <string>
 #include <unordered_map>
 
-const int DEFAULT_WIDTH = 1200;
-const int DEFAULT_HEIGHT = 800;
+const int DEFAULT_WIDTH = 1400;
+const int DEFAULT_HEIGHT = 900;
+const bool DEFAULT_WINDOWED_FULLSCREEN = true;
+const bool DEFAULT_BORDERLESS_FULLSCREEN = false;
 const bool DEFAULT_FULLSCREEN = false;
 const std::string DEFAULT_TITLE = "Vector Engine";
 const bool DEFAULT_LOG_TO_FILE = true;
@@ -40,6 +42,8 @@ public:
     struct Window {
       int width;
       int height;
+      bool windowedFullscreen;
+      bool borderlessFullscreen;
       bool fullscreen;
       std::string title;
     };
@@ -60,6 +64,7 @@ public:
   Config LoadConfig();
 
   std::string GetBaseDirectory();
+
 private:
   Config config;
 

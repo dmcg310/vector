@@ -5,12 +5,15 @@ GLFWwindow *Window::window = nullptr;
 int Window::width = 0;
 int Window::height = 0;
 bool Window::isFullscreen = false;
+bool Window::isBorderlessFullscreen = false;
 int Window::windowedPosX = 0;
 int Window::windowedPosY = 0;
 int Window::windowedWidth = 0;
 int Window::windowedHeight = 0;
 
-bool Window::Initialize(int width, int height, const std::string &title) {
+bool Window::Initialize(int _width, int _height, bool windowedFullscreen,
+                        bool borderlessFullscreen, bool fullscreen,
+                        const std::string &title) {
   if (!glfwInit()) {
     Log::Write(Log::FATAL, "Failed to initialize glfw. Error running `glfwInit()`");
     return false;
@@ -23,11 +26,10 @@ bool Window::Initialize(int width, int height, const std::string &title) {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-  window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+  window = glfwCreateWindow(_width, _height, title.c_str(), nullptr, nullptr);
   if (!window) {
     Log::Write(Log::FATAL, "Failed to create window. `glfwCreateWindow()` returned NULL");
     glfwTerminate();
-
     return false;
   }
 
@@ -37,18 +39,25 @@ bool Window::Initialize(int width, int height, const std::string &title) {
   if (!gladLoadGL(glfwGetProcAddress)) {
     Log::Write(Log::FATAL,
                "Failed to initialize glad. `gladLoadGLLoader()` returned NULL");
-
     return false;
   }
 
-  Window::SetSize(width, height);
-  windowedWidth = width;
-  windowedHeight = height;
+  Window::SetSize(_width, _height);
+  windowedWidth = _width;
+  windowedHeight = _height;
   Window::GetPosition(windowedPosX, windowedPosY);
 
   glfwSetKeyCallback(window, KeyCallback);
   glfwSetCursorPosCallback(window, MouseCallback);
   glfwSetMouseButtonCallback(window, MouseButtonCallback);
+
+  if (fullscreen) {
+    SetFullscreen(true, false);
+  } else if (borderlessFullscreen) {
+    SetFullscreen(true, true);
+  } else if (windowedFullscreen) {
+    glfwMaximizeWindow(window);
+  }
 
   return true;
 }
@@ -58,7 +67,6 @@ void Window::Run(std::function<void()> loop_body) {
     PollEvents();
     loop_body();
   }
-
   Shutdown();
 }
 
@@ -93,8 +101,10 @@ void Window::SetPosition(int x, int y) { glfwSetWindowPos(window, x, y); }
 
 bool Window::IsFullscreen() { return isFullscreen; }
 
-void Window::SetFullscreen(bool fullscreen) {
-  if (fullscreen == isFullscreen) { return; }
+void Window::SetFullscreen(bool fullscreen, bool borderless) {
+  if (fullscreen == isFullscreen && borderless == isBorderlessFullscreen) { return; }
+
+  isBorderlessFullscreen = borderless;
 
   if (fullscreen) {
     glfwGetWindowPos(window, &windowedPosX, &windowedPosY);
@@ -104,24 +114,29 @@ void Window::SetFullscreen(bool fullscreen) {
     if (!monitor) {
       Log::Write(Log::FATAL,
                  "Error getting primary monitor in `glfwGetPrimaryMonitor()`");
-
       return;
     }
 
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
     if (!mode) {
       Log::Write(Log::FATAL, "Error getting video mode in `glfwGetVideoMode()`");
-
       return;
     }
 
-    glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height,
-                         mode->refreshRate);
-    Window::SetSize(mode->width, mode->height);
+    if (borderless) {
+      glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_TRUE);
+      glfwSetWindowSize(window, mode->width, mode->height);
+      glfwSetWindowPos(window, 0, 0);
+    } else {
+      glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height,
+                           mode->refreshRate);
+      Window::SetSize(mode->width, mode->height);
+    }
   } else {
     glfwSetWindowMonitor(window, nullptr, windowedPosX, windowedPosY, windowedWidth,
                          windowedHeight, 0);
     Window::SetSize(windowedWidth, windowedHeight);
+    glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_TRUE);
   }
 
   isFullscreen = fullscreen;
