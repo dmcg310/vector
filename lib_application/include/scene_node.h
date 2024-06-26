@@ -36,8 +36,19 @@ public:
     for (const auto &child: children) { child->Shutdown(); }
   }
 
+  virtual void SetScale(const glm::vec2 &s) { scale = s; }
+  [[nodiscard]] virtual glm::vec2 GetScale() const { return scale; }
+
+  virtual void SetRotation(const glm::vec2 &rot) { rotation = rot; }
+  [[nodiscard]] virtual glm::vec2 GetRotation() const { return rotation; }
+
   virtual void SetPosition(const glm::vec2 &pos) { position = pos; }
   [[nodiscard]] virtual glm::vec2 GetPosition() const { return position; }
+
+
+  [[nodiscard]] std::vector<std::shared_ptr<SceneNode>> GetChildren() const {
+    return children;
+  }
 
   glm::vec2 position;
   glm::vec2 rotation;

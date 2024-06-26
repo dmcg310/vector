@@ -2,6 +2,8 @@
 
 #ifdef _DEBUG
 
+#include "../../lib_application/nodes/2D/node2d.h"
+#include "../../lib_application/nodes/2D/texture2d.h"
 #include "../../lib_log/include/log.h"
 #include "../../lib_renderer/include/framebuffer.h"
 #include "../../lib_renderer/include/render_api_factory.h"
@@ -29,6 +31,10 @@ public:
   void ResizeViewport(uint32_t width, uint32_t height);
   void Render();
   void RenderDebugMenu();
+
+  void RenderNode(const std::shared_ptr<SceneNode> &node,
+                  const std::shared_ptr<SceneNode> &selectedNode);
+
   void Shutdown();
 
   void ToggleDebugMenu() { isDebugMenuOpen = !isDebugMenuOpen; }

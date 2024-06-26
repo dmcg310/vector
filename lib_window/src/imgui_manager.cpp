@@ -146,17 +146,30 @@ void ImGuiManager::RenderDebugMenu() {
   auto nodes = currentScene->GetNodes();
   auto selectedNode = renderer.GetSelectedNode();
 
-  if (ImGui::CollapsingHeader("Nodes")) {
+  if (ImGui::CollapsingHeader("Node Hierarchy")) {
     for (size_t i = 0; i < nodes.size(); ++i) {
+      bool isRootNode = (i == 0); // Assuming the first node is the root node
+
       std::string nodeName =
               "Node " + std::to_string(i) + " (" + typeid(*nodes[i]).name() + ")";
 
-      if (ImGui::Selectable(nodeName.c_str(), selectedNode == nodes[i])) {
-        if (selectedNode == nodes[i]) {
-          currentScene->SelectNode(nullptr);
-        } else {
-          currentScene->SelectNode(nodes[i]);
+      if (isRootNode) { nodeName += " [Root]"; }
+
+      if (ImGui::TreeNode(nodeName.c_str())) {
+        if (!isRootNode &&
+            ImGui::Selectable(nodeName.c_str(), selectedNode == nodes[i])) {
+          if (selectedNode == nodes[i]) {
+            currentScene->SelectNode(nullptr);
+          } else {
+            currentScene->SelectNode(nodes[i]);
+          }
         }
+
+        for (const auto &child: nodes[i]->GetChildren()) {
+          RenderNode(child, selectedNode);
+        }
+
+        ImGui::TreePop();
       }
     }
   }
@@ -165,15 +178,44 @@ void ImGuiManager::RenderDebugMenu() {
     ImGui::Separator();
     ImGui::Text("Selected Node Properties");
 
-    glm::vec2 position = selectedNode->GetPosition();
+    if (auto textureNode = std::dynamic_pointer_cast<Texture2DNode>(selectedNode)) {
+      static glm::vec2 position = textureNode->GetPosition();
+      static glm::vec2 rotation = textureNode->GetRotation();
+      static glm::vec2 scale = textureNode->GetScale();
 
-    ImGui::SliderFloat("X Position", &position.x, -1.0f, 1.0f, "%.3f");
-    ImGui::SliderFloat("Y Position", &position.y, -1.0f, 1.0f, "%.3f");
+      if (ImGui::SliderFloat("X Position", &position.x, -1.0f, 1.0f, "%.3f")) {
+        textureNode->SetPosition(position);
+      }
+      if (ImGui::SliderFloat("Y Position", &position.y, -1.0f, 1.0f, "%.3f")) {
+        textureNode->SetPosition(position);
+      }
+      if (ImGui::SliderFloat("Rotation", &rotation.x, -360.0f, 360.0f, "%.3f")) {
+        textureNode->SetRotation(rotation);
+      }
+      if (ImGui::SliderFloat("X Scale", &scale.x, 0.1f, 10.0f, "%.3f")) {
+        textureNode->SetScale(scale);
+      }
+      if (ImGui::SliderFloat("Y Scale", &scale.y, 0.1f, 10.0f, "%.3f")) {
+        textureNode->SetScale(scale);
+      }
 
-    selectedNode->SetPosition(position);
+      if (ImGui::Button("Reset Position")) {
+        position = glm::vec2(0.0f, 0.0f);
+        textureNode->SetPosition(position);
+      }
 
-    if (ImGui::Button("Reset Position")) {
-      selectedNode->SetPosition(glm::vec2(0.0f, 0.0f));
+      ImGui::SameLine();
+      if (ImGui::Button("Reset Rotation")) {
+        rotation = glm::vec2(0.0f, 0.0f);
+        textureNode->SetRotation(rotation);
+      }
+
+      if (ImGui::Button("Reset Scale")) {
+        scale = glm::vec2(1.0f, 1.0f);
+        textureNode->SetScale(scale);
+      }
+    } else {
+      ImGui::Text("This node is not editable.");
     }
   }
 
@@ -205,6 +247,37 @@ void ImGuiManager::RenderDebugMenu() {
   }
 
   ImGui::End();
+}
+
+void ImGuiManager::RenderNode(const std::shared_ptr<SceneNode> &node,
+                              const std::shared_ptr<SceneNode> &selectedNode) {
+  auto children = node->GetChildren();
+  for (size_t i = 0; i < children.size(); ++i) {
+    std::string nodeName =
+            "Child Node " + std::to_string(i) + " (" + typeid(*children[i]).name() + ")";
+
+    if (ImGui::TreeNode(nodeName.c_str())) {
+      if (ImGui::Selectable(nodeName.c_str(), selectedNode == children[i])) {
+        if (selectedNode == children[i]) {
+          Renderer::GetInstance().GetCurrentScene()->SelectNode(nullptr);
+        } else {
+          Renderer::GetInstance().GetCurrentScene()->SelectNode(children[i]);
+        }
+      }
+
+      RenderNode(children[i], selectedNode);
+
+      ImGui::TreePop();
+    } else {
+      if (ImGui::Selectable(nodeName.c_str(), selectedNode == children[i])) {
+        if (selectedNode == children[i]) {
+          Renderer::GetInstance().GetCurrentScene()->SelectNode(nullptr);
+        } else {
+          Renderer::GetInstance().GetCurrentScene()->SelectNode(children[i]);
+        }
+      }
+    }
+  }
 }
 
 void ImGuiManager::Shutdown() {
