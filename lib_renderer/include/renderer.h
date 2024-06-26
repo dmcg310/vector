@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../lib_application/include/scene_manager.h"
-#include "../../lib_application/nodes/simple_node.h"
 #include "../../lib_window/include/window.h"
 #include "context.h"
 
@@ -22,9 +21,7 @@ public:
   void Shutdown();
 
   SceneManager &GetSceneManager();
-
-  // FIX
-  SimpleNode &GetNode();
+  SceneNode &GetNode();
 
   std::shared_ptr<Scene> GetCurrentScene();
   std::shared_ptr<SceneNode> GetSelectedNode();

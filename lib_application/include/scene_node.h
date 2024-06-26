@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <glm/glm.hpp>
 #include <memory>
 #include <vector>
@@ -19,25 +20,28 @@ public:
     child->parent = nullptr;
   }
 
-  virtual void Initialize() {}
+  virtual void Initialize() {
+    for (const auto &child: children) { child->Initialize(); }
+  }
 
   virtual void Update(float deltaTime) {
-    for (auto const &child: children) { child->Update(deltaTime); }
+    for (const auto &child: children) { child->Update(deltaTime); }
   }
 
   virtual void Render() {
-    for (auto const &child: children) { child->Render(); }
+    for (const auto &child: children) { child->Render(); }
   }
 
-  virtual void Shutdown() {}
+  virtual void Shutdown() {
+    for (const auto &child: children) { child->Shutdown(); }
+  }
 
   virtual void SetPosition(const glm::vec2 &pos) { position = pos; }
-
   [[nodiscard]] virtual glm::vec2 GetPosition() const { return position; }
 
   glm::vec2 position;
-  glm::vec3 rotation;
-  glm::vec3 scale;
+  glm::vec2 rotation;
+  glm::vec2 scale;
 
 protected:
   SceneNode *parent;

@@ -1,5 +1,4 @@
 #include "renderer.h"
-#include "../../lib_application/nodes/simple_node.h"
 #include "../../lib_application/scenes/test_scene/test_scene.h"
 #include "../../lib_log/include/log.h"
 #include "../../lib_window/include/window.h"
@@ -39,9 +38,8 @@ void Renderer::Initialize(GLFWwindow *window) {
 #endif
 }
 
-SimpleNode &Renderer::GetNode() {
-  // FIX
-  return reinterpret_cast<SimpleNode &>(sceneManager.GetActiveScene()->GetNode());
+SceneNode &Renderer::GetNode() {
+  return reinterpret_cast<SceneNode &>(sceneManager.GetActiveScene()->GetNode());
 }
 
 SceneManager &Renderer::GetSceneManager() { return sceneManager; }

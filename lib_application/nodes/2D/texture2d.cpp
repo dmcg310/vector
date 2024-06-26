@@ -1,29 +1,15 @@
-#include "simple_node.h"
+#include "texture2d.h"
+#include <glad/gl.h>
 
-glm::mat4 SimpleNode::GetModelMatrix(const glm::mat4 &renderPassModelMatrix) const {
-  auto model = glm::mat4(1.0f);
-  model = glm::translate(model, glm::vec3(position, 0.0f));
-  model = renderPassModelMatrix * model;
-  return model;
-}
-
-SimpleNode::SimpleNode()
+Texture2DNode::Texture2DNode()
     : vao(nullptr), vertexBuffer(nullptr), indexBuffer(nullptr), texture(nullptr),
       shader(nullptr) {}
 
-SimpleNode::~SimpleNode() {
-  if (vao) { vao = nullptr; }
-
-  if (vertexBuffer) { vertexBuffer = nullptr; }
-
-  if (indexBuffer) { indexBuffer = nullptr; }
-
-  if (texture) { texture = nullptr; }
-
-  if (shader) { shader = nullptr; }
+Texture2DNode::~Texture2DNode() {
+  // Clean up resources
 }
 
-void SimpleNode::Initialize() {
+void Texture2DNode::Initialize(const std::string &textureFile) {
   float vertices[] = {
           // positions        // texture coords
           -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom-left
@@ -34,7 +20,7 @@ void SimpleNode::Initialize() {
 
   unsigned int indices[] = {0, 1, 2, 2, 3, 0};
 
-  vao = std::make_shared<OpenGLVertexArray>();
+  vao = VertexArray::CreateVertexArray();
   vao->Create();
 
   vertexBuffer = Buffer::CreateBuffer(BufferType::Vertex);
@@ -51,7 +37,7 @@ void SimpleNode::Initialize() {
   shader->Link();
 
   texture = Texture::CreateTexture();
-  texture->LoadFromFile("assets/textures/container.jpg");
+  texture->LoadFromFile(textureFile);
   texture->SetParameters();
 
   renderPass = RenderPass::CreateRenderPass();
@@ -60,9 +46,11 @@ void SimpleNode::Initialize() {
   renderCommandQueue = RenderCommandQueue::CreateRenderCommandQueue();
 }
 
-void SimpleNode::Update(float deltaTime) {}
+void Texture2DNode::Update(float deltaTime) {
+  // Update logic here if necessary
+}
 
-void SimpleNode::Render() {
+void Texture2DNode::Render() {
   auto &imGuiManager = ImGuiManager::GetInstance();
   bool isDebugMenuOpen = imGuiManager.IsDebugMenuOpen();
 
@@ -140,7 +128,3 @@ void SimpleNode::Render() {
     renderPass->End();
   }
 }
-
-void SimpleNode::SetPosition(const glm::vec2 &pos) { position = pos; }
-
-glm::vec2 SimpleNode::GetPosition() const { return position; }

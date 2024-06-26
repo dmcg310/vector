@@ -9,9 +9,7 @@
 
 OpenGLTexture::OpenGLTexture() : textureID(0) {
   glGenTextures(1, &textureID);
-  if (textureID == 0) {
-    Log::Write(Log::ERROR, "Failed to generate texture ID");
-  }
+  if (textureID == 0) { Log::Write(Log::ERROR, "Failed to generate texture ID"); }
 }
 
 void OpenGLTexture::LoadFromFile(const std::string &filePath) {
@@ -34,7 +32,8 @@ void OpenGLTexture::LoadFromFile(const std::string &filePath) {
 
     glBindTexture(GL_TEXTURE_2D, textureID);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE,
+                 data);
     SetParameters();
     glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -51,13 +50,15 @@ void OpenGLTexture::LoadFromFile(const std::string &filePath) {
 
 void OpenGLTexture::Create(int width, int height, GLenum format) {
   glBindTexture(GL_TEXTURE_2D, textureID);
-  glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+  glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE,
+               nullptr);
   SetParameters();
   glGenerateMipmap(GL_TEXTURE_2D);
 
   GLenum error = glGetError();
   if (error != GL_NO_ERROR) {
-    Log::Write(Log::ERROR, "Error creating framebuffer texture: " + std::to_string(error));
+    Log::Write(Log::ERROR,
+               "Error creating framebuffer texture: " + std::to_string(error));
   }
 }
 
