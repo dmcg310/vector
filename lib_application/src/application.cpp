@@ -129,6 +129,7 @@ void Application::MainLoopBody() {
 }
 
 void Application::LogFrameInfo(float deltaTime) {
+#ifdef _DEBUG
   frameCount++;
 
   accumulatedTime += deltaTime;
@@ -150,4 +151,5 @@ void Application::LogFrameInfo(float deltaTime) {
     accumulatedFPS = 0.0;
     frameSamples = 0;
   }
+#endif
 }

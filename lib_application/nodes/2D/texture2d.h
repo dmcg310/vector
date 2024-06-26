@@ -6,8 +6,11 @@
 #include "../../lib_renderer/include/shader.h"
 #include "../../lib_renderer/include/texture.h"
 #include "../../lib_renderer/include/vertex_array.h"
-#include "../../lib_window/include/imgui_manager.h"
 #include "node2d.h"
+
+#ifdef _DEBUG
+#include "../../lib_window/include/imgui_manager.h"
+#endif
 
 class Texture2DNode : public Node2D {
 public:

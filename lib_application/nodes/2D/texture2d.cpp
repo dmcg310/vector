@@ -49,8 +49,12 @@ void Texture2DNode::Update(float deltaTime) {
 }
 
 void Texture2DNode::Render() {
+  bool isDebugMenuOpen = false;
+
+#ifdef _DEBUG
   auto const &imGuiManager = ImGuiManager::GetInstance();
-  bool isDebugMenuOpen = imGuiManager.IsDebugMenuOpen();
+  isDebugMenuOpen = imGuiManager.IsDebugMenuOpen();
+#endif
 
   std::shared_ptr<Framebuffer> framebuffer;
 
@@ -58,6 +62,7 @@ void Texture2DNode::Render() {
   float fbHeight;
 
   if (isDebugMenuOpen) {
+#ifdef _DEBUG
     if (!imGuiManager.IsInitialized()) {
       Log::Write(Log::ERROR, "ImGuiManager is not initialized");
       return;
@@ -68,7 +73,7 @@ void Texture2DNode::Render() {
 
     fbWidth = imGuiManager.GetViewportSize().x;
     fbHeight = imGuiManager.GetViewportSize().y;
-
+#endif
   } else {
     // Change this to use Framebuffer::CreateFramebuffer() to remain API agnostic
     framebuffer = Framebuffer::CreateFramebuffer();
@@ -113,5 +118,7 @@ void Texture2DNode::Render() {
     renderCommandQueue->Execute();
   }
 
+#ifdef _DEBUG
   if (isDebugMenuOpen) { ImGuiManager::GetInstance().Render(); }
+#endif
 }

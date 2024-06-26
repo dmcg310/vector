@@ -45,7 +45,6 @@ public:
   virtual void SetPosition(const glm::vec2 &pos) { position = pos; }
   [[nodiscard]] virtual glm::vec2 GetPosition() const { return position; }
 
-
   [[nodiscard]] std::vector<std::shared_ptr<SceneNode>> GetChildren() const {
     return children;
   }
