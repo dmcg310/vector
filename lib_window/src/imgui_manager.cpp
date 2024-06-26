@@ -35,7 +35,6 @@ bool ImGuiManager::Setup(GLFWwindow *window) {
         Log::Write(Log::FATAL, "Failed to initialize ImGui OpenGL3 implementation");
         return false;
       }
-
       break;
 
     default:
@@ -65,7 +64,6 @@ bool ImGuiManager::Setup(GLFWwindow *window) {
   framebuffer->AttachRenderbuffer(renderbuffer);
 
   initialized = true;
-
   return true;
 }
 
@@ -117,7 +115,6 @@ void ImGuiManager::Render() {
       newViewportSize != viewportSize) {
     ResizeViewport(static_cast<uint32_t>(newViewportSize.x),
                    static_cast<uint32_t>(newViewportSize.y));
-
     viewportSize = newViewportSize;
   }
 
@@ -126,7 +123,6 @@ void ImGuiManager::Render() {
   auto renderPass = RenderPass::CreateRenderPass();
   renderPass->SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   renderPass->Begin();
-
 
   ImGui::Image(reinterpret_cast<ImTextureID>(texture->GetID()), viewportScreenSize,
                ImVec2{0, 1}, ImVec2{1, 0});
@@ -165,39 +161,42 @@ void ImGuiManager::RenderDebugMenu() {
   auto nodes = currentScene->GetNodes();
   auto selectedNode = renderer.GetSelectedNode();
 
-  if (ImGui::CollapsingHeader("Node Hierarchy")) {
-    for (size_t i = 0; i < nodes.size(); ++i) {
-      bool isRootNode = (i == 0); // Assuming the first node is the root node
+  if (!nodes.empty()) {
+    auto rootNode = nodes[0];
 
-      std::string nodeName =
-              "Node " + std::to_string(i) + " (" + typeid(*nodes[i]).name() + ")";
+    std::string nodeName =
+            rootNode->GetName() + " (" + rootNode->GetNodeType() + ") [Root]";
 
-      if (isRootNode) { nodeName += " [Root]"; }
+    ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow |
+                                   ImGuiTreeNodeFlags_OpenOnDoubleClick |
+                                   ImGuiTreeNodeFlags_DefaultOpen;
 
-      if (ImGui::TreeNode(nodeName.c_str())) {
-        if (!isRootNode &&
-            ImGui::Selectable(nodeName.c_str(), selectedNode == nodes[i])) {
-          if (selectedNode == nodes[i]) {
-            currentScene->SelectNode(nullptr);
-          } else {
-            currentScene->SelectNode(nodes[i]);
-          }
-        }
+    if (selectedNode == rootNode) { nodeFlags |= ImGuiTreeNodeFlags_Selected; }
 
-        for (const auto &child: nodes[i]->GetChildren()) {
-          RenderNode(child, selectedNode);
-        }
+    bool nodeOpen = ImGui::TreeNodeEx(nodeName.c_str(), nodeFlags);
 
-        ImGui::TreePop();
+    if (ImGui::IsItemClicked()) {
+      if (selectedNode == rootNode) {
+        currentScene->SelectNode(nullptr);
+      } else {
+        currentScene->SelectNode(rootNode);
       }
+    }
+
+    if (nodeOpen) {
+      for (const auto &child: rootNode->GetChildren()) {
+        RenderNode(child, selectedNode);
+      }
+      ImGui::TreePop();
     }
   }
 
   if (selectedNode) {
     ImGui::Separator();
-    ImGui::Text("Selected Node Properties");
 
     if (auto textureNode = std::dynamic_pointer_cast<Texture2DNode>(selectedNode)) {
+      ImGui::Text("Properties");
+
       static glm::vec2 position = textureNode->GetPosition();
       static glm::vec2 rotation = textureNode->GetRotation();
       static glm::vec2 scale = textureNode->GetScale();
@@ -261,7 +260,6 @@ void ImGuiManager::RenderDebugMenu() {
     }
 
     ImGui::SetScrollHereY(1.0f);
-
     ImGui::EndChild();
   }
 
@@ -271,30 +269,46 @@ void ImGuiManager::RenderDebugMenu() {
 void ImGuiManager::RenderNode(const std::shared_ptr<SceneNode> &node,
                               const std::shared_ptr<SceneNode> &selectedNode) {
   auto children = node->GetChildren();
-  for (size_t i = 0; i < children.size(); ++i) {
-    std::string nodeName =
-            "Child Node " + std::to_string(i) + " (" + typeid(*children[i]).name() + ")";
 
-    if (ImGui::TreeNode(nodeName.c_str())) {
-      if (ImGui::Selectable(nodeName.c_str(), selectedNode == children[i])) {
-        if (selectedNode == children[i]) {
-          Renderer::GetInstance().GetCurrentScene()->SelectNode(nullptr);
-        } else {
-          Renderer::GetInstance().GetCurrentScene()->SelectNode(children[i]);
-        }
+  if (children.empty()) {
+    std::string nodeName = node->GetName() + " (" + node->GetNodeType() + ")";
+
+    ImGuiTreeNodeFlags nodeFlags =
+            ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+    if (selectedNode == node) { nodeFlags |= ImGuiTreeNodeFlags_Selected; }
+
+    ImGui::TreeNodeEx(nodeName.c_str(), nodeFlags);
+
+    if (ImGui::IsItemClicked()) {
+      if (selectedNode == node) {
+        Renderer::GetInstance().GetCurrentScene()->SelectNode(nullptr);
+      } else {
+        Renderer::GetInstance().GetCurrentScene()->SelectNode(node);
       }
+    }
+  } else {
+    std::string nodeName = node->GetName() + " (" + node->GetNodeType() + ")";
 
-      RenderNode(children[i], selectedNode);
+    ImGuiTreeNodeFlags nodeFlags =
+            ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+    if (selectedNode == node) { nodeFlags |= ImGuiTreeNodeFlags_Selected; }
+
+    bool nodeOpen = ImGui::TreeNodeEx(nodeName.c_str(), nodeFlags);
+
+    if (ImGui::IsItemClicked()) {
+      if (selectedNode == node) {
+        Renderer::GetInstance().GetCurrentScene()->SelectNode(nullptr);
+      } else {
+        Renderer::GetInstance().GetCurrentScene()->SelectNode(node);
+      }
+    }
+
+    if (nodeOpen) {
+      for (const auto &child: children) { RenderNode(child, selectedNode); }
 
       ImGui::TreePop();
-    } else {
-      if (ImGui::Selectable(nodeName.c_str(), selectedNode == children[i])) {
-        if (selectedNode == children[i]) {
-          Renderer::GetInstance().GetCurrentScene()->SelectNode(nullptr);
-        } else {
-          Renderer::GetInstance().GetCurrentScene()->SelectNode(children[i]);
-        }
-      }
     }
   }
 }
