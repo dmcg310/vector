@@ -31,7 +31,11 @@ public:
 
   virtual void Shutdown() {}
 
-  glm::vec3 position;
+  virtual void SetPosition(const glm::vec2 &pos) { position = pos; }
+
+  [[nodiscard]] virtual glm::vec2 GetPosition() const { return position; }
+
+  glm::vec2 position;
   glm::vec3 rotation;
   glm::vec3 scale;
 

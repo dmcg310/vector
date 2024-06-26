@@ -141,7 +141,6 @@ void ImGuiManager::RenderDebugMenu() {
                            ImGuiCond_FirstUseEver);
   ImGui::Begin("Options");
 
-  // REFACTOR
   auto &renderer = Renderer::GetInstance();
   auto currentScene = renderer.GetCurrentScene();
   auto nodes = currentScene->GetNodes();
@@ -149,9 +148,15 @@ void ImGuiManager::RenderDebugMenu() {
 
   if (ImGui::CollapsingHeader("Nodes")) {
     for (size_t i = 0; i < nodes.size(); ++i) {
-      if (ImGui::Selectable(("Node " + std::to_string(i)).c_str(),
-                            selectedNode == nodes[i])) {
-        currentScene->SelectNode(nodes[i]);
+      std::string nodeName =
+              "Node " + std::to_string(i) + " (" + typeid(*nodes[i]).name() + ")";
+
+      if (ImGui::Selectable(nodeName.c_str(), selectedNode == nodes[i])) {
+        if (selectedNode == nodes[i]) {
+          currentScene->SelectNode(nullptr);
+        } else {
+          currentScene->SelectNode(nodes[i]);
+        }
       }
     }
   }
@@ -160,13 +165,16 @@ void ImGuiManager::RenderDebugMenu() {
     ImGui::Separator();
     ImGui::Text("Selected Node Properties");
 
-    glm::vec3 position = selectedNode->position;
+    glm::vec2 position = selectedNode->GetPosition();
+
     ImGui::SliderFloat("X Position", &position.x, -1.0f, 1.0f, "%.3f");
     ImGui::SliderFloat("Y Position", &position.y, -1.0f, 1.0f, "%.3f");
 
-    if (ImGui::Button("Reset Position")) { position = glm::vec3(0.0f, 0.0f, 0.0f); }
+    selectedNode->SetPosition(position);
 
-    selectedNode->position = position;
+    if (ImGui::Button("Reset Position")) {
+      selectedNode->SetPosition(glm::vec2(0.0f, 0.0f));
+    }
   }
 
   ImGui::End();

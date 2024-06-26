@@ -9,7 +9,7 @@ glm::mat4 SimpleNode::GetModelMatrix(const glm::mat4 &renderPassModelMatrix) con
 
 SimpleNode::SimpleNode()
     : vao(nullptr), vertexBuffer(nullptr), indexBuffer(nullptr), texture(nullptr),
-      shader(nullptr), position(0.0f, 0.0f) {}
+      shader(nullptr) {}
 
 SimpleNode::~SimpleNode() {
   if (vao) { vao = nullptr; }

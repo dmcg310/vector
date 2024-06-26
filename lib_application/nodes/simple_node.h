@@ -19,12 +19,12 @@ public:
   SimpleNode();
   ~SimpleNode();
 
-  void Initialize();
-  void Update(float deltaTime);
-  void Render();
+  void Initialize() override;
+  void Update(float deltaTime) override;
+  void Render() override;
 
-  void SetPosition(const glm::vec2 &position);
-  [[nodiscard]] glm::vec2 GetPosition() const;
+  void SetPosition(const glm::vec2 &position) override;
+  [[nodiscard]] glm::vec2 GetPosition() const override;
   [[nodiscard]] glm::mat4 GetModelMatrix(const glm::mat4 &renderPassModelMatrix) const;
 
 private:
@@ -35,5 +35,4 @@ private:
   std::shared_ptr<Shader> shader;
   std::shared_ptr<RenderPass> renderPass;
   std::shared_ptr<RenderCommandQueue> renderCommandQueue;
-  glm::vec2 position;
 };
