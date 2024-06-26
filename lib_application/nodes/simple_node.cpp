@@ -1,5 +1,12 @@
 #include "simple_node.h"
 
+glm::mat4 SimpleNode::GetModelMatrix(const glm::mat4 &renderPassModelMatrix) const {
+  auto model = glm::mat4(1.0f);
+  model = glm::translate(model, position);
+  model = renderPassModelMatrix * model;
+  return model;
+}
+
 SimpleNode::SimpleNode()
     : vao(nullptr), vertexBuffer(nullptr), indexBuffer(nullptr), texture(nullptr),
       shader(nullptr), position(0.0f, 0.0f, 0.0f) {}
@@ -85,7 +92,7 @@ void SimpleNode::Render() {
 
         shader->Bind();
         shader->SetUniform("u_Projection", renderPass->GetProjectionMatrix());
-        shader->SetUniform("u_Model", renderPass->GetModelMatrix());
+        shader->SetUniform("u_Model", GetModelMatrix(renderPass->GetModelMatrix()));
       });
 
       renderCommandQueue->Submit([this]() { texture->Bind(0); });
@@ -119,7 +126,7 @@ void SimpleNode::Render() {
 
         shader->Bind();
         shader->SetUniform("u_Projection", renderPass->GetProjectionMatrix());
-        shader->SetUniform("u_Model", renderPass->GetModelMatrix());
+        shader->SetUniform("u_Model", GetModelMatrix(renderPass->GetModelMatrix()));
       });
 
       renderCommandQueue->Submit([this]() { texture->Bind(0); });

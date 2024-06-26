@@ -23,6 +23,7 @@ public:
   void Render();
   void SetPosition(const glm::vec3 &position);
   [[nodiscard]] glm::vec3 GetPosition() const;
+  [[nodiscard]] glm::mat4 GetModelMatrix(const glm::mat4 &renderPassModelMatrix) const;
 
 private:
   std::shared_ptr<VertexArray> vao;
