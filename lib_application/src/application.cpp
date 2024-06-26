@@ -43,10 +43,6 @@ bool Application::Initialize() {
 
   Renderer::GetInstance().Initialize(Window::GetGLFWWindow());
 
-  // auto testScene = std::make_shared<TestScene>();
-  // renderer->GetSceneManager().AddScene("TestScene", testScene);
-  // renderer->GetSceneManager().SetActiveScene("TestScene");
-
   return true;
 }
 

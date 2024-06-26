@@ -7,13 +7,14 @@
 #include "../../../lib_renderer/include/texture.h"
 #include "../../../lib_renderer/include/vertex_array.h"
 #include "../../lib_window/include/imgui_manager.h"
+#include "scene_node.h"
 
 // TEMPORARY
 #include "../../../lib_renderer/src/concrete/opengl/opengl_framebuffer.h"
 
 #include <glm/glm.hpp>
 
-class SimpleNode {
+class SimpleNode : public SceneNode {
 public:
   SimpleNode();
   ~SimpleNode();
@@ -21,6 +22,7 @@ public:
   void Initialize();
   void Update(float deltaTime);
   void Render();
+
   void SetPosition(const glm::vec2 &position);
   [[nodiscard]] glm::vec2 GetPosition() const;
   [[nodiscard]] glm::mat4 GetModelMatrix(const glm::mat4 &renderPassModelMatrix) const;

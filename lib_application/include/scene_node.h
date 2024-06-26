@@ -6,7 +6,7 @@
 
 class SceneNode {
 public:
-  SceneNode() : parent(nullptr) {}
+  SceneNode() : parent(nullptr), position(0.0f), rotation(0.0f), scale(1.0f) {}
   virtual ~SceneNode() {}
 
   void AddChild(const std::shared_ptr<SceneNode> &child) {
@@ -19,6 +19,8 @@ public:
     child->parent = nullptr;
   }
 
+  virtual void Initialize() {}
+
   virtual void Update(float deltaTime) {
     for (auto const &child: children) { child->Update(deltaTime); }
   }
@@ -26,6 +28,8 @@ public:
   virtual void Render() {
     for (auto const &child: children) { child->Render(); }
   }
+
+  virtual void Shutdown() {}
 
   glm::vec3 position;
   glm::vec3 rotation;

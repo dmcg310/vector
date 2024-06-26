@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../include/scene.h"
+#include "../../lib_application/nodes/simple_node.h"
 #include "../../lib_renderer/include/buffer.h"
 #include "../../lib_renderer/include/render_command_queue.h"
 #include "../../lib_renderer/include/render_pass.h"
@@ -19,11 +20,5 @@ public:
   void Shutdown() override;
 
 private:
-  std::shared_ptr<VertexArray> vao;
-  std::shared_ptr<Buffer> vertexBuffer;
-  std::shared_ptr<Buffer> indexBuffer;
-  std::shared_ptr<Texture> texture;
-  std::shared_ptr<Shader> shader;
-  std::shared_ptr<RenderPass> renderPass;
-  std::shared_ptr<RenderCommandQueue> renderCommandQueue;
+  std::shared_ptr<SimpleNode> simpleNode;
 };
