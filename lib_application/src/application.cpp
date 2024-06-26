@@ -41,12 +41,11 @@ bool Application::Initialize() {
   // Input event observer
   Window::RegisterObserver(this);
 
-  renderer = new Renderer();
-  renderer->Initialize(Window::GetGLFWWindow());
+  Renderer::GetInstance().Initialize(Window::GetGLFWWindow());
 
-  auto testScene = std::make_shared<TestScene>();
-  renderer->GetSceneManager().AddScene("TestScene", testScene);
-  renderer->GetSceneManager().SetActiveScene("TestScene");
+  // auto testScene = std::make_shared<TestScene>();
+  // renderer->GetSceneManager().AddScene("TestScene", testScene);
+  // renderer->GetSceneManager().SetActiveScene("TestScene");
 
   return true;
 }
@@ -76,12 +75,7 @@ void Application::Run() {
 }
 
 void Application::Shutdown() {
-  if (renderer) {
-    renderer->Shutdown();
-
-    delete renderer;
-    renderer = nullptr;
-  }
+  Renderer::GetInstance().Shutdown();
 
   Window::UnregisterObserver(this);
   Window::Shutdown();
@@ -122,14 +116,14 @@ void Application::Update() {
   float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
   lastTime = currentTime;
 
-  renderer->Update(deltaTime);
+  Renderer::GetInstance().Update(deltaTime);
 
 #ifdef _DEBUG
   LogFrameInfo(deltaTime);
 #endif
 }
 
-void Application::Render() { renderer->Render(); }
+void Application::Render() { Renderer::GetInstance().Render(); }
 
 void Application::MainLoopBody() {
   Update();

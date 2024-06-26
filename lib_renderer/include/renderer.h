@@ -11,8 +11,10 @@
 
 class Renderer {
 public:
-  Renderer();
-  ~Renderer();
+  static Renderer &GetInstance() {
+    static Renderer instance;
+    return instance;
+  }
 
   void Initialize(GLFWwindow *window);
   void Render();
@@ -23,6 +25,12 @@ public:
   SimpleNode &GetNode();
 
 private:
+  Renderer();
+  ~Renderer();
+
+  Renderer(const Renderer &) = delete;
+  Renderer &operator=(const Renderer &) = delete;
+
   Context *context;
   SceneManager sceneManager;
   SimpleNode node;
