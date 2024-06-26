@@ -2,14 +2,14 @@
 
 glm::mat4 SimpleNode::GetModelMatrix(const glm::mat4 &renderPassModelMatrix) const {
   auto model = glm::mat4(1.0f);
-  model = glm::translate(model, position);
+  model = glm::translate(model, glm::vec3(position, 0.0f));
   model = renderPassModelMatrix * model;
   return model;
 }
 
 SimpleNode::SimpleNode()
     : vao(nullptr), vertexBuffer(nullptr), indexBuffer(nullptr), texture(nullptr),
-      shader(nullptr), position(0.0f, 0.0f, 0.0f) {}
+      shader(nullptr), position(0.0f, 0.0f) {}
 
 SimpleNode::~SimpleNode() {
   if (vao) { vao = nullptr; }
@@ -141,6 +141,6 @@ void SimpleNode::Render() {
   }
 }
 
-void SimpleNode::SetPosition(const glm::vec3 &pos) { position = pos; }
+void SimpleNode::SetPosition(const glm::vec2 &pos) { position = pos; }
 
-glm::vec3 SimpleNode::GetPosition() const { return position; }
+glm::vec2 SimpleNode::GetPosition() const { return position; }

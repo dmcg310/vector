@@ -21,8 +21,8 @@ public:
   void Initialize();
   void Update(float deltaTime);
   void Render();
-  void SetPosition(const glm::vec3 &position);
-  [[nodiscard]] glm::vec3 GetPosition() const;
+  void SetPosition(const glm::vec2 &position);
+  [[nodiscard]] glm::vec2 GetPosition() const;
   [[nodiscard]] glm::mat4 GetModelMatrix(const glm::mat4 &renderPassModelMatrix) const;
 
 private:
@@ -33,5 +33,5 @@ private:
   std::shared_ptr<Shader> shader;
   std::shared_ptr<RenderPass> renderPass;
   std::shared_ptr<RenderCommandQueue> renderCommandQueue;
-  glm::vec3 position;
+  glm::vec2 position;
 };
