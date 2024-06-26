@@ -141,9 +141,15 @@ void ImGuiManager::RenderDebugMenu() {
                            ImGuiCond_FirstUseEver);
   ImGui::Begin("Options");
 
-  static float fps = 0.0f;
-  fps = 0.9f * fps + 0.1f * ImGui::GetIO().Framerate;
-  ImGui::Text("FPS: %.1f", fps);
+  auto &node = Renderer::GetInstance().GetNode();
+  glm::vec2 position = node.GetPosition();
+
+  ImGui::SliderFloat("X Position", &position.x, -1.0f, 1.0f, "%.3f");
+  ImGui::SliderFloat("Y Position", &position.y, -1.0f, 1.0f, "%.3f");
+
+  node.SetPosition(position);
+
+  if (ImGui::Button("Reset Position")) { node.SetPosition(glm::vec2(0.0f, 0.0f)); }
 
   ImGui::End();
 
@@ -171,17 +177,6 @@ void ImGuiManager::RenderDebugMenu() {
 
     ImGui::EndChild();
   }
-
-  ImGui::End();
-
-  // Properties
-  ImGui::Begin("Node Properties");
-
-  Renderer &renderer = Renderer::GetInstance();
-  SimpleNode &node = renderer.GetNode();
-  glm::vec3 position = node.GetPosition();
-
-  if (ImGui::DragFloat3("Position", &position.x, 0.1f)) { node.SetPosition(position); }
 
   ImGui::End();
 }
