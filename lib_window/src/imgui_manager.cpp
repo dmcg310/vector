@@ -1,4 +1,5 @@
 #include "imgui_manager.h"
+#include "../../lib_renderer/include/renderer.h"
 
 #ifdef _DEBUG
 
@@ -170,6 +171,17 @@ void ImGuiManager::RenderDebugMenu() {
 
     ImGui::EndChild();
   }
+
+  ImGui::End();
+
+  // Properties
+  ImGui::Begin("Node Properties");
+
+  Renderer &renderer = Renderer::GetInstance();
+  SimpleNode &node = renderer.GetNode();
+  glm::vec3 position = node.GetPosition();
+
+  if (ImGui::DragFloat3("Position", &position.x, 0.1f)) { node.SetPosition(position); }
 
   ImGui::End();
 }
