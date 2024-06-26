@@ -38,10 +38,12 @@ public:
   void Shutdown();
 
   void ToggleDebugMenu() { isDebugMenuOpen = !isDebugMenuOpen; }
-  bool IsDebugMenuOpen() const { return isDebugMenuOpen; }
-  bool IsInitialized() const { return initialized; }
-  glm::vec2 GetViewportSize() const { return viewportSize; }
-  Framebuffer *GetFramebuffer() const { return framebuffer; }
+  [[nodiscard]] bool IsDebugMenuOpen() const { return isDebugMenuOpen; }
+  [[nodiscard]] bool IsInitialized() const { return initialized; }
+  [[nodiscard]] glm::vec2 GetViewportSize() const { return viewportSize; }
+  [[nodiscard]] std::shared_ptr<Framebuffer> GetFramebuffer() const {
+    return framebuffer;
+  }
 
 private:
   ImGuiManager()
@@ -53,7 +55,7 @@ private:
   bool isDebugMenuOpen;
   glm::vec2 viewportSize;
   Texture *texture;
-  Framebuffer *framebuffer;
+  std::shared_ptr<Framebuffer> framebuffer;
   Renderbuffer *renderbuffer;
   API renderAPI;
 

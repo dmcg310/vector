@@ -1,13 +1,11 @@
 #include "texture2d.h"
-#include <glad/gl.h>
+#include "../../../lib_renderer/include/render_api_factory.h"
 
 Texture2DNode::Texture2DNode()
     : vao(nullptr), vertexBuffer(nullptr), indexBuffer(nullptr), texture(nullptr),
       shader(nullptr) {}
 
-Texture2DNode::~Texture2DNode() {
-  // Clean up resources
-}
+Texture2DNode::~Texture2DNode() = default;
 
 void Texture2DNode::Initialize(const std::string &textureFile) {
   float vertices[] = {
@@ -51,8 +49,13 @@ void Texture2DNode::Update(float deltaTime) {
 }
 
 void Texture2DNode::Render() {
-  auto &imGuiManager = ImGuiManager::GetInstance();
+  auto const &imGuiManager = ImGuiManager::GetInstance();
   bool isDebugMenuOpen = imGuiManager.IsDebugMenuOpen();
+
+  std::shared_ptr<Framebuffer> framebuffer;
+
+  float fbWidth;
+  float fbHeight;
 
   if (isDebugMenuOpen) {
     if (!imGuiManager.IsInitialized()) {
@@ -60,71 +63,55 @@ void Texture2DNode::Render() {
       return;
     }
 
-    // Bind the framebuffer to render the scene
-    Framebuffer *framebuffer = imGuiManager.GetFramebuffer();
+    framebuffer = imGuiManager.GetFramebuffer();
     framebuffer->Bind();
 
-    int fbWidth = static_cast<int>(imGuiManager.GetViewportSize().x);
-    int fbHeight = static_cast<int>(imGuiManager.GetViewportSize().y);
+    fbWidth = imGuiManager.GetViewportSize().x;
+    fbHeight = imGuiManager.GetViewportSize().y;
 
-    glViewport(0, 0, fbWidth, fbHeight);
-
-    renderPass->SetClearColor(0.8f, 0.3f, 0.3f, 1.0f);
-    renderPass->Begin();
-
-    if (renderCommandQueue) {
-      renderCommandQueue->Submit([this]() { vao->Bind(); });
-
-      renderCommandQueue->Submit([this, fbWidth, fbHeight]() {
-        renderPass->SetViewportSize(fbWidth, fbHeight);
-
-        shader->Bind();
-        shader->SetUniform("u_Projection", renderPass->GetProjectionMatrix());
-        shader->SetUniform("u_Model", GetModelMatrix(renderPass->GetModelMatrix()));
-      });
-
-      renderCommandQueue->Submit([this]() { texture->Bind(0); });
-
-      renderCommandQueue->Submit(
-              []() { glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); });
-
-      renderCommandQueue->Execute();
-    }
-
-    renderPass->End();
-
-    ImGuiManager::GetInstance().Render();
   } else {
-    // Bind the default framebuffer to render the scene directly to the window
-    Framebuffer *framebuffer = new OpenGLFramebuffer();
+    // Change this to use Framebuffer::CreateFramebuffer() to remain API agnostic
+    framebuffer = Framebuffer::CreateFramebuffer();
     framebuffer->Unbind();
 
-    int windowWidth, windowHeight;
-    glfwGetFramebufferSize(Window::GetGLFWWindow(), &windowWidth, &windowHeight);
-    glViewport(0, 0, windowWidth, windowHeight);
-
-    renderPass->SetClearColor(0.8f, 0.3f, 0.3f, 1.0f);
-    renderPass->Begin();
-
-    if (renderCommandQueue) {
-      renderCommandQueue->Submit([this]() { vao->Bind(); });
-
-      renderCommandQueue->Submit([this, windowWidth, windowHeight]() {
-        renderPass->SetViewportSize(windowWidth, windowHeight);
-
-        shader->Bind();
-        shader->SetUniform("u_Projection", renderPass->GetProjectionMatrix());
-        shader->SetUniform("u_Model", GetModelMatrix(renderPass->GetModelMatrix()));
-      });
-
-      renderCommandQueue->Submit([this]() { texture->Bind(0); });
-
-      renderCommandQueue->Submit(
-              []() { glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); });
-
-      renderCommandQueue->Execute();
-    }
-
-    renderPass->End();
+    auto framebufferSize = framebuffer->GetSize(Window::GetGLFWWindow());
+    fbWidth = framebufferSize.x;
+    fbHeight = framebufferSize.y;
   }
+
+  renderPass->SetViewportSize(fbWidth, fbHeight);
+  renderPass->SetClearColor(0.8f, 0.3f, 0.3f, 1.0f);
+  renderPass->Begin();
+
+  if (renderCommandQueue) {
+    renderCommandQueue->Submit([this]() { vao->Bind(); });
+
+    renderCommandQueue->Submit([this, fbWidth, fbHeight]() {
+      renderPass->SetViewportSize(fbWidth, fbHeight);
+
+      shader->Bind();
+      shader->SetUniform("u_Projection", renderPass->GetProjectionMatrix());
+      shader->SetUniform("u_Model", GetModelMatrix(renderPass->GetModelMatrix()));
+    });
+
+    renderCommandQueue->Submit([this]() { texture->Bind(0); });
+
+    renderCommandQueue->Submit([this]() {
+      renderCommand = RenderCommand::CreateDrawElementsCommand();
+
+      switch (currentAPI) {
+        case API::OpenGL:
+          renderCommand->SetDrawElementsParams(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+          break;
+        default:
+          break;
+      }
+
+      renderCommand->Execute();
+    });
+
+    renderCommandQueue->Execute();
+  }
+
+  if (isDebugMenuOpen) { ImGuiManager::GetInstance().Render(); }
 }

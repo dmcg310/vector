@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../lib_renderer/include/render_command.h"
 #include "../../lib_renderer/include/render_command_queue.h"
 #include "../../lib_renderer/include/render_pass.h"
 #include "../../lib_renderer/include/shader.h"
@@ -24,5 +25,6 @@ private:
   std::shared_ptr<Texture> texture;
   std::shared_ptr<Shader> shader;
   std::shared_ptr<RenderPass> renderPass;
+  std::shared_ptr<RenderCommand> renderCommand;
   std::shared_ptr<RenderCommandQueue> renderCommandQueue;
 };

@@ -38,7 +38,7 @@ bool ImGuiManager::Setup(GLFWwindow *window) {
       texture = new OpenGLTexture();
       texture->Create(800, 600, GL_RGBA);
 
-      framebuffer = new OpenGLFramebuffer();
+      framebuffer = Framebuffer::CreateFramebuffer();
       framebuffer->Create();
       framebuffer->AttachTexture(texture);
 
@@ -291,7 +291,6 @@ void ImGuiManager::Shutdown() {
   ImGui::DestroyContext();
 
   delete texture;
-  delete framebuffer;
   delete renderbuffer;
 }
 
