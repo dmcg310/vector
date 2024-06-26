@@ -8,6 +8,7 @@
 #include "../include/render_command.h"
 #include "../include/render_command_queue.h"
 #include "../include/render_pass.h"
+#include "../include/renderbuffer.h"
 #include "../include/shader.h"
 #include "../include/texture.h"
 #include "../include/vertex_array.h"
@@ -16,6 +17,7 @@
 #include "../src/concrete/opengl/opengl_render_command.h"
 #include "../src/concrete/opengl/opengl_render_command_queue.h"
 #include "../src/concrete/opengl/opengl_render_pass.h"
+#include "../src/concrete/opengl/opengl_renderbuffer.h"
 #include "../src/concrete/opengl/opengl_shader.h"
 #include "../src/concrete/opengl/opengl_texture.h"
 #include "../src/concrete/opengl/opengl_vertex_array.h"
@@ -47,6 +49,15 @@ std::shared_ptr<Framebuffer> Framebuffer::CreateFramebuffer() {
   switch (currentAPI) {
     case API::OpenGL:
       return std::make_shared<OpenGLFramebuffer>();
+    default:
+      return nullptr;
+  }
+}
+
+std::shared_ptr<Renderbuffer> Renderbuffer::CreateRenderbuffer() {
+  switch (currentAPI) {
+    case API::OpenGL:
+      return std::make_shared<OpenGLRenderbuffer>();
     default:
       return nullptr;
   }

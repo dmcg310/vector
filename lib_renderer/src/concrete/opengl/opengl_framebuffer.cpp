@@ -44,7 +44,7 @@ void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height) {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void OpenGLFramebuffer::AttachTexture(Texture *texture) {
+void OpenGLFramebuffer::AttachTexture(std::shared_ptr<Texture> texture) {
   this->texture = texture;
 
   Bind();
@@ -60,7 +60,7 @@ void OpenGLFramebuffer::AttachTexture(Texture *texture) {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void OpenGLFramebuffer::AttachRenderbuffer(Renderbuffer *renderbuffer) {
+void OpenGLFramebuffer::AttachRenderbuffer(std::shared_ptr<Renderbuffer> renderbuffer) {
   this->renderbuffer = renderbuffer;
 
   Bind();

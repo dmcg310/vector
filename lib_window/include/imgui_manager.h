@@ -47,16 +47,16 @@ public:
 
 private:
   ImGuiManager()
-      : framebuffer(nullptr), texture(nullptr), renderbuffer(nullptr), initialized(false),
+      : framebuffer(nullptr), texture(nullptr), renderbuffer(nullptr),
         isDebugMenuOpen(false), renderAPI(API::None) {}
   ~ImGuiManager() {}
 
   bool initialized;
   bool isDebugMenuOpen;
   glm::vec2 viewportSize;
-  Texture *texture;
+  std::shared_ptr<Texture> texture;
   std::shared_ptr<Framebuffer> framebuffer;
-  Renderbuffer *renderbuffer;
+  std::shared_ptr<Renderbuffer> renderbuffer;
   API renderAPI;
 
   bool Setup(GLFWwindow *window);

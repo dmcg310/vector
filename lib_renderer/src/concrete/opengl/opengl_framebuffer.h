@@ -10,13 +10,13 @@ public:
   void Bind() override;
   void Unbind() override;
   void Resize(uint32_t width, uint32_t height) override;
-  void AttachTexture(Texture *texture) override;
-  void AttachRenderbuffer(Renderbuffer *renderbuffer) override;
+  void AttachTexture(std::shared_ptr<Texture> texture) override;
+  void AttachRenderbuffer(std::shared_ptr<Renderbuffer> renderbuffer) override;
   glm::vec2 GetSize(GLFWwindow *window) override;
   ~OpenGLFramebuffer() override;
 
 private:
   unsigned int fbo;
-  Texture *texture;
-  Renderbuffer *renderbuffer;
+  std::shared_ptr<Texture> texture;
+  std::shared_ptr<Renderbuffer> renderbuffer;
 };
