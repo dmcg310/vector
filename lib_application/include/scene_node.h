@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <glm/glm.hpp>
 #include <memory>
+#include <string>
 #include <vector>
 
 class SceneNode {
@@ -49,11 +50,14 @@ public:
     return children;
   }
 
+  [[nodiscard]] std::string GetName() const { return name; }
+  void SetName(const std::string &_name) { name = _name; }
+
+protected:
+  std::string name;
   glm::vec2 position;
   glm::vec2 rotation;
   glm::vec2 scale;
-
-protected:
   SceneNode *parent;
   std::vector<std::shared_ptr<SceneNode>> children;
 };
