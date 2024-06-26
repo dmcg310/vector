@@ -50,11 +50,22 @@ public:
     return children;
   }
 
-  [[nodiscard]] std::string GetName() const { return name; }
+  [[nodiscard]] std::string GetName() const {
+    if (name.empty()) {
+      return GetNodeType();
+    } else {
+      return name;
+    }
+  }
+
   void SetName(const std::string &_name) { name = _name; }
+
+  [[nodiscard]] std::string GetNodeType() const { return nodeType; }
+  void SetNodeType(const std::string &_nodeType) { nodeType = _nodeType; }
 
 protected:
   std::string name;
+  std::string nodeType;
   glm::vec2 position;
   glm::vec2 rotation;
   glm::vec2 scale;
