@@ -10,12 +10,12 @@ public:
   void Begin() override;
   void End() override;
   void SetClearColor(float r, float g, float b, float a) override;
-  void SetViewportSize(int width, int height) override;
+  void SetViewportSize(float width, float height) override;
   glm::mat4 GetProjectionMatrix() const override;
   glm::mat4 GetModelMatrix() const override;
 
 private:
-  int viewportWidth;
-  int viewportHeight;
+  float viewportWidth;
+  float viewportHeight;
   float clearColor[4];
 };

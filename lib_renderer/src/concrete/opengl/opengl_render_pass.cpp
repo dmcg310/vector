@@ -16,19 +16,19 @@ void OpenGLRenderPass::SetClearColor(float r, float g, float b, float a) {
   clearColor[3] = a;
 }
 
-void OpenGLRenderPass::SetViewportSize(int width, int height) {
+void OpenGLRenderPass::SetViewportSize(float width, float height) {
   viewportWidth = width;
   viewportHeight = height;
+
+  glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 }
 
 glm::mat4 OpenGLRenderPass::GetProjectionMatrix() const {
-  return glm::ortho(0.0f, static_cast<float>(viewportWidth), 0.0f,
-                    static_cast<float>(viewportHeight));
+  return glm::ortho(0.0f, viewportWidth, 0.0f, viewportHeight);
 }
 
 glm::mat4 OpenGLRenderPass::GetModelMatrix() const {
-  float aspectRatio =
-          static_cast<float>(viewportWidth) / static_cast<float>(viewportHeight);
+  float aspectRatio = viewportWidth / viewportHeight;
   float scale = std::min(viewportWidth, viewportHeight) / 2.0f;
 
   glm::mat4 model = glm::mat4(1.0f);

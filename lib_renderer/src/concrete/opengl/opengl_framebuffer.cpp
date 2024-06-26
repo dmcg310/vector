@@ -76,6 +76,15 @@ void OpenGLFramebuffer::AttachRenderbuffer(Renderbuffer *renderbuffer) {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+glm::vec2 OpenGLFramebuffer::GetSize(GLFWwindow *window) {
+  int width;
+  int height;
+
+  glfwGetFramebufferSize(window, &width, &height);
+
+  return glm::vec2(width, height);
+}
+
 OpenGLFramebuffer::~OpenGLFramebuffer() {
   glDeleteFramebuffers(1, &fbo);
 

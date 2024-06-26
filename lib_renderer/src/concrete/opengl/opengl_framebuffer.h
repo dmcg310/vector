@@ -4,10 +4,6 @@
 #include "../../../include/renderbuffer.h"
 #include "../../../include/texture.h"
 
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-#include <glad/gl.h>
-
 class OpenGLFramebuffer : public Framebuffer {
 public:
   void Create() override;
@@ -16,6 +12,7 @@ public:
   void Resize(uint32_t width, uint32_t height) override;
   void AttachTexture(Texture *texture) override;
   void AttachRenderbuffer(Renderbuffer *renderbuffer) override;
+  glm::vec2 GetSize(GLFWwindow *window) override;
   ~OpenGLFramebuffer() override;
 
 private:
