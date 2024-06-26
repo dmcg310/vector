@@ -16,6 +16,12 @@ public:
   virtual void AddNode(const std::shared_ptr<SceneNode> &node);
   virtual void RemoveNode(const std::shared_ptr<SceneNode> &node);
 
+  [[nodiscard]] virtual std::shared_ptr<SceneNode> &GetNode();
+  virtual std::vector<std::shared_ptr<SceneNode>> &GetNodes();
+  virtual void SelectNode(const std::shared_ptr<SceneNode> &node);
+  [[nodiscard]] virtual std::shared_ptr<SceneNode> GetSelectedNode() const;
+
 private:
   std::vector<std::shared_ptr<SceneNode>> nodes;
+  std::shared_ptr<SceneNode> selectedNode;
 };

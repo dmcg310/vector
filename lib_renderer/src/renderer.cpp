@@ -1,4 +1,5 @@
 #include "renderer.h"
+#include "../../lib_application/nodes/simple_node.h"
 #include "../../lib_application/scenes/test_scene/test_scene.h"
 #include "../../lib_log/include/log.h"
 #include "../../lib_window/include/window.h"
@@ -26,6 +27,7 @@ void Renderer::Initialize(GLFWwindow *window) {
     throw;
   }
 
+  // Maybe we can make any scene not just TestScene
   auto testScene = std::make_shared<TestScene>();
   sceneManager.AddScene("TestScene", testScene);
   sceneManager.SetActiveScene("TestScene");
@@ -37,7 +39,20 @@ void Renderer::Initialize(GLFWwindow *window) {
 #endif
 }
 
+SimpleNode &Renderer::GetNode() {
+  // FIX
+  return reinterpret_cast<SimpleNode &>(sceneManager.GetActiveScene()->GetNode());
+}
+
 SceneManager &Renderer::GetSceneManager() { return sceneManager; }
+
+std::shared_ptr<Scene> Renderer::GetCurrentScene() {
+  return sceneManager.GetActiveScene();
+}
+
+std::shared_ptr<SceneNode> Renderer::GetSelectedNode() {
+  return GetCurrentScene()->GetSelectedNode();
+}
 
 void Renderer::Update(float deltaTime) {
   sceneManager.Update(deltaTime);
@@ -69,4 +84,3 @@ void Renderer::Shutdown() {
     context = nullptr;
   }
 }
-SimpleNode &Renderer::GetNode() { return node; }

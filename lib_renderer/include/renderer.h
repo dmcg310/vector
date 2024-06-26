@@ -22,7 +22,12 @@ public:
   void Shutdown();
 
   SceneManager &GetSceneManager();
+
+  // FIX
   SimpleNode &GetNode();
+
+  std::shared_ptr<Scene> GetCurrentScene();
+  std::shared_ptr<SceneNode> GetSelectedNode();
 
 private:
   Renderer();
@@ -33,7 +38,6 @@ private:
 
   Context *context;
   SceneManager sceneManager;
-  SimpleNode node;
 
 #ifdef _DEBUG
   ImGuiManager &imGuiManager;

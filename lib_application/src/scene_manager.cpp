@@ -16,6 +16,8 @@ void SceneManager::AddScene(const std::string &sceneName, std::shared_ptr<Scene>
   scenes[sceneName] = std::move(scene);
 }
 
+std::shared_ptr<Scene> SceneManager::GetActiveScene() { return activeScene; }
+
 void SceneManager::Update(float deltaTime) {
   if (activeScene) { activeScene->Update(deltaTime); }
 }
