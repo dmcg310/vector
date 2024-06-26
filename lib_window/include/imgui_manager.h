@@ -10,10 +10,6 @@
 #include "../../lib_renderer/include/render_pass.h"
 #include "../../lib_renderer/include/renderbuffer.h"
 #include "../../lib_renderer/include/texture.h"
-#include "../../lib_renderer/src/concrete/opengl/opengl_framebuffer.h"
-#include "../../lib_renderer/src/concrete/opengl/opengl_render_pass.h"
-#include "../../lib_renderer/src/concrete/opengl/opengl_renderbuffer.h"
-#include "../../lib_renderer/src/concrete/opengl/opengl_texture.h"
 #include <glm/glm.hpp>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -31,10 +27,8 @@ public:
   void ResizeViewport(uint32_t width, uint32_t height);
   void Render();
   void RenderDebugMenu();
-
   void RenderNode(const std::shared_ptr<SceneNode> &node,
                   const std::shared_ptr<SceneNode> &selectedNode);
-
   void Shutdown();
 
   void ToggleDebugMenu() { isDebugMenuOpen = !isDebugMenuOpen; }

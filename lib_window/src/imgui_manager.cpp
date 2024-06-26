@@ -5,6 +5,7 @@
 
 bool ImGuiManager::Initialize(GLFWwindow *window, API api) {
   renderAPI = api;
+
   return Setup(window);
 }
 
@@ -35,18 +36,6 @@ bool ImGuiManager::Setup(GLFWwindow *window) {
         return false;
       }
 
-      texture = new OpenGLTexture();
-      texture->Create(800, 600, GL_RGBA);
-
-      framebuffer = Framebuffer::CreateFramebuffer();
-      framebuffer->Create();
-      framebuffer->AttachTexture(texture);
-
-      renderbuffer = new OpenGLRenderbuffer();
-      renderbuffer->Create();
-      renderbuffer->SetStorage(GL_DEPTH24_STENCIL8, 800, 600);
-      framebuffer->AttachRenderbuffer(renderbuffer);
-
       break;
 
     default:
@@ -54,35 +43,65 @@ bool ImGuiManager::Setup(GLFWwindow *window) {
       return false;
   }
 
+  texture = Texture::CreateTexture();
+  texture->Create(800, 600, GL_RGBA);
+
+  framebuffer = Framebuffer::CreateFramebuffer();
+  framebuffer->Create();
+  framebuffer->AttachTexture(texture);
+
+  renderbuffer = Renderbuffer::CreateRenderbuffer();
+  renderbuffer->Create();
+
+  switch (renderAPI) {
+    case API::OpenGL:
+      renderbuffer->SetStorage(GL_DEPTH24_STENCIL8, 800, 600);
+      break;
+
+    default:
+      break;
+  }
+
+  framebuffer->AttachRenderbuffer(renderbuffer);
+
   initialized = true;
+
   return true;
 }
 
 void ImGuiManager::ResizeViewport(uint32_t width, uint32_t height) {
-  delete texture;
-  delete renderbuffer;
+  texture = Texture::CreateTexture();
+  texture->Create((int) width, (int) height, GL_RGBA);
+
+  framebuffer->Bind();
+  framebuffer->AttachTexture(texture);
+
+  renderbuffer = Renderbuffer::CreateRenderbuffer();
+  renderbuffer->Create();
 
   switch (renderAPI) {
     case API::OpenGL:
-      texture = new OpenGLTexture();
-      texture->Create(width, height, GL_RGBA);
+      renderbuffer->SetStorage(GL_DEPTH24_STENCIL8, (int) width, (int) height);
+      break;
 
-      framebuffer->Bind();
-      framebuffer->AttachTexture(texture);
-
-      renderbuffer = new OpenGLRenderbuffer();
-      renderbuffer->Create();
-      renderbuffer->SetStorage(GL_DEPTH24_STENCIL8, width, height);
-
-      framebuffer->AttachRenderbuffer(renderbuffer);
-
+    default:
       break;
   }
+
+  framebuffer->AttachRenderbuffer(renderbuffer);
 }
 
 void ImGuiManager::Render() {
-  ImGui_ImplOpenGL3_NewFrame();
-  ImGui_ImplGlfw_NewFrame();
+  switch (renderAPI) {
+    case API::OpenGL:
+      ImGui_ImplOpenGL3_NewFrame();
+      ImGui_ImplGlfw_NewFrame();
+      break;
+
+    default:
+      break;
+  }
+
   ImGui::NewFrame();
 
   ImGuiID dockspaceID = ImGui::GetID("MyDockspace");
@@ -98,22 +117,19 @@ void ImGuiManager::Render() {
       newViewportSize != viewportSize) {
     ResizeViewport(static_cast<uint32_t>(newViewportSize.x),
                    static_cast<uint32_t>(newViewportSize.y));
+
     viewportSize = newViewportSize;
   }
 
-  switch (renderAPI) {
-    case API::OpenGL:
-      framebuffer->Unbind();
+  framebuffer->Unbind();
 
-      RenderPass *renderPass = new OpenGLRenderPass();
-      renderPass->SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-      renderPass->Begin();
+  auto renderPass = RenderPass::CreateRenderPass();
+  renderPass->SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  renderPass->Begin();
 
-      break;
-  }
 
-  ImGui::Image(reinterpret_cast<void *>(static_cast<intptr_t>(texture->GetID())),
-               viewportScreenSize, ImVec2{0, 1}, ImVec2{1, 0});
+  ImGui::Image(reinterpret_cast<ImTextureID>(texture->GetID()), viewportScreenSize,
+               ImVec2{0, 1}, ImVec2{1, 0});
 
   ImGui::End();
   ImGui::Render();
@@ -121,6 +137,9 @@ void ImGuiManager::Render() {
   switch (renderAPI) {
     case API::OpenGL:
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+      break;
+
+    default:
       break;
   }
 
@@ -289,9 +308,6 @@ void ImGuiManager::Shutdown() {
 
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
-
-  delete texture;
-  delete renderbuffer;
 }
 
 #endif
