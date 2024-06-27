@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../lib_log/include/log.h"
 #include <algorithm>
 #include <glm/glm.hpp>
 #include <memory>
@@ -17,8 +18,12 @@ public:
   }
 
   void RemoveChild(const std::shared_ptr<SceneNode> &child) {
-    children.erase(std::remove(children.begin(), children.end(), child), children.end());
-    child->parent = nullptr;
+    auto it = std::find(children.begin(), children.end(), child);
+    if (it != children.end()) {
+      (*it)->Shutdown();
+      children.erase(it);
+      child->parent = nullptr;
+    }
   }
 
   virtual void Initialize() {
@@ -49,6 +54,17 @@ public:
   [[nodiscard]] std::vector<std::shared_ptr<SceneNode>> GetChildren() const {
     return children;
   }
+
+  virtual SceneNode *GetParent() const { return parent; }
+
+  virtual void Clone(const std::shared_ptr<SceneNode> &node) const {
+    for (const auto &child: children) {
+      auto newNode = child->Clone();
+      node->AddChild(newNode);
+    }
+  }
+
+  [[nodiscard]] virtual std::shared_ptr<SceneNode> Clone() const = 0;
 
   [[nodiscard]] std::string GetName() const {
     if (name.empty()) {

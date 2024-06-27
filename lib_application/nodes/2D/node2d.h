@@ -23,4 +23,13 @@ public:
     model = renderPassModelMatrix * model;
     return model;
   }
+
+  [[nodiscard]] std::shared_ptr<SceneNode> Clone() const override {
+    auto node = std::make_shared<Node2D>(*this);
+    node->children.clear();
+
+    for (const auto &child: children) { node->AddChild(child->Clone()); }
+
+    return node;
+  }
 };

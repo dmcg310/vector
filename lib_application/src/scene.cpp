@@ -27,9 +27,11 @@ void Scene::Shutdown() {
 void Scene::AddNode(const std::shared_ptr<SceneNode> &node) { nodes.push_back(node); }
 
 void Scene::RemoveNode(const std::shared_ptr<SceneNode> &node) {
-  nodes.erase(std::remove(nodes.begin(), nodes.end(), node), nodes.end());
-
-  node->Shutdown();
+  auto it = std::find(nodes.begin(), nodes.end(), node);
+  if (it != nodes.end()) {
+    (*it)->Shutdown();
+    nodes.erase(it);
+  }
 }
 
 std::shared_ptr<SceneNode> &Scene::GetNode() { return nodes[0]; }

@@ -31,7 +31,9 @@ public:
                   const std::shared_ptr<SceneNode> &selectedNode);
   void Shutdown();
 
-  void ToggleDebugMenu() { isDebugMenuOpen = !isDebugMenuOpen; }
+  void Refresh();
+
+  void ToggleDebugMenu();
   [[nodiscard]] bool IsDebugMenuOpen() const { return isDebugMenuOpen; }
   [[nodiscard]] bool IsInitialized() const { return initialized; }
   [[nodiscard]] glm::vec2 GetViewportSize() const { return viewportSize; }
@@ -42,7 +44,7 @@ public:
 private:
   ImGuiManager()
       : framebuffer(nullptr), texture(nullptr), renderbuffer(nullptr),
-        isDebugMenuOpen(false), renderAPI(API::None) {}
+        isDebugMenuOpen(true), renderAPI(API::None) {}
   ~ImGuiManager() {}
 
   bool initialized;
