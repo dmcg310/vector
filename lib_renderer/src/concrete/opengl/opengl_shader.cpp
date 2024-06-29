@@ -102,8 +102,34 @@ void OpenGLShader::SetUniform(const std::string &name, float value) {
   }
 }
 
+void OpenGLShader::SetUniform(const std::string &name, int value) {
+  GLint location = GetUniformLocation(name);
+  if (location == -1) { return; }
+
+  glUniform1i(location, value);
+
+  GLenum error = glGetError();
+  if (error != GL_NO_ERROR) {
+    Log::Write(Log::ERROR,
+               "Error setting uniform '" + name + "': " + std::to_string(error));
+  }
+}
+
+void OpenGLShader::SetUniformArray(const std::string &name,
+                                   const std::vector<int> &values) {
+  GLint location = GetUniformLocation(name);
+  if (location == -1) { return; }
+
+  glUniform1iv(location, values.size(), values.data());
+
+  GLenum error = glGetError();
+  if (error != GL_NO_ERROR) {
+    Log::Write(Log::ERROR,
+               "Error setting uniform array '" + name + "': " + std::to_string(error));
+  }
+}
+
 GLint OpenGLShader::GetUniformLocation(const std::string &name) {
-  // We can cache the uniform location for performance
   if (auto it = uniformLocations.find(name); it != uniformLocations.end()) {
     return it->second;
   }

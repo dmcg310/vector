@@ -16,6 +16,9 @@ public:
   void SetUniform(const std::string &name, const glm::mat4 &value) override;
   void SetUniform(const std::string &name, const glm::vec3 &value) override;
   void SetUniform(const std::string &name, float value) override;
+  void SetUniform(const std::string &name, int value) override;
+  void SetUniformArray(const std::string &name, const std::vector<int> &values) override;
+  GLuint GetProgramID() const override { return shaderProgram; }
   void LoadFromFile(const std::string &filePath, ShaderType shaderType) override;
 
 private:
