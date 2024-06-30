@@ -7,6 +7,8 @@ Cube3DNode::Cube3DNode()
 Cube3DNode::~Cube3DNode() = default;
 
 void Cube3DNode::Initialize() {
+  SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
+
   float vertices[] = {
           -1.0f, -1.0f, 1.0f,  // Front-bottom-left
           1.0f,  -1.0f, 1.0f,  // Front-bottom-right
@@ -17,6 +19,16 @@ void Cube3DNode::Initialize() {
           1.0f,  1.0f,  -1.0f, // Back-top-right
           -1.0f, 1.0f,  -1.0f  // Back-top-left
   };
+
+  auto scaleX = GetScale().x;
+  auto scaleY = GetScale().y;
+  auto scaleZ = GetScale().z;
+
+  for (int i = 0; i < sizeof(vertices) / sizeof(vertices[0]); i += 3) {
+    vertices[i] *= scaleX;
+    vertices[i + 1] *= scaleY;
+    vertices[i + 2] *= scaleZ;
+  }
 
   int indices[] = {
           0, 1, 2, 2, 3, 0, // Front face
