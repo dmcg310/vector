@@ -30,8 +30,12 @@ public:
     for (auto &child: children) { child->SetViewMatrixAndZoom(viewMatrix, zoom); }
   }
 
+  void SetLightPosition(const glm::vec3 &lightPos) { lightPosition = lightPos; }
+  [[nodiscard]] glm::vec3 GetLightPosition() const { return lightPosition; }
+
 private:
   glm::vec3 position;
   glm::vec3 rotation;
   glm::vec3 scale;
+  glm::vec3 lightPosition;
 };

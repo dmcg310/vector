@@ -9,42 +9,50 @@ Cube3DNode::~Cube3DNode() = default;
 void Cube3DNode::Initialize() {
   SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
-  float vertices[] = {
-          -1.0f, -1.0f, 1.0f,  // Front-bottom-left
-          1.0f,  -1.0f, 1.0f,  // Front-bottom-right
-          1.0f,  1.0f,  1.0f,  // Front-top-right
-          -1.0f, 1.0f,  1.0f,  // Front-top-left
-          -1.0f, -1.0f, -1.0f, // Back-bottom-left
-          1.0f,  -1.0f, -1.0f, // Back-bottom-right
-          1.0f,  1.0f,  -1.0f, // Back-top-right
-          -1.0f, 1.0f,  -1.0f  // Back-top-left
-  };
+  float vertices[] = {-0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  -0.5f,
+                      -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  0.5f,  -0.5f, 0.0f,
+                      0.0f,  -1.0f, -0.5f, 0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f,
+
+                      -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  0.5f,  -0.5f,
+                      0.5f,  0.0f,  0.0f,  1.0f,  0.5f,  0.5f,  0.5f,  0.0f,
+                      0.0f,  1.0f,  -0.5f, 0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+
+                      -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,  -0.5f, 0.5f,
+                      -0.5f, -1.0f, 0.0f,  0.0f,  -0.5f, -0.5f, -0.5f, -1.0f,
+                      0.0f,  0.0f,  -0.5f, -0.5f, 0.5f,  -1.0f, 0.0f,  0.0f,
+
+                      0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.5f,  0.5f,
+                      -0.5f, 1.0f,  0.0f,  0.0f,  0.5f,  -0.5f, -0.5f, 1.0f,
+                      0.0f,  0.0f,  0.5f,  -0.5f, 0.5f,  1.0f,  0.0f,  0.0f,
+
+                      -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,  0.5f,  -0.5f,
+                      -0.5f, 0.0f,  -1.0f, 0.0f,  0.5f,  -0.5f, 0.5f,  0.0f,
+                      -1.0f, 0.0f,  -0.5f, -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,
+
+                      -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f,  0.5f,  0.5f,
+                      -0.5f, 0.0f,  1.0f,  0.0f,  0.5f,  0.5f,  0.5f,  0.0f,
+                      1.0f,  0.0f,  -0.5f, 0.5f,  0.5f,  0.0f,  1.0f,  0.0f};
+
+  unsigned int indices[] = {0,  1,  2,  2,  3,  0,  4,  5,  6,  6,  7,  4,
+                            8,  9,  10, 10, 11, 8,  12, 13, 14, 14, 15, 12,
+                            16, 17, 18, 18, 19, 16, 20, 21, 22, 22, 23, 20};
 
   auto scaleX = GetScale().x;
   auto scaleY = GetScale().y;
   auto scaleZ = GetScale().z;
 
-  for (int i = 0; i < sizeof(vertices) / sizeof(vertices[0]); i += 3) {
+  for (int i = 0; i < sizeof(vertices) / sizeof(vertices[0]); i += 6) {
     vertices[i] *= scaleX;
     vertices[i + 1] *= scaleY;
     vertices[i + 2] *= scaleZ;
   }
-
-  int indices[] = {
-          0, 1, 2, 2, 3, 0, // Front face
-          1, 5, 6, 6, 2, 1, // Right face
-          7, 6, 5, 5, 4, 7, // Back face
-          4, 0, 3, 3, 7, 4, // Left face
-          4, 5, 1, 1, 0, 4, // Bottom face
-          3, 2, 6, 6, 7, 3  // Top face
-  };
 
   vao = VertexArray::CreateVertexArray();
   vao->Create();
 
   vertexBuffer = Buffer::CreateBuffer(BufferType::Vertex);
   vertexBuffer->Create(sizeof(vertices), vertices);
-  vao->AddVertexBuffer(vertexBuffer, 3);
+  vao->AddVertexBuffer(vertexBuffer, 6);
 
   indexBuffer = Buffer::CreateBuffer(BufferType::Index);
   indexBuffer->Create(sizeof(indices), indices);
@@ -59,7 +67,7 @@ void Cube3DNode::Initialize() {
   renderCommandQueue = RenderCommandQueue::CreateRenderCommandQueue();
 
   vao->Bind();
-  vao->AddVertexBuffer(vertexBuffer, 3);
+  vao->AddVertexBuffer(vertexBuffer, 6); // 6 for positions and normals
   vao->SetIndexBuffer(indexBuffer);
   vao->Unbind();
 
@@ -82,12 +90,14 @@ void Cube3DNode::Render() {
 
   renderPass->SetViewportSize(fbWidth, fbHeight);
 
+  auto lightPos = Renderer::GetInstance().GetCurrentScene()->GetLightPosition();
+
   if (renderCommandQueue) {
     renderCommandQueue->Submit([this]() { vao->Bind(); });
 
     renderCommandQueue->Submit([this]() { shader->Bind(); });
 
-    renderCommandQueue->Submit([this, fbWidth, fbHeight]() {
+    renderCommandQueue->Submit([this, fbWidth, fbHeight, lightPos]() {
       float aspectRatio = fbWidth / fbHeight;
 
       glm::mat4 projection =
@@ -100,6 +110,7 @@ void Cube3DNode::Render() {
       shader->SetUniform("solidColor", solidColor);
       shader->SetUniform("lightColor", lightColor);
       shader->SetUniform("objectColor", objectColor);
+      shader->SetUniform("lightPos", lightPos);
     });
 
     renderCommandQueue->Submit([this]() {

@@ -7,44 +7,53 @@ LightingCubeNode::LightingCubeNode()
 LightingCubeNode::~LightingCubeNode() = default;
 
 void LightingCubeNode::Initialize() {
-  SetScale(glm::vec3(0.2f, 0.2f, 0.2f)); // Smaller scale for the light cube
+  SetLightPosition(glm::vec3(1.2f, 1.0f, 2.0f));
+  SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
 
-  float vertices[] = {
-          -1.0f, -1.0f, 1.0f,  // Front-bottom-left
-          1.0f,  -1.0f, 1.0f,  // Front-bottom-right
-          1.0f,  1.0f,  1.0f,  // Front-top-right
-          -1.0f, 1.0f,  1.0f,  // Front-top-left
-          -1.0f, -1.0f, -1.0f, // Back-bottom-left
-          1.0f,  -1.0f, -1.0f, // Back-bottom-right
-          1.0f,  1.0f,  -1.0f, // Back-top-right
-          -1.0f, 1.0f,  -1.0f  // Back-top-left
-  };
+  float vertices[] = {-0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  -0.5f,
+                      -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  0.5f,  -0.5f, 0.0f,
+                      0.0f,  -1.0f, -0.5f, 0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f,
+
+                      -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  0.5f,  -0.5f,
+                      0.5f,  0.0f,  0.0f,  1.0f,  0.5f,  0.5f,  0.5f,  0.0f,
+                      0.0f,  1.0f,  -0.5f, 0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+
+                      -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,  -0.5f, 0.5f,
+                      -0.5f, -1.0f, 0.0f,  0.0f,  -0.5f, -0.5f, -0.5f, -1.0f,
+                      0.0f,  0.0f,  -0.5f, -0.5f, 0.5f,  -1.0f, 0.0f,  0.0f,
+
+                      0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.5f,  0.5f,
+                      -0.5f, 1.0f,  0.0f,  0.0f,  0.5f,  -0.5f, -0.5f, 1.0f,
+                      0.0f,  0.0f,  0.5f,  -0.5f, 0.5f,  1.0f,  0.0f,  0.0f,
+
+                      -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,  0.5f,  -0.5f,
+                      -0.5f, 0.0f,  -1.0f, 0.0f,  0.5f,  -0.5f, 0.5f,  0.0f,
+                      -1.0f, 0.0f,  -0.5f, -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,
+
+                      -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f,  0.5f,  0.5f,
+                      -0.5f, 0.0f,  1.0f,  0.0f,  0.5f,  0.5f,  0.5f,  0.0f,
+                      1.0f,  0.0f,  -0.5f, 0.5f,  0.5f,  0.0f,  1.0f,  0.0f};
+
+  unsigned int indices[] = {0,  1,  2,  2,  3,  0,  4,  5,  6,  6,  7,  4,
+                            8,  9,  10, 10, 11, 8,  12, 13, 14, 14, 15, 12,
+                            16, 17, 18, 18, 19, 16, 20, 21, 22, 22, 23, 20};
 
   auto scaleX = GetScale().x;
   auto scaleY = GetScale().y;
   auto scaleZ = GetScale().z;
 
-  for (int i = 0; i < sizeof(vertices) / sizeof(vertices[0]); i += 3) {
+  for (int i = 0; i < sizeof(vertices) / sizeof(vertices[0]); i += 6) {
     vertices[i] *= scaleX;
     vertices[i + 1] *= scaleY;
     vertices[i + 2] *= scaleZ;
   }
-
-  int indices[] = {
-          0, 1, 2, 2, 3, 0, // Front face
-          1, 5, 6, 6, 2, 1, // Right face
-          7, 6, 5, 5, 4, 7, // Back face
-          4, 0, 3, 3, 7, 4, // Left face
-          4, 5, 1, 1, 0, 4, // Bottom face
-          3, 2, 6, 6, 7, 3  // Top face
-  };
 
   vao = VertexArray::CreateVertexArray();
   vao->Create();
 
   vertexBuffer = Buffer::CreateBuffer(BufferType::Vertex);
   vertexBuffer->Create(sizeof(vertices), vertices);
-  vao->AddVertexBuffer(vertexBuffer, 3);
+  vao->AddVertexBuffer(vertexBuffer, 6);
 
   indexBuffer = Buffer::CreateBuffer(BufferType::Index);
   indexBuffer->Create(sizeof(indices), indices);
@@ -59,19 +68,23 @@ void LightingCubeNode::Initialize() {
   renderCommandQueue = RenderCommandQueue::CreateRenderCommandQueue();
 
   vao->Bind();
-  vao->AddVertexBuffer(vertexBuffer, 3);
+  vao->AddVertexBuffer(vertexBuffer, 6);
   vao->SetIndexBuffer(indexBuffer);
   vao->Unbind();
 
   glEnable(GL_DEPTH_TEST);
 }
 
-void LightingCubeNode::Update(float deltaTime) {}
+void LightingCubeNode::Update(float deltaTime) {
+  float radius = 2.0f;
+  angle += deltaTime;
+  Renderer::GetInstance().GetCurrentScene()->SetLightPosition(
+          glm::vec3(radius * cos(angle), 1.0f, radius * sin(angle)));
+}
 
 void LightingCubeNode::Render() {
-  bool isDebugMenuOpen = false;
-
 #ifdef _DEBUG
+  bool isDebugMenuOpen = false;
   auto const &imGuiManager = ImGuiManager::GetInstance();
   isDebugMenuOpen = imGuiManager.IsDebugMenuOpen();
 #endif
@@ -93,7 +106,7 @@ void LightingCubeNode::Render() {
 
       glm::mat4 projection =
               glm::perspective(glm::radians(zoom), aspectRatio, 0.1f, 100.0f);
-      glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(1.2f, 1.0f, -2.0f));
+      glm::mat4 model = glm::translate(glm::mat4(1.0f), GetLightPosition());
 
       shader->SetUniform("projection", projection);
       shader->SetUniform("view", viewMatrix);

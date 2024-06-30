@@ -74,6 +74,12 @@ public:
     for (const auto &child: children) { child->SetViewMatrixAndZoom(viewMatrix, zoom); }
   }
 
+  virtual void SetLightPosition(const glm::vec3 &lightPos) {
+    for (const auto &child: children) { child->SetLightPosition(lightPos); }
+  }
+
+  [[nodiscard]] virtual glm::vec3 GetLightPosition() const { return glm::vec3(0.0f); }
+
 protected:
   std::string name;
   std::string nodeType;

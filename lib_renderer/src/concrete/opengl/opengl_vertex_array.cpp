@@ -36,13 +36,13 @@ void OpenGLVertexArray::AddVertexBuffer(std::shared_ptr<Buffer> vertexBuffer,
   Bind();
   vertexBuffer->Bind(0);
 
-  glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float),
                         (void *) nullptr);
+  glEnableVertexAttribArray(0);
 
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float),
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float),
                         (void *) (3 * sizeof(float)));
+  glEnableVertexAttribArray(1);
 
   vertexBuffers.push_back(vertexBuffer);
 

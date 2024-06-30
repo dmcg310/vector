@@ -43,6 +43,7 @@ private:
   std::shared_ptr<RenderCommandQueue> renderCommandQueue;
 
   float zoom;
+  float angle = 0.0f;
   glm::mat4 viewMatrix;
   glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 };

@@ -22,6 +22,8 @@ public:
   [[nodiscard]] virtual std::shared_ptr<SceneNode> GetSelectedNode() const;
 
   virtual void SetViewMatrixAndZoom(const glm::mat4 &viewMatrix, float zoom);
+  virtual void SetLightPosition(const glm::vec3 &lightPos);
+  [[nodiscard]] virtual glm::vec3 GetLightPosition() const;
 
 private:
   std::vector<std::shared_ptr<SceneNode>> nodes;

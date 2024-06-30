@@ -45,3 +45,9 @@ std::shared_ptr<SceneNode> Scene::GetSelectedNode() const { return selectedNode;
 void Scene::SetViewMatrixAndZoom(const glm::mat4 &viewMatrix, float zoom) {
   for (auto &node: nodes) { node->SetViewMatrixAndZoom(viewMatrix, zoom); }
 }
+
+void Scene::SetLightPosition(const glm::vec3 &lightPos) {
+  for (auto &node: nodes) { node->SetLightPosition(lightPos); }
+}
+
+glm::vec3 Scene::GetLightPosition() const { return nodes[0]->GetLightPosition(); }
