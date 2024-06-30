@@ -29,6 +29,14 @@ void TestScene::Initialize() {
 
   rootNode->AddChild(cube3d);
   AddNode(cube3d);
+
+  auto lightingCube = std::make_shared<LightingCubeNode>();
+  lightingCube->SetNodeType("LightingCubeNode");
+  lightingCube->SetName("Lighting Cube");
+  lightingCube->Initialize();
+
+  rootNode->AddChild(lightingCube);
+  AddNode(lightingCube);
 }
 
 void TestScene::Update(float deltaTime) { Scene::Update(deltaTime); }
