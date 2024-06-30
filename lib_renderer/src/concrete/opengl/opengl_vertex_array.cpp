@@ -21,16 +21,24 @@ void OpenGLVertexArray::Bind() {
   }
 }
 
-void OpenGLVertexArray::AddVertexBuffer(std::shared_ptr<Buffer> vertexBuffer) {
+void OpenGLVertexArray::Unbind() {
+  glBindVertexArray(0);
+
+  GLenum error = glGetError();
+  if (error != GL_NO_ERROR) {
+    Log::Write(Log::ERROR,
+               "Error unbinding vertex array object: " + std::to_string(error));
+  }
+}
+
+void OpenGLVertexArray::AddVertexBuffer(std::shared_ptr<Buffer> vertexBuffer,
+                                        int stride) {
   Bind();
   vertexBuffer->Bind(0);
 
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) nullptr);
-
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
-                        (void *) (3 * sizeof(float)));
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float),
+                        (void *) nullptr);
 
   vertexBuffers.push_back(vertexBuffer);
 
