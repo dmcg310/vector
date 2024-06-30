@@ -9,21 +9,24 @@ Texture2DNode::~Texture2DNode() = default;
 
 void Texture2DNode::Initialize(const std::string &textureFile) {
   float vertices[] = {
-          // positions        // texture coords
+          // positions         // texture coords
           -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom-left
           0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, // bottom-right
           0.5f,  0.5f,  0.0f, 1.0f, 1.0f, // top-right
           -0.5f, 0.5f,  0.0f, 0.0f, 1.0f  // top-left
   };
 
-  unsigned int indices[] = {0, 1, 2, 2, 3, 0};
+  int indices[] = {
+          0, 1, 2, // first triangle
+          2, 3, 0  // second triangle
+  };
 
   vao = VertexArray::CreateVertexArray();
   vao->Create();
 
   vertexBuffer = Buffer::CreateBuffer(BufferType::Vertex);
   vertexBuffer->Create(sizeof(vertices), vertices);
-  vao->AddVertexBuffer(vertexBuffer);
+  vao->AddVertexBuffer(vertexBuffer, 5);
 
   indexBuffer = Buffer::CreateBuffer(BufferType::Index);
   indexBuffer->Create(sizeof(indices), indices);
@@ -75,7 +78,6 @@ void Texture2DNode::Render() {
     fbHeight = imGuiManager.GetViewportSize().y;
 #endif
   } else {
-    // Change this to use Framebuffer::CreateFramebuffer() to remain API agnostic
     framebuffer = Framebuffer::CreateFramebuffer();
     framebuffer->Unbind();
 
@@ -92,26 +94,21 @@ void Texture2DNode::Render() {
     renderCommandQueue->Submit([this]() { vao->Bind(); });
 
     renderCommandQueue->Submit([this, fbWidth, fbHeight]() {
-      renderPass->SetViewportSize(fbWidth, fbHeight);
+      auto model = GetModelMatrix(renderPass->GetModelMatrix());
+      auto view = glm::mat4(1.0f);
+      auto projection = glm::ortho(0.0f, fbWidth, 0.0f, fbHeight);
 
       shader->Bind();
-      shader->SetUniform("u_Projection", renderPass->GetProjectionMatrix());
-      shader->SetUniform("u_Model", GetModelMatrix(renderPass->GetModelMatrix()));
+      shader->SetUniform("model", model);
+      shader->SetUniform("view", view);
+      shader->SetUniform("projection", projection);
     });
 
     renderCommandQueue->Submit([this]() { texture->Bind(0); });
 
     renderCommandQueue->Submit([this]() {
       renderCommand = RenderCommand::CreateDrawElementsCommand();
-
-      switch (currentAPI) {
-        case API::OpenGL:
-          renderCommand->SetDrawElementsParams(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-          break;
-        default:
-          break;
-      }
-
+      renderCommand->SetDrawElementsParams(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
       renderCommand->Execute();
     });
 

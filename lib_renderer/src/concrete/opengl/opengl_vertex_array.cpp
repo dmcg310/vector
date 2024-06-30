@@ -40,6 +40,10 @@ void OpenGLVertexArray::AddVertexBuffer(std::shared_ptr<Buffer> vertexBuffer,
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float),
                         (void *) nullptr);
 
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float),
+                        (void *) (3 * sizeof(float)));
+
   vertexBuffers.push_back(vertexBuffer);
 
   GLenum error = glGetError();

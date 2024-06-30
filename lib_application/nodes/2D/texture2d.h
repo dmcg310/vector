@@ -31,10 +31,10 @@ public:
   }
 
 private:
+  std::shared_ptr<Texture> texture;
   std::shared_ptr<VertexArray> vao;
   std::shared_ptr<Buffer> vertexBuffer;
   std::shared_ptr<Buffer> indexBuffer;
-  std::shared_ptr<Texture> texture;
   std::shared_ptr<Shader> shader;
   std::shared_ptr<RenderPass> renderPass;
   std::shared_ptr<RenderCommand> renderCommand;
