@@ -208,47 +208,47 @@ void ImGuiManager::RenderDebugMenu() {
   if (selectedNode) {
     ImGui::Separator();
 
-    if (auto textureNode = std::dynamic_pointer_cast<Texture2DNode>(selectedNode)) {
-      ImGui::Text("Properties");
+    // if (auto textureNode = std::dynamic_pointer_cast<Texture2DNode>(selectedNode)) {
+    //   ImGui::Text("Properties");
 
-      static glm::vec2 position = textureNode->GetPosition();
-      static glm::vec2 rotation = textureNode->GetRotation();
-      static glm::vec2 scale = textureNode->GetScale();
+    //   static auto position = textureNode->GetPosition();
+    //   static glm::vec2 rotation = textureNode->GetRotation();
+    //   static glm::vec2 scale = textureNode->GetScale();
 
-      if (ImGui::SliderFloat("X Position", &position.x, -1.0f, 1.0f, "%.3f")) {
-        textureNode->SetPosition(position);
-      }
-      if (ImGui::SliderFloat("Y Position", &position.y, -1.0f, 1.0f, "%.3f")) {
-        textureNode->SetPosition(position);
-      }
-      if (ImGui::SliderFloat("Rotation", &rotation.x, -360.0f, 360.0f, "%.3f")) {
-        textureNode->SetRotation(rotation);
-      }
-      if (ImGui::SliderFloat("X Scale", &scale.x, 0.1f, 10.0f, "%.3f")) {
-        textureNode->SetScale(scale);
-      }
-      if (ImGui::SliderFloat("Y Scale", &scale.y, 0.1f, 10.0f, "%.3f")) {
-        textureNode->SetScale(scale);
-      }
+    //   if (ImGui::SliderFloat("X Position", &position.x, -1.0f, 1.0f, "%.3f")) {
+    //     textureNode->SetPosition(position);
+    //   }
+    //   if (ImGui::SliderFloat("Y Position", &position.y, -1.0f, 1.0f, "%.3f")) {
+    //     textureNode->SetPosition(position);
+    //   }
+    //   if (ImGui::SliderFloat("Rotation", &rotation.x, -360.0f, 360.0f, "%.3f")) {
+    //     textureNode->SetRotation(rotation);
+    //   }
+    //   if (ImGui::SliderFloat("X Scale", &scale.x, 0.1f, 10.0f, "%.3f")) {
+    //     textureNode->SetScale(scale);
+    //   }
+    //   if (ImGui::SliderFloat("Y Scale", &scale.y, 0.1f, 10.0f, "%.3f")) {
+    //     textureNode->SetScale(scale);
+    //   }
 
-      if (ImGui::Button("Reset Position")) {
-        position = glm::vec2(0.0f, 0.0f);
-        textureNode->SetPosition(position);
-      }
+    //   if (ImGui::Button("Reset Position")) {
+    //     position = glm::vec2(0.0f, 0.0f);
+    //     textureNode->SetPosition(position);
+    //   }
 
-      ImGui::SameLine();
-      if (ImGui::Button("Reset Rotation")) {
-        rotation = glm::vec2(0.0f, 0.0f);
-        textureNode->SetRotation(rotation);
-      }
+    //   ImGui::SameLine();
+    //   if (ImGui::Button("Reset Rotation")) {
+    //     rotation = glm::vec2(0.0f, 0.0f);
+    //     textureNode->SetRotation(rotation);
+    //   }
 
-      if (ImGui::Button("Reset Scale")) {
-        scale = glm::vec2(1.0f, 1.0f);
-        textureNode->SetScale(scale);
-      }
-    } else {
-      ImGui::Text("This node is not editable.");
-    }
+    //   if (ImGui::Button("Reset Scale")) {
+    //     scale = glm::vec2(1.0f, 1.0f);
+    //     textureNode->SetScale(scale);
+    //   }
+    // } else {
+    //   ImGui::Text("This node is not editable.");
+    // }
   }
 
   ImGui::End();

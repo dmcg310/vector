@@ -102,6 +102,7 @@ void Texture2DNode::Render() {
       shader->SetUniform("model", model);
       shader->SetUniform("view", view);
       shader->SetUniform("projection", projection);
+      shader->SetUniform("useSolidColor", false);
     });
 
     renderCommandQueue->Submit([this]() { texture->Bind(0); });

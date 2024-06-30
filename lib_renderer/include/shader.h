@@ -19,6 +19,7 @@ public:
   virtual void Link() = 0;
   virtual void Bind() = 0;
   virtual void SetUniform(const std::string &name, const glm::mat4 &value) = 0;
+  virtual void SetUniform(const std::string &name, const glm::vec4 &value) = 0;
   virtual void SetUniform(const std::string &name, const glm::vec3 &value) = 0;
   virtual void SetUniform(const std::string &name, float value) = 0;
   virtual void SetUniform(const std::string &name, int value) = 0;

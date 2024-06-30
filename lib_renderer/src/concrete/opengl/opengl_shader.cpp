@@ -76,6 +76,19 @@ void OpenGLShader::SetUniform(const std::string &name, const glm::mat4 &value) {
   }
 }
 
+void OpenGLShader::SetUniform(const std::string &name, const glm::vec4 &value) {
+  GLint location = GetUniformLocation(name);
+  if (location == -1) { return; }
+
+  glUniform4fv(location, 1, glm::value_ptr(value));
+
+  GLenum error = glGetError();
+  if (error != GL_NO_ERROR) {
+    Log::Write(Log::ERROR,
+               "Error setting uniform '" + name + "': " + std::to_string(error));
+  }
+}
+
 void OpenGLShader::SetUniform(const std::string &name, const glm::vec3 &value) {
   GLint location = GetUniformLocation(name);
   if (location == -1) { return; }

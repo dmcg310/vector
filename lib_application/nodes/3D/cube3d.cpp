@@ -121,6 +121,8 @@ void Cube3DNode::Render() {
       model = glm::rotate(model, rotationAngleY, glm::vec3(0.0f, 1.0f, 0.0f));
 
       shader->SetUniform("model", model);
+      shader->SetUniform("useSolidColor", true);
+      shader->SetUniform("solidColor", glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
     });
 
     renderCommandQueue->Submit([this]() {
