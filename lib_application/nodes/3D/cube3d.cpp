@@ -52,7 +52,7 @@ void Cube3DNode::Initialize() {
 
   shader = Shader::CreateShader();
   shader->LoadFromFile("assets/shaders/vertex_shader.glsl", ShaderType::Vertex);
-  shader->LoadFromFile("assets/shaders/fragment_shader.glsl", ShaderType::Fragment);
+  shader->LoadFromFile("assets/shaders/fragment_shader_cube.glsl", ShaderType::Fragment);
   shader->Link();
 
   renderPass = RenderPass::CreateRenderPass();
@@ -69,9 +69,8 @@ void Cube3DNode::Initialize() {
 void Cube3DNode::Update(float deltaTime) {}
 
 void Cube3DNode::Render() {
-  bool isDebugMenuOpen = false;
-
 #ifdef _DEBUG
+  bool isDebugMenuOpen = false;
   auto const &imGuiManager = ImGuiManager::GetInstance();
   isDebugMenuOpen = imGuiManager.IsDebugMenuOpen();
 #endif
@@ -98,7 +97,9 @@ void Cube3DNode::Render() {
       shader->SetUniform("view", viewMatrix);
       shader->SetUniform("model", glm::mat4(1.0f));
       shader->SetUniform("useSolidColor", true);
-      shader->SetUniform("solidColor", glm::vec4(0.2f, 0.2f, 0.2f, 1.0f));
+      shader->SetUniform("solidColor", solidColor);
+      shader->SetUniform("lightColor", lightColor);
+      shader->SetUniform("objectColor", objectColor);
     });
 
     renderCommandQueue->Submit([this]() {

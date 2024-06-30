@@ -34,9 +34,6 @@ public:
   }
 
 private:
-  glm::mat4 viewMatrix;
-  float zoom;
-
   std::shared_ptr<VertexArray> vao;
   std::shared_ptr<Buffer> vertexBuffer;
   std::shared_ptr<Buffer> indexBuffer;
@@ -44,4 +41,8 @@ private:
   std::shared_ptr<RenderPass> renderPass;
   std::shared_ptr<RenderCommand> renderCommand;
   std::shared_ptr<RenderCommandQueue> renderCommandQueue;
+
+  float zoom;
+  glm::mat4 viewMatrix;
+  glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 };

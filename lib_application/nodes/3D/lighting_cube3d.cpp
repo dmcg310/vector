@@ -7,7 +7,7 @@ LightingCubeNode::LightingCubeNode()
 LightingCubeNode::~LightingCubeNode() = default;
 
 void LightingCubeNode::Initialize() {
-  SetScale(glm::vec3(0.2f, 0.2f, 0.2f)); // Smaller scale for the lighting cube
+  SetScale(glm::vec3(0.2f, 0.2f, 0.2f)); // Smaller scale for the light cube
 
   float vertices[] = {
           -1.0f, -1.0f, 1.0f,  // Front-bottom-left
@@ -52,7 +52,7 @@ void LightingCubeNode::Initialize() {
 
   shader = Shader::CreateShader();
   shader->LoadFromFile("assets/shaders/vertex_shader.glsl", ShaderType::Vertex);
-  shader->LoadFromFile("assets/shaders/fragment_shader.glsl", ShaderType::Fragment);
+  shader->LoadFromFile("assets/shaders/fragment_shader_light.glsl", ShaderType::Fragment);
   shader->Link();
 
   renderPass = RenderPass::CreateRenderPass();
@@ -98,8 +98,7 @@ void LightingCubeNode::Render() {
       shader->SetUniform("projection", projection);
       shader->SetUniform("view", viewMatrix);
       shader->SetUniform("model", model);
-      shader->SetUniform("useSolidColor", true);
-      shader->SetUniform("solidColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+      shader->SetUniform("lightColor", lightColor);
     });
 
     renderCommandQueue->Submit([this]() {
