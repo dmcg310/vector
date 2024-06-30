@@ -60,6 +60,10 @@ bool Window::Initialize(int _width, int _height, bool windowedFullscreen,
     glfwMaximizeWindow(window);
   }
 
+#ifdef _RELEASE
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+#endif
+
   return true;
 }
 

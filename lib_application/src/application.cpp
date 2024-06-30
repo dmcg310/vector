@@ -46,6 +46,10 @@ bool Application::Initialize() {
 
   Renderer::GetInstance().Initialize(Window::GetGLFWWindow());
 
+#ifdef _RELEASE
+  cameraControlEnabled = true;
+#endif
+
   return true;
 }
 
@@ -97,6 +101,9 @@ void Application::OnKeyPress(int key) {
   if (key == GLFW_KEY_ESCAPE) { Shutdown(); }
 
   if (key == GLFW_KEY_C) {
+#ifdef _RELEASE
+    return;
+#endif
     cameraControlEnabled = !cameraControlEnabled;
     cursorVisible = !cursorVisible;
 
