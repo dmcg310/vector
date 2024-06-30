@@ -27,7 +27,7 @@ public:
   void NotifyKeyRelease(int key);
   void NotifyMouseMove(double x, double y);
   void NotifyMouseClick(int button);
-  void NotifyScroll(double yoffset);
+  void NotifyScroll(double xoffset, double yoffset);
 
 private:
   std::vector<IEventObserver *> observers;

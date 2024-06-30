@@ -25,6 +25,6 @@ void EventManager::NotifyMouseClick(int button) {
   for (auto observer: observers) { observer->OnMouseClick(button); }
 }
 
-void EventManager::NotifyScroll(double yoffset) {
+void EventManager::NotifyScroll(double xoffset, double yoffset) {
   for (auto observer: observers) { observer->OnScroll(yoffset); }
 }

@@ -70,8 +70,8 @@ public:
   [[nodiscard]] std::string GetNodeType() const { return nodeType; }
   void SetNodeType(const std::string &_nodeType) { nodeType = _nodeType; }
 
-  virtual void SetViewMatrix(const glm::mat4 &viewMatrix) {
-    for (const auto &child: children) { child->SetViewMatrix(viewMatrix); }
+  virtual void SetViewMatrixAndZoom(const glm::mat4 &viewMatrix, float zoom) {
+    for (const auto &child: children) { child->SetViewMatrixAndZoom(viewMatrix, zoom); }
   }
 
 protected:

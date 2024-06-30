@@ -50,6 +50,7 @@ bool Window::Initialize(int _width, int _height, bool windowedFullscreen,
   glfwSetKeyCallback(window, KeyCallback);
   glfwSetCursorPosCallback(window, MouseCallback);
   glfwSetMouseButtonCallback(window, MouseButtonCallback);
+  glfwSetScrollCallback(window, ScrollCallback);
 
   if (fullscreen) {
     SetFullscreen(true, false);
@@ -169,4 +170,8 @@ void Window::MouseCallback(GLFWwindow *window, double xpos, double ypos) {
 
 void Window::MouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
   if (action == GLFW_PRESS) { Window::eventManager.NotifyMouseClick(button); }
+}
+
+void Window::ScrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
+  Window::eventManager.NotifyScroll(xoffset, yoffset);
 }

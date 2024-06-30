@@ -18,8 +18,9 @@ public:
   void Update(float deltaTime) override;
   void Render() override;
 
-  void SetViewMatrix(const glm::mat4 &_viewMatrix) override {
+  void SetViewMatrixAndZoom(const glm::mat4 &_viewMatrix, float _zoom) override {
     this->viewMatrix = _viewMatrix;
+    this->zoom = _zoom;
   }
 
   [[nodiscard]] std::shared_ptr<SceneNode> Clone() const override {
@@ -33,6 +34,8 @@ public:
 
 private:
   glm::mat4 viewMatrix;
+  float zoom;
+
   std::shared_ptr<VertexArray> vao;
   std::shared_ptr<Buffer> vertexBuffer;
   std::shared_ptr<Buffer> indexBuffer;

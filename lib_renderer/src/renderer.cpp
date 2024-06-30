@@ -83,7 +83,9 @@ void Renderer::Shutdown() {
   }
 }
 
-void Renderer::SetViewMatrix(const glm::mat4 &viewMatrix) {
+void Renderer::SetViewMatrixAndZoom(const glm::mat4 &viewMatrix, float zoom) {
   this->viewMatrix = viewMatrix;
-  GetCurrentScene()->SetViewMatrix(viewMatrix);
+  this->zoom = zoom;
+
+  GetCurrentScene()->SetViewMatrixAndZoom(viewMatrix, zoom);
 }

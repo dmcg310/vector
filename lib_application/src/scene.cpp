@@ -42,6 +42,6 @@ void Scene::SelectNode(const std::shared_ptr<SceneNode> &node) { selectedNode = 
 
 std::shared_ptr<SceneNode> Scene::GetSelectedNode() const { return selectedNode; }
 
-void Scene::SetViewMatrix(const glm::mat4 &viewMatrix) {
-  for (auto &node: nodes) { node->SetViewMatrix(viewMatrix); }
+void Scene::SetViewMatrixAndZoom(const glm::mat4 &viewMatrix, float zoom) {
+  for (auto &node: nodes) { node->SetViewMatrixAndZoom(viewMatrix, zoom); }
 }

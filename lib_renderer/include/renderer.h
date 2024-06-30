@@ -20,7 +20,7 @@ public:
   void Update(float deltaTime);
   void Shutdown();
 
-  void SetViewMatrix(const glm::mat4 &viewMatrix);
+  void SetViewMatrixAndZoom(const glm::mat4 &viewMatrix, float zoom);
 
   SceneManager &GetSceneManager();
   SceneNode &GetNode();
@@ -40,6 +40,7 @@ private:
 
   glm::mat4 viewMatrix;
   glm::mat4 projectionMatrix;
+  float zoom;
 
 #ifdef _DEBUG
   ImGuiManager &imGuiManager;

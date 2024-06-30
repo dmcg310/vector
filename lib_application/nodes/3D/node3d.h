@@ -26,8 +26,8 @@ public:
     return node;
   }
 
-  virtual void SetViewMatrix(const glm::mat4 &viewMatrix) override {
-    for (auto &child: children) { child->SetViewMatrix(viewMatrix); }
+  virtual void SetViewMatrixAndZoom(const glm::mat4 &viewMatrix, float zoom) override {
+    for (auto &child: children) { child->SetViewMatrixAndZoom(viewMatrix, zoom); }
   }
 
 private:

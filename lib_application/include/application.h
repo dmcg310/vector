@@ -5,6 +5,7 @@
 #include "event.h"
 #include "renderer.h"
 #include "settings.h"
+#include <unordered_set>
 
 class Application : public IEventObserver {
 public:
@@ -37,4 +38,7 @@ private:
 
   Renderer *renderer;
   Camera camera;
+  bool cameraControlEnabled = false;
+  bool cursorVisible = true;
+  std::unordered_set<int> pressedKeys;
 };

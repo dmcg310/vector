@@ -96,37 +96,61 @@ void Application::OnKeyPress(int key) {
 
   if (key == GLFW_KEY_ESCAPE) { Shutdown(); }
 
-  if (key == GLFW_KEY_W) camera.ProcessKeyboard(FORWARD, 0.1f);
-  if (key == GLFW_KEY_S) camera.ProcessKeyboard(BACKWARD, 0.1f);
-  if (key == GLFW_KEY_A) camera.ProcessKeyboard(LEFT, 0.1f);
-  if (key == GLFW_KEY_D) camera.ProcessKeyboard(RIGHT, 0.1f);
+  if (key == GLFW_KEY_C) {
+    cameraControlEnabled = !cameraControlEnabled;
+    cursorVisible = !cursorVisible;
+
+    if (cursorVisible) {
+      glfwSetInputMode(Window::GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    } else {
+      glfwSetInputMode(Window::GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+      // reset cursor position
+      int width = Window::GetWidth();
+      int height = Window::GetHeight();
+      glfwSetCursorPos(Window::GetGLFWWindow(), width / 2.0, height / 2.0);
+    }
+  }
+
+  if (cameraControlEnabled) {
+    if (key == GLFW_KEY_W) camera.ProcessKeyboard(FORWARD, 0.1f);
+    if (key == GLFW_KEY_S) camera.ProcessKeyboard(BACKWARD, 0.1f);
+    if (key == GLFW_KEY_A) camera.ProcessKeyboard(LEFT, 0.1f);
+    if (key == GLFW_KEY_D) camera.ProcessKeyboard(RIGHT, 0.1f);
+  }
+
+  pressedKeys.insert(key);
 }
 
 void Application::OnKeyRelease(int key) {
   // Handle key releases
+  pressedKeys.erase(key);
 }
 
 void Application::OnMouseMove(double x, double y) {
-  static bool firstMouse = true;
-  static float lastX = Window::GetWidth() / 2, lastY = Window::GetHeight() / 2;
+  if (cameraControlEnabled) {
+    static bool firstMouse = true;
+    static float lastX = Window::GetWidth() / 2.0;
+    static float lastY = Window::GetHeight() / 2.0;
 
-  if (firstMouse) {
+    if (firstMouse) {
+      lastX = x;
+      lastY = y;
+      firstMouse = false;
+    }
+
+    float xoffset = x - lastX;
+    float yoffset = lastY - y; // Reversed since y-coordinates go from bottom to top
+
     lastX = x;
     lastY = y;
-    firstMouse = false;
+
+    camera.ProcessMouseMovement(xoffset, yoffset);
   }
-
-  float xoffset = x - lastX;
-  float yoffset = lastY - y; // Reversed since y-coordinates go from bottom to top
-
-  lastX = x;
-  lastY = y;
-
-  camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 void Application::OnMouseClick(int button) {
-  // Handle mouse click
+  // Handle mouse clicks
 }
 
 void Application::OnScroll(double yoffset) {
@@ -141,13 +165,24 @@ void Application::Update() {
 
   Renderer::GetInstance().Update(deltaTime);
 
+  if (cameraControlEnabled) {
+    if (pressedKeys.find(GLFW_KEY_W) != pressedKeys.end())
+      camera.ProcessKeyboard(FORWARD, deltaTime);
+    if (pressedKeys.find(GLFW_KEY_S) != pressedKeys.end())
+      camera.ProcessKeyboard(BACKWARD, deltaTime);
+    if (pressedKeys.find(GLFW_KEY_A) != pressedKeys.end())
+      camera.ProcessKeyboard(LEFT, deltaTime);
+    if (pressedKeys.find(GLFW_KEY_D) != pressedKeys.end())
+      camera.ProcessKeyboard(RIGHT, deltaTime);
+  }
+
 #ifdef _DEBUG
   LogFrameInfo(deltaTime);
 #endif
 }
 
 void Application::Render() {
-  Renderer::GetInstance().SetViewMatrix(camera.GetViewMatrix());
+  Renderer::GetInstance().SetViewMatrixAndZoom(camera.GetViewMatrix(), camera.Zoom);
   Renderer::GetInstance().Render();
 }
 
