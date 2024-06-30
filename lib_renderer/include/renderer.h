@@ -3,6 +3,7 @@
 #include "../../lib_application/include/scene_manager.h"
 #include "../../lib_window/include/window.h"
 #include "context.h"
+#include "render_api_factory.h"
 
 #ifdef _DEBUG
 #include "../../lib_window/include/imgui_manager.h"
@@ -19,6 +20,9 @@ public:
   void Render();
   void Update(float deltaTime);
   void Shutdown();
+
+  void SetupFramebuffer(std::shared_ptr<Framebuffer> &framebuffer, float &fbWidth,
+                        float &fbHeight);
 
   void SetViewMatrixAndZoom(const glm::mat4 &viewMatrix, float zoom);
 

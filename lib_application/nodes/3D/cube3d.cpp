@@ -1,8 +1,8 @@
 #include "cube3d.h"
 
 Cube3DNode::Cube3DNode()
-    : vao(nullptr), vertexBuffer(nullptr), indexBuffer(nullptr), shader(nullptr),
-      viewMatrix() {}
+    : viewMatrix(), vao(nullptr), vertexBuffer(nullptr), indexBuffer(nullptr),
+      shader(nullptr) {}
 
 Cube3DNode::~Cube3DNode() = default;
 
@@ -56,14 +56,11 @@ void Cube3DNode::Initialize() {
   shader->Link();
 
   renderPass = RenderPass::CreateRenderPass();
-  renderPass->SetClearColor(0.8f, 0.3f, 0.3f, 1.0f);
-
   renderCommandQueue = RenderCommandQueue::CreateRenderCommandQueue();
 
   vao->Bind();
   vao->AddVertexBuffer(vertexBuffer, 3);
   vao->SetIndexBuffer(indexBuffer);
-
   vao->Unbind();
 
   glEnable(GL_DEPTH_TEST);
@@ -79,35 +76,12 @@ void Cube3DNode::Render() {
   isDebugMenuOpen = imGuiManager.IsDebugMenuOpen();
 #endif
 
-  std::shared_ptr<Framebuffer> framebuffer;
   float fbWidth;
   float fbHeight;
-
-  if (isDebugMenuOpen) {
-#ifdef _DEBUG
-    if (!imGuiManager.IsInitialized()) {
-      Log::Write(Log::ERROR, "ImGuiManager is not initialized");
-      return;
-    }
-
-    framebuffer = imGuiManager.GetFramebuffer();
-    framebuffer->Bind();
-
-    fbWidth = imGuiManager.GetViewportSize().x;
-    fbHeight = imGuiManager.GetViewportSize().y;
-#endif
-  } else {
-    framebuffer = Framebuffer::CreateFramebuffer();
-    framebuffer->Unbind();
-
-    auto framebufferSize = framebuffer->GetSize(Window::GetGLFWWindow());
-    fbWidth = framebufferSize.x;
-    fbHeight = framebufferSize.y;
-  }
+  auto framebuffer = Framebuffer::CreateFramebuffer();
+  Renderer::GetInstance().SetupFramebuffer(framebuffer, fbWidth, fbHeight);
 
   renderPass->SetViewportSize(fbWidth, fbHeight);
-  renderPass->SetClearColor(0.8f, 0.3f, 0.3f, 1.0f);
-  renderPass->Begin();
 
   if (renderCommandQueue) {
     renderCommandQueue->Submit([this]() { vao->Bind(); });
@@ -119,14 +93,12 @@ void Cube3DNode::Render() {
 
       glm::mat4 projection =
               glm::perspective(glm::radians(zoom), aspectRatio, 0.1f, 100.0f);
-      glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
 
       shader->SetUniform("projection", projection);
       shader->SetUniform("view", viewMatrix);
-
       shader->SetUniform("model", glm::mat4(1.0f));
       shader->SetUniform("useSolidColor", true);
-      shader->SetUniform("solidColor", glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
+      shader->SetUniform("solidColor", glm::vec4(0.2f, 0.2f, 0.2f, 1.0f));
     });
 
     renderCommandQueue->Submit([this]() {

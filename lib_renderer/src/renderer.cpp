@@ -61,10 +61,24 @@ void Renderer::Update(float deltaTime) {
 }
 
 void Renderer::Render() {
+  auto renderPass = RenderPass::CreateRenderPass();
+
+  float fbWidth;
+  float fbHeight;
+  auto framebuffer = Framebuffer::CreateFramebuffer();
+  SetupFramebuffer(framebuffer, fbWidth, fbHeight);
+
+  renderPass->SetViewportSize(fbWidth, fbHeight);
+  renderPass->SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  renderPass->Begin();
+
   sceneManager.Render();
 
 #ifdef _DEBUG
-  if (imGuiManager.IsDebugMenuOpen()) { imGuiManager.Render(); }
+  if (imGuiManager.IsDebugMenuOpen()) {
+    framebuffer->Unbind();
+    imGuiManager.Render();
+  }
 #endif
 
   context->SwapBuffers();
@@ -81,6 +95,33 @@ void Renderer::Shutdown() {
     delete context;
     context = nullptr;
   }
+}
+
+void Renderer::SetupFramebuffer(std::shared_ptr<Framebuffer> &framebuffer, float &fbWidth,
+                                float &fbHeight) {
+#ifdef _DEBUG
+  if (imGuiManager.IsDebugMenuOpen()) {
+    framebuffer = imGuiManager.GetFramebuffer();
+    framebuffer->Bind();
+
+    fbWidth = imGuiManager.GetViewportSize().x;
+    fbHeight = imGuiManager.GetViewportSize().y;
+  } else {
+    framebuffer = Framebuffer::CreateFramebuffer();
+    framebuffer->Unbind();
+
+    auto framebufferSize = framebuffer->GetSize(Window::GetGLFWWindow());
+    fbWidth = framebufferSize.x;
+    fbHeight = framebufferSize.y;
+  }
+#else
+  framebuffer = Framebuffer::CreateFramebuffer();
+  framebuffer->Unbind();
+
+  auto framebufferSize = framebuffer->GetSize(Window::GetGLFWWindow());
+  fbWidth = framebufferSize.x;
+  fbHeight = framebufferSize.y;
+#endif
 }
 
 void Renderer::SetViewMatrixAndZoom(const glm::mat4 &viewMatrix, float zoom) {

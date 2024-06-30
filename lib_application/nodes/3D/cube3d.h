@@ -3,6 +3,7 @@
 #include "../../../lib_renderer/include/render_api_factory.h"
 #include "../../include/scene_node.h"
 #include "node3d.h"
+#include "renderer.h"
 #include <glm/glm.hpp>
 
 #ifdef _DEBUG
