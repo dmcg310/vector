@@ -26,6 +26,10 @@ public:
     return node;
   }
 
+  virtual void SetViewMatrix(const glm::mat4 &viewMatrix) override {
+    for (auto &child: children) { child->SetViewMatrix(viewMatrix); }
+  }
+
 private:
   glm::vec3 position;
   glm::vec3 rotation;

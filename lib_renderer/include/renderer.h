@@ -20,6 +20,8 @@ public:
   void Update(float deltaTime);
   void Shutdown();
 
+  void SetViewMatrix(const glm::mat4 &viewMatrix);
+
   SceneManager &GetSceneManager();
   SceneNode &GetNode();
 
@@ -35,6 +37,9 @@ private:
 
   Context *context;
   SceneManager sceneManager;
+
+  glm::mat4 viewMatrix;
+  glm::mat4 projectionMatrix;
 
 #ifdef _DEBUG
   ImGuiManager &imGuiManager;

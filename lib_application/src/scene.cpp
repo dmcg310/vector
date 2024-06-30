@@ -41,3 +41,7 @@ std::vector<std::shared_ptr<SceneNode>> &Scene::GetNodes() { return nodes; }
 void Scene::SelectNode(const std::shared_ptr<SceneNode> &node) { selectedNode = node; }
 
 std::shared_ptr<SceneNode> Scene::GetSelectedNode() const { return selectedNode; }
+
+void Scene::SetViewMatrix(const glm::mat4 &viewMatrix) {
+  for (auto &node: nodes) { node->SetViewMatrix(viewMatrix); }
+}

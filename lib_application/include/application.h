@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../lib_renderer/include/context.h"
+#include "camera.h"
 #include "event.h"
 #include "renderer.h"
 #include "settings.h"
@@ -16,6 +17,7 @@ public:
   void OnKeyRelease(int key) override;
   void OnMouseMove(double x, double y) override;
   void OnMouseClick(int button) override;
+  void OnScroll(double yoffset) override;
 
 private:
   void Update();
@@ -34,4 +36,5 @@ private:
 #endif
 
   Renderer *renderer;
+  Camera camera;
 };

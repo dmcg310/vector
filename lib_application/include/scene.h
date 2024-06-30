@@ -21,6 +21,8 @@ public:
   virtual void SelectNode(const std::shared_ptr<SceneNode> &node);
   [[nodiscard]] virtual std::shared_ptr<SceneNode> GetSelectedNode() const;
 
+  virtual void SetViewMatrix(const glm::mat4 &viewMatrix);
+
 private:
   std::vector<std::shared_ptr<SceneNode>> nodes;
   std::shared_ptr<SceneNode> selectedNode;

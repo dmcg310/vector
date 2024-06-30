@@ -10,25 +10,21 @@ void EventManager::UnregisterObserver(IEventObserver *observer) {
 }
 
 void EventManager::NotifyKeyPress(int key) {
-  for (auto observer : observers) {
-    observer->OnKeyPress(key);
-  }
+  for (auto observer: observers) { observer->OnKeyPress(key); }
 }
 
 void EventManager::NotifyKeyRelease(int key) {
-  for (auto observer : observers) {
-    observer->OnKeyRelease(key);
-  }
+  for (auto observer: observers) { observer->OnKeyRelease(key); }
 }
 
 void EventManager::NotifyMouseMove(double x, double y) {
-  for (auto observer : observers) {
-    observer->OnMouseMove(x, y);
-  }
+  for (auto observer: observers) { observer->OnMouseMove(x, y); }
 }
 
 void EventManager::NotifyMouseClick(int button) {
-  for (auto observer : observers) {
-    observer->OnMouseClick(button);
-  }
+  for (auto observer: observers) { observer->OnMouseClick(button); }
+}
+
+void EventManager::NotifyScroll(double yoffset) {
+  for (auto observer: observers) { observer->OnScroll(yoffset); }
 }

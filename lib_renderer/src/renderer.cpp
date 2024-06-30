@@ -82,3 +82,8 @@ void Renderer::Shutdown() {
     context = nullptr;
   }
 }
+
+void Renderer::SetViewMatrix(const glm::mat4 &viewMatrix) {
+  this->viewMatrix = viewMatrix;
+  GetCurrentScene()->SetViewMatrix(viewMatrix);
+}

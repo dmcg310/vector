@@ -18,6 +18,10 @@ public:
   void Update(float deltaTime) override;
   void Render() override;
 
+  void SetViewMatrix(const glm::mat4 &_viewMatrix) override {
+    this->viewMatrix = _viewMatrix;
+  }
+
   [[nodiscard]] std::shared_ptr<SceneNode> Clone() const override {
     auto node = std::make_shared<Cube3DNode>(*this);
     node->children.clear();
@@ -28,6 +32,7 @@ public:
   }
 
 private:
+  glm::mat4 viewMatrix;
   std::shared_ptr<VertexArray> vao;
   std::shared_ptr<Buffer> vertexBuffer;
   std::shared_ptr<Buffer> indexBuffer;
@@ -35,6 +40,4 @@ private:
   std::shared_ptr<RenderPass> renderPass;
   std::shared_ptr<RenderCommand> renderCommand;
   std::shared_ptr<RenderCommandQueue> renderCommandQueue;
-  float rotationAngleX = 0.0f;
-  float rotationAngleY = 0.0f;
 };

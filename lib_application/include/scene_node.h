@@ -70,6 +70,10 @@ public:
   [[nodiscard]] std::string GetNodeType() const { return nodeType; }
   void SetNodeType(const std::string &_nodeType) { nodeType = _nodeType; }
 
+  virtual void SetViewMatrix(const glm::mat4 &viewMatrix) {
+    for (const auto &child: children) { child->SetViewMatrix(viewMatrix); }
+  }
+
 protected:
   std::string name;
   std::string nodeType;

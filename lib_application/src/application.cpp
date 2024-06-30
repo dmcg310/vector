@@ -7,9 +7,10 @@
 Application::Application()
 #ifdef _DEBUG
     : frameCount(0), startTime(std::chrono::steady_clock::now()), accumulatedTime(0.0),
-      accumulatedFPS(0.0), sampleFrames(100), frameSamples(0), renderer(nullptr)
+      accumulatedFPS(0.0), sampleFrames(100), frameSamples(0), renderer(nullptr),
+      camera(glm::vec3(0.0f, 0.0f, 3.0f))
 #else
-    : renderer(nullptr)
+    : renderer(nullptr), camera(glm::vec3(0.0f, 0.0f, 3.0f))
 #endif
 {
 }
@@ -94,6 +95,11 @@ void Application::OnKeyPress(int key) {
 #endif
 
   if (key == GLFW_KEY_ESCAPE) { Shutdown(); }
+
+  if (key == GLFW_KEY_W) camera.ProcessKeyboard(FORWARD, 0.1f);
+  if (key == GLFW_KEY_S) camera.ProcessKeyboard(BACKWARD, 0.1f);
+  if (key == GLFW_KEY_A) camera.ProcessKeyboard(LEFT, 0.1f);
+  if (key == GLFW_KEY_D) camera.ProcessKeyboard(RIGHT, 0.1f);
 }
 
 void Application::OnKeyRelease(int key) {
@@ -101,11 +107,30 @@ void Application::OnKeyRelease(int key) {
 }
 
 void Application::OnMouseMove(double x, double y) {
-  // Handle mouse move
+  static bool firstMouse = true;
+  static float lastX = Window::GetWidth() / 2, lastY = Window::GetHeight() / 2;
+
+  if (firstMouse) {
+    lastX = x;
+    lastY = y;
+    firstMouse = false;
+  }
+
+  float xoffset = x - lastX;
+  float yoffset = lastY - y; // Reversed since y-coordinates go from bottom to top
+
+  lastX = x;
+  lastY = y;
+
+  camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 void Application::OnMouseClick(int button) {
   // Handle mouse click
+}
+
+void Application::OnScroll(double yoffset) {
+  camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
 
 void Application::Update() {
@@ -121,7 +146,10 @@ void Application::Update() {
 #endif
 }
 
-void Application::Render() { Renderer::GetInstance().Render(); }
+void Application::Render() {
+  Renderer::GetInstance().SetViewMatrix(camera.GetViewMatrix());
+  Renderer::GetInstance().Render();
+}
 
 void Application::MainLoopBody() {
   Update();

@@ -1,7 +1,8 @@
 #include "cube3d.h"
 
 Cube3DNode::Cube3DNode()
-    : vao(nullptr), vertexBuffer(nullptr), indexBuffer(nullptr), shader(nullptr) {}
+    : vao(nullptr), vertexBuffer(nullptr), indexBuffer(nullptr), shader(nullptr),
+      viewMatrix() {}
 
 Cube3DNode::~Cube3DNode() = default;
 
@@ -56,12 +57,7 @@ void Cube3DNode::Initialize() {
   glEnable(GL_DEPTH_TEST);
 }
 
-void Cube3DNode::Update(float deltaTime) {
-  rotationAngleX +=
-          deltaTime * glm::radians(45.0f); // Rotate 45 degrees per second around x-axis
-  rotationAngleY +=
-          deltaTime * glm::radians(30.0f); // Rotate 30 degrees per second around y-axis
-}
+void Cube3DNode::Update(float deltaTime) {}
 
 void Cube3DNode::Render() {
   bool isDebugMenuOpen = false;
@@ -114,13 +110,9 @@ void Cube3DNode::Render() {
       glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
 
       shader->SetUniform("projection", projection);
-      shader->SetUniform("view", view);
+      shader->SetUniform("view", viewMatrix);
 
-      auto model = glm::mat4(1.0f);
-      model = glm::rotate(model, rotationAngleX, glm::vec3(1.0f, 0.0f, 0.0f));
-      model = glm::rotate(model, rotationAngleY, glm::vec3(0.0f, 1.0f, 0.0f));
-
-      shader->SetUniform("model", model);
+      shader->SetUniform("model", glm::mat4(1.0f));
       shader->SetUniform("useSolidColor", true);
       shader->SetUniform("solidColor", glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
     });
