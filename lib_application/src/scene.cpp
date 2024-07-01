@@ -51,3 +51,9 @@ void Scene::SetLightPosition(const glm::vec3 &lightPos) {
 }
 
 glm::vec3 Scene::GetLightPosition() const { return nodes[0]->GetLightPosition(); }
+
+void Scene::SetCameraPosition(const glm::vec3 &cameraPos) {
+  for (auto &node: nodes) { node->SetCameraPosition(cameraPos); }
+}
+
+glm::vec3 Scene::GetCameraPosition() const { return nodes[0]->GetCameraPosition(); }

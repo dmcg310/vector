@@ -91,13 +91,14 @@ void Cube3DNode::Render() {
   renderPass->SetViewportSize(fbWidth, fbHeight);
 
   auto lightPos = Renderer::GetInstance().GetCurrentScene()->GetLightPosition();
+  auto cameraPos = Renderer::GetInstance().GetCurrentScene()->GetCameraPosition();
 
   if (renderCommandQueue) {
     renderCommandQueue->Submit([this]() { vao->Bind(); });
 
     renderCommandQueue->Submit([this]() { shader->Bind(); });
 
-    renderCommandQueue->Submit([this, fbWidth, fbHeight, lightPos]() {
+    renderCommandQueue->Submit([this, fbWidth, fbHeight, lightPos, cameraPos]() {
       float aspectRatio = fbWidth / fbHeight;
 
       glm::mat4 projection =
@@ -111,6 +112,7 @@ void Cube3DNode::Render() {
       shader->SetUniform("lightColor", lightColor);
       shader->SetUniform("objectColor", objectColor);
       shader->SetUniform("lightPos", lightPos);
+      shader->SetUniform("viewPos", cameraPos);
     });
 
     renderCommandQueue->Submit([this]() {

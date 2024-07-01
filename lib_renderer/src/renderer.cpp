@@ -130,3 +130,7 @@ void Renderer::SetViewMatrixAndZoom(const glm::mat4 &viewMatrix, float zoom) {
 
   GetCurrentScene()->SetViewMatrixAndZoom(viewMatrix, zoom);
 }
+
+void Renderer::SetCameraPosition(const glm::vec3 &cameraPos) {
+  GetCurrentScene()->SetCameraPosition(cameraPos);
+}

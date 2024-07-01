@@ -26,6 +26,8 @@ public:
 
   void SetViewMatrixAndZoom(const glm::mat4 &viewMatrix, float zoom);
 
+  void SetCameraPosition(const glm::vec3 &cameraPos);
+
   SceneManager &GetSceneManager();
   SceneNode &GetNode();
 

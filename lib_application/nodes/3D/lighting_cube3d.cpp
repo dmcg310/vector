@@ -78,8 +78,12 @@ void LightingCubeNode::Initialize() {
 void LightingCubeNode::Update(float deltaTime) {
   float radius = 2.0f;
   angle += deltaTime;
-  Renderer::GetInstance().GetCurrentScene()->SetLightPosition(
-          glm::vec3(radius * cos(angle), 1.0f, radius * sin(angle)));
+
+  auto cameraPos = Renderer::GetInstance().GetCurrentScene()->GetCameraPosition();
+  auto lightPos = glm::vec3(radius * cos(angle), 1.0f, radius * sin(angle));
+
+  Renderer::GetInstance().GetCurrentScene()->SetLightPosition(lightPos);
+  Renderer::GetInstance().GetCurrentScene()->SetCameraPosition(cameraPos);
 }
 
 void LightingCubeNode::Render() {

@@ -74,15 +74,22 @@ public:
     for (const auto &child: children) { child->SetViewMatrixAndZoom(viewMatrix, zoom); }
   }
 
+  [[nodiscard]] virtual glm::vec3 GetLightPosition() const { return lightPos; }
   virtual void SetLightPosition(const glm::vec3 &lightPos) {
     for (const auto &child: children) { child->SetLightPosition(lightPos); }
   }
 
-  [[nodiscard]] virtual glm::vec3 GetLightPosition() const { return glm::vec3(0.0f); }
+  [[nodiscard]] virtual glm::vec3 GetCameraPosition() const { return cameraPos; }
+  virtual void SetCameraPosition(const glm::vec3 &cameraPos) {
+    this->cameraPos = cameraPos;
+    for (const auto &child: children) { child->SetCameraPosition(cameraPos); }
+  }
 
 protected:
   std::string name;
   std::string nodeType;
   SceneNode *parent;
   std::vector<std::shared_ptr<SceneNode>> children;
+  glm::vec3 lightPos;
+  glm::vec3 cameraPos;
 };

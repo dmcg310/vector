@@ -190,6 +190,7 @@ void Application::Update() {
 
 void Application::Render() {
   Renderer::GetInstance().SetViewMatrixAndZoom(camera.GetViewMatrix(), camera.Zoom);
+  Renderer::GetInstance().SetCameraPosition(camera.Position);
   Renderer::GetInstance().Render();
 }
 
