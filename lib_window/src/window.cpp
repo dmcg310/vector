@@ -35,6 +35,7 @@ bool Window::Initialize(int _width, int _height, bool windowedFullscreen,
 
   glfwMakeContextCurrent(window);
   glfwSetWindowUserPointer(window, nullptr);
+  glfwSwapInterval(0);
 
   if (!gladLoadGL(glfwGetProcAddress)) {
     Log::Write(Log::FATAL,
