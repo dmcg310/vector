@@ -21,7 +21,7 @@ public:
   void OnKeyRelease(int key) override;
   void OnMouseMove(double x, double y) override;
   void OnMouseClick(int button) override;
-  void OnScroll(double yoffset) override;
+  void OnScroll(double xoffset, double yoffset) override;
 
 private:
   void Update();

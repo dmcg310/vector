@@ -108,7 +108,9 @@ void Application::OnMouseClick(int button) {
   // Handle mouse clicks
 }
 
-void Application::OnScroll(double yoffset) {
+void Application::OnScroll(double xoffset, double yoffset) {
+  (void) xoffset;
+
   camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
 
