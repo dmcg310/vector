@@ -13,6 +13,8 @@ Vector is a small, work in progress, 2D/3D game engine written in C++. Currently
 - Input handling
 - ImGui integration
 
+![Phong lighting Demo](github-assets/vector-phong.gif)
+
 ## Dependencies
 
 To build and run Vector, you will need the following dependencies:
