@@ -61,10 +61,6 @@ bool Window::Initialize(int _width, int _height, bool windowedFullscreen,
     glfwMaximizeWindow(window);
   }
 
-#ifdef _RELEASE
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-#endif
-
   return true;
 }
 
@@ -73,6 +69,7 @@ void Window::Run(std::function<void()> loop_body) {
     PollEvents();
     loop_body();
   }
+
   Shutdown();
 }
 
@@ -87,25 +84,17 @@ void Window::PollEvents() { glfwPollEvents(); }
 
 bool Window::ShouldClose() { return glfwWindowShouldClose(window); }
 
-void Window::SetTitle(const std::string &title) {
-  glfwSetWindowTitle(window, title.c_str());
-}
-
 int Window::GetWidth() { return Window::width; }
 
 int Window::GetHeight() { return Window::height; }
 
-void Window::SetSize(int width, int height) {
-  glfwSetWindowSize(window, width, height);
-  Window::width = width;
-  Window::height = height;
+void Window::SetSize(int _width, int _height) {
+  glfwSetWindowSize(window, _width, _height);
+  Window::width = _width;
+  Window::height = _height;
 }
 
 void Window::GetPosition(int &x, int &y) { glfwGetWindowPos(window, &x, &y); }
-
-void Window::SetPosition(int x, int y) { glfwSetWindowPos(window, x, y); }
-
-bool Window::IsFullscreen() { return isFullscreen; }
 
 void Window::SetFullscreen(bool fullscreen, bool borderless) {
   if (fullscreen == isFullscreen && borderless == isBorderlessFullscreen) { return; }
@@ -148,10 +137,6 @@ void Window::SetFullscreen(bool fullscreen, bool borderless) {
   isFullscreen = fullscreen;
 }
 
-void Window::GetMousePosition(double &x, double &y) { glfwGetCursorPos(window, &x, &y); }
-
-void Window::SetMousePosition(double x, double y) { glfwSetCursorPos(window, x, y); }
-
 void Window::RegisterObserver(IEventObserver *observer) {
   eventManager.RegisterObserver(observer);
 }
@@ -160,8 +145,12 @@ void Window::UnregisterObserver(IEventObserver *observer) {
   eventManager.UnregisterObserver(observer);
 }
 
-void Window::KeyCallback(GLFWwindow *window, int key, int scancode, int action,
+void Window::KeyCallback(GLFWwindow *_window, int key, int scancode, int action,
                          int mods) {
+  (void) _window;
+  (void) scancode;
+  (void) mods;
+
   if (action == GLFW_PRESS) {
     Window::eventManager.NotifyKeyPress(key);
   } else if (action == GLFW_RELEASE) {
@@ -169,14 +158,21 @@ void Window::KeyCallback(GLFWwindow *window, int key, int scancode, int action,
   }
 }
 
-void Window::MouseCallback(GLFWwindow *window, double xpos, double ypos) {
+void Window::MouseCallback(GLFWwindow *_window, double xpos, double ypos) {
+  (void) _window;
+
   Window::eventManager.NotifyMouseMove(xpos, ypos);
 }
 
-void Window::MouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
+void Window::MouseButtonCallback(GLFWwindow *_window, int button, int action, int mods) {
+  (void) _window;
+  (void) mods;
+
   if (action == GLFW_PRESS) { Window::eventManager.NotifyMouseClick(button); }
 }
 
-void Window::ScrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
+void Window::ScrollCallback(GLFWwindow *_window, double xoffset, double yoffset) {
+  (void) _window;
+
   Window::eventManager.NotifyScroll(xoffset, yoffset);
 }

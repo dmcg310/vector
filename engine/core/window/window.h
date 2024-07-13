@@ -22,21 +22,14 @@ public:
   static void PollEvents();
   static bool ShouldClose();
 
-  static void SetTitle(const std::string &title);
-
   static int GetWidth();
   static int GetHeight();
 
-  static void SetSize(int width, int height);
+  static void SetSize(int _width, int _height);
 
   static void GetPosition(int &x, int &y);
-  static void SetPosition(int x, int y);
 
-  static bool IsFullscreen();
   static void SetFullscreen(bool fullscreen, bool borderless = false);
-
-  static void GetMousePosition(double &x, double &y);
-  static void SetMousePosition(double x, double y);
 
   static void RegisterObserver(IEventObserver *observer);
   static void UnregisterObserver(IEventObserver *observer);
@@ -44,19 +37,18 @@ public:
 private:
   static EventManager eventManager;
   static GLFWwindow *window;
-  static int width, height;
+  static int width;
+  static int height;
   static bool isFullscreen;
   static bool isBorderlessFullscreen;
-  static int windowedPosX, windowedPosY, windowedWidth, windowedHeight;
+  static int windowedPosX;
+  static int windowedPosY;
+  static int windowedWidth;
+  static int windowedHeight;
 
   static void KeyCallback(GLFWwindow *window, int key, int scancode, int action,
                           int mods);
-  static void MouseCallback(GLFWwindow *window, double xpos, double ypos);
+  static void MouseCallback(GLFWwindow *_window, double xpos, double ypos);
   static void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
   static void ScrollCallback(GLFWwindow *window, double xoffset, double yoffset);
-
-  static void NotifyKeyPress(int key);
-  static void NotifyKeyRelease(int key);
-  static void NotifyMouseMove(double x, double y);
-  static void NotifyMouseClick(int button);
 };
