@@ -20,106 +20,45 @@ Vector is a small, work in progress, 2D/3D game engine written in C++. Currently
 To build and run Vector, you will need the following dependencies:
 
 - **Cmake** (Version 3.25 or higher)
-- **vcpkg** (For installing dependencies)
+- **vcpkg** (For installing dependencies, can be installed through setup.py)
 - **C++17** compatible compiler
 - **OpenGL** (Version 3.3 or higher)
+- **Python** (For running the build script)
 
 ## Installation Instructions
 
-### 1. Install vcpkg
-
-Clone the vcpkg repository and run the bootstrap script:
-
-```sh
-git clone https://github.com/microsoft/vcpkg.git
-cd vcpkg
-./bootstrap-vcpkg.sh # Unix
-.\bootstrap-vcpkg.bat # Windows
-```
-
-### 2. Install Required Packages
-
-Use vcpkg to install the required packages:
-
-```sh
-./vcpkg install glfw3 glm glad imgui[opengl3-binding] imgui[docking-experimental] imgui[glfw-binding]
-```
-
-### 3. Clone the Repository
+### 1. Clone the Repository
 
 ```sh
 git clone https://github.com/dmcg310/vector.git
-```
-
-### 4. Build the Project
-
-#### MacOS/Linux
-
-1. Create a build directory and navigate to it:
-
-```sh
 cd vector
-mkdir build
-cd build
 ```
 
-2. Run CMake with the vckpg toolchain file and specify the build type:
+### 2. Install Python Dependencies
 
-Note: Replace `[...]` with the path to the vcpkg directory, e.g. `/home/user/vcpkg`.
-
-Debug:
+Ensure you have Python 3 installed. Then install the required Python packages:
 
 ```sh
-cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=[...]/scripts/buildsystems/vcpkg.cmake ..
+pip install -r requirements.txt
 ```
 
-Release:
+### 3. Run the Setup Script
+
+Run the setup script to install `vcpkg`, install dependencies, and build the project:
 
 ```sh
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=[...]/scripts/buildsystems/vcpkg.cmake ..
+python setup.py
 ```
 
-3. Build the project:
+The setup script will:
+- Ask if `vcpkg` is already installed.
+- If not, it will prompt for a directory to install `vcpkg`.
+- Install necessary dependencies using `vcpkg`.
+- Build the project using CMake.
 
-```sh
-make
-```
+### 4. Run the Project
 
-#### Windows
-
-1. Create a build directory and navigate to it:
-
-```sh
-cd vector
-mkdir build
-cd build
-```
-
-2. Run CMake with the vckpg toolchain file and specify the build type:
-
-Note: Replace `[...]` with the path to the vcpkg directory, e.g. `C:/vcpkg`.
-
-Debug:
-
-```sh
-cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=[...]/scripts/buildsystems/vcpkg.cmake ..
-```
-
-Release:
-
-```sh
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=[...]/scripts/buildsystems/vcpkg.cmake ..
-```
-
-3. Build the project:
-
-```sh
-cmake --build .
-```
-
-### 5. Run the Project
-
-Note: From within the build directory, e.g. `vector/build`.
+After building, navigate to the `vector/build` directory and run the appropriate executable for your platform.
 
 #### MacOS/Linux
 
