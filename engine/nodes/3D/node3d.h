@@ -17,21 +17,12 @@ public:
   void SetScale(const glm::vec3 &scl) { scale = scl; }
   [[nodiscard]] glm::vec3 GetScale() const { return scale; }
 
-  [[nodiscard]] std::shared_ptr<SceneNode> Clone() const override {
-    auto node = std::make_shared<Node3D>(*this);
-    node->children.clear();
-
-    for (const auto &child: children) { node->AddChild(child->Clone()); }
-
-    return node;
-  }
-
-  virtual void SetViewMatrixAndZoom(const glm::mat4 &viewMatrix, float zoom) override {
+  void SetViewMatrixAndZoom(const glm::mat4 &viewMatrix, float zoom) override {
     for (auto &child: children) { child->SetViewMatrixAndZoom(viewMatrix, zoom); }
   }
 
-  void SetLightPosition(const glm::vec3 &lightPos) { lightPosition = lightPos; }
-  [[nodiscard]] glm::vec3 GetLightPosition() const { return lightPosition; }
+  void SetLightPosition(const glm::vec3 &lightPos) override { lightPosition = lightPos; }
+  [[nodiscard]] glm::vec3 GetLightPosition() const override { return lightPosition; }
 
 private:
   glm::vec3 position;

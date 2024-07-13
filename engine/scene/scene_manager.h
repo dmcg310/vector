@@ -1,7 +1,7 @@
 #pragma once
 
-#include "scene.h"
 #include "../core/log/log.h"
+#include "scene.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -11,6 +11,7 @@ class SceneManager {
 public:
   void SetActiveScene(const std::string &sceneName);
   void AddScene(const std::string &sceneName, std::shared_ptr<Scene> scene);
+
   std::shared_ptr<Scene> GetActiveScene();
 
   void Update(float deltaTime);

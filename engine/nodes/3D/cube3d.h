@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../../renderer/render_api_factory.h"
+#include "../../renderer/renderer.h"
 #include "../../scene/scene_node.h"
 #include "node3d.h"
-#include "../../renderer/renderer.h"
 #include <glm/glm.hpp>
 
 #ifdef _DEBUG
@@ -22,15 +22,6 @@ public:
   void SetViewMatrixAndZoom(const glm::mat4 &_viewMatrix, float _zoom) override {
     this->viewMatrix = _viewMatrix;
     this->zoom = _zoom;
-  }
-
-  [[nodiscard]] std::shared_ptr<SceneNode> Clone() const override {
-    auto node = std::make_shared<Cube3DNode>(*this);
-    node->children.clear();
-
-    for (const auto &child: children) { node->AddChild(child->Clone()); }
-
-    return node;
   }
 
 private:

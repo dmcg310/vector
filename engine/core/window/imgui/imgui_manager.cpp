@@ -322,16 +322,6 @@ void ImGuiManager::RenderNode(const std::shared_ptr<SceneNode> &node,
         }
       }
 
-      if (ImGui::MenuItem("Duplicate Node")) {
-        auto newNode = node->Clone();
-        node->GetParent()->AddChild(newNode);
-
-        Renderer::GetInstance().GetCurrentScene()->AddNode(newNode);
-        Renderer::GetInstance().GetCurrentScene()->SelectNode(newNode);
-
-        justDuplicated = true;
-      }
-
       if (ImGui::MenuItem("Rename")) {
         renameActive = true;
         nodeToRename = node;
