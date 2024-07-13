@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../renderer/render_api_factory.h"
 #include "../../renderer/render_command/render_command.h"
 #include "../../renderer/render_command/render_command_queue.h"
 #include "../../renderer/render_pass/render_pass.h"
@@ -7,7 +8,6 @@
 #include "../../renderer/texture/texture.h"
 #include "../../renderer/vertex_array/vertex_array.h"
 #include "node2d.h"
-#include "../../renderer/render_api_factory.h"
 
 #ifdef _DEBUG
 #include "../../core/window/imgui/imgui_manager.h"
@@ -21,15 +21,6 @@ public:
   void Initialize(const std::string &textureFile);
   void Update(float deltaTime) override;
   void Render() override;
-
-  [[nodiscard]] std::shared_ptr<SceneNode> Clone() const override {
-    auto node = std::make_shared<Texture2DNode>(*this);
-    node->children.clear();
-
-    for (const auto &child: children) { node->AddChild(child->Clone()); }
-
-    return node;
-  }
 
 private:
   std::shared_ptr<Texture> texture;
