@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../../include/shader.h"
-#include <glad/gl.h>
+#include "shader.h"
+#include "../opengl_includes.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <unordered_map>
 

@@ -1,5 +1,4 @@
 #include "opengl_framebuffer.h"
-#include "../../../../lib_log/include/log.h"
 
 void OpenGLFramebuffer::Create() {
   glGenFramebuffers(1, &fbo);

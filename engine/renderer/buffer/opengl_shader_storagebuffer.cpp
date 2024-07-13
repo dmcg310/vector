@@ -1,5 +1,4 @@
 #include "opengl_shader_storagebuffer.h"
-#include "../../../../../lib_log/include/log.h"
 
 void OpenGLShaderStorageBuffer::Create(size_t size, const void *data) {
   glGenBuffers(1, &bufferID);

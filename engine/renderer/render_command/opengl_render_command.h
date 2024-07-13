@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../include/render_command.h"
+#include "render_command.h"
 
 class OpenGLDrawElementsCommand : public RenderCommand {
 public:

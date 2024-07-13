@@ -1,5 +1,4 @@
 #include "texture2d.h"
-#include "../../../lib_renderer/include/render_api_factory.h"
 
 Texture2DNode::Texture2DNode()
     : vao(nullptr), vertexBuffer(nullptr), indexBuffer(nullptr), texture(nullptr),

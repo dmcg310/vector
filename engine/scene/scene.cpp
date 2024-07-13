@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "../../lib_log/include/log.h"
 
 void Scene::Initialize() {
   if (nodes.empty()) {

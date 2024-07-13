@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scene_node.h"
+#include "../../scene/scene_node.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 class Node2D : public SceneNode {

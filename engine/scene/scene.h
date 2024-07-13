@@ -3,6 +3,7 @@
 #include "scene_node.h"
 #include <memory>
 #include <vector>
+#include "../core/log/log.h"
 
 class Scene {
 public:

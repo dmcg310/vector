@@ -1,9 +1,7 @@
 #pragma once
 
-#include "../../../include/render_pass.h"
-#include <glad/gl.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "render_pass.h"
+#include "../opengl_includes.h"
 
 class OpenGLRenderPass : public RenderPass {
 public:

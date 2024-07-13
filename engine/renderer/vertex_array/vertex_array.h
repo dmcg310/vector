@@ -1,6 +1,6 @@
 #pragma once
 
-#include "buffer.h"
+#include "../buffer/buffer.h"
 #include <memory>
 #include <vector>
 

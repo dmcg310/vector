@@ -1,7 +1,7 @@
 #include "renderer.h"
-#include "../../lib_application/scenes/test_scene/test_scene.h"
-#include "../../lib_log/include/log.h"
-#include "../../lib_window/include/window.h"
+#include "../scene/test_scene/test_scene.h"
+#include "../core/log/log.h"
+#include "../core/window/window.h"
 #include "render_api_factory.h"
 
 Renderer::Renderer()

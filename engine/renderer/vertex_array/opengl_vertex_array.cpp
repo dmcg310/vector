@@ -1,5 +1,4 @@
 #include "opengl_vertex_array.h"
-#include "../../../../lib_log/include/log.h"
 
 void OpenGLVertexArray::Create() {
   glGenVertexArrays(1, &vaoID);

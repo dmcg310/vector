@@ -1,14 +1,11 @@
 #pragma once
 
-#include "renderbuffer.h"
-#include "texture.h"
+#include "../renderbuffer/renderbuffer.h"
+#include "../texture/texture.h"
+#include "../opengl_includes.h"
 #include <cstdint>
 #include <glm/glm.hpp>
 #include <memory>
-
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-#include <glad/gl.h>
 
 class Framebuffer {
 public:

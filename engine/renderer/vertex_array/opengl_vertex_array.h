@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../../include/vertex_array.h"
-#include <glad/gl.h>
+#include "vertex_array.h"
+#include "../opengl_includes.h"
 #include <vector>
 
 class OpenGLVertexArray : public VertexArray {

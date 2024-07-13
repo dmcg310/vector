@@ -1,10 +1,7 @@
 #pragma once
 
-#include "../../../../include/buffer.h"
-
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-#include <glad/gl.h>
+#include "buffer.h"
+#include "../opengl_includes.h"
 
 class OpenGLUniformBuffer : public Buffer {
 public:

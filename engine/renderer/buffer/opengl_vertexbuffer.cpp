@@ -1,5 +1,4 @@
 #include "opengl_vertexbuffer.h"
-#include "../../../../../lib_log/include/log.h"
 
 void OpenGLVertexBuffer::Create(size_t size, const void *data) {
   glGenBuffers(1, &bufferID);

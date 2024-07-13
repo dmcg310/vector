@@ -1,4 +1,4 @@
-#include "../include/event.h"
+#include "event.h"
 
 void EventManager::RegisterObserver(IEventObserver *observer) {
   observers.push_back(observer);

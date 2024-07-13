@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../../include/pipeline_state.h"
-#include <glad/gl.h>
+#include "pipeline_state.h"
+#include "../opengl_includes.h"
 
 class OpenGLPipelineState : public PipelineState {
 public:

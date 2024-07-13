@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../../include/renderbuffer.h"
-#include <glad/gl.h>
+#include "renderbuffer.h"
+#include "../opengl_includes.h"
 
 class OpenGLRenderbuffer : public Renderbuffer {
 public:

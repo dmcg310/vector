@@ -1,5 +1,4 @@
 #include "test_scene.h"
-#include "../../../lib_window/include/window.h"
 
 void TestScene::Initialize() {
   // auto node2d = std::make_shared<Node2D>();

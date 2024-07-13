@@ -1,11 +1,15 @@
 #pragma once
 
-#include "../../lib_renderer/include/context.h"
-#include "camera.h"
-#include "event.h"
-#include "renderer.h"
-#include "settings.h"
+#include "renderer/context/context.h"
+#include "core/camera/camera.h"
+#include "core/window/event.h"
+#include "renderer/renderer.h"
+#include "core/settings/settings.h"
 #include <unordered_set>
+#include "scene/test_scene/test_scene.h"
+#include "renderer/renderer.h"
+#include <chrono>
+#include <memory>
 
 class Application : public IEventObserver {
 public:

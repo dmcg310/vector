@@ -1,10 +1,7 @@
 #pragma once
 
-#include "../../../include/context.h"
-
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-#include <glad/gl.h>
+#include "context.h"
+#include "../opengl_includes.h"
 
 class OpenGLContext : public Context {
 public:

@@ -1,10 +1,7 @@
 #pragma once
 
-#include "../../../include/texture.h"
-
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-#include <glad/gl.h>
+#include "texture.h"
+#include "../opengl_includes.h"
 
 class OpenGLTexture : public Texture {
 public:

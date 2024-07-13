@@ -1,6 +1,7 @@
 #pragma once
 
 #include "scene.h"
+#include "../core/log/log.h"
 #include <memory>
 #include <string>
 #include <unordered_map>

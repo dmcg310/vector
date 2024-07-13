@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../lib_log/include/log.h"
+#include "../log/log.h"
 #include "event.h"
 #include <functional>
 #include <string>

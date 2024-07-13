@@ -1,4 +1,4 @@
-#include "../include/settings.h"
+#include "settings.h"
 
 std::string boolToString(bool value) { return value ? "true" : "false"; }
 

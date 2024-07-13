@@ -1,5 +1,4 @@
 #include "opengl_pipeline_state.h"
-#include "../../../../lib_log/include/log.h"
 
 void OpenGLPipelineState::SetBlendState(bool enable) {
   if (enable) {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../../include/framebuffer.h"
-#include "../../../include/renderbuffer.h"
-#include "../../../include/texture.h"
+#include "framebuffer.h"
+#include "../renderbuffer/renderbuffer.h"
+#include "../texture/texture.h"
 
 class OpenGLFramebuffer : public Framebuffer {
 public:

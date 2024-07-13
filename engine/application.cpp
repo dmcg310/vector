@@ -1,8 +1,4 @@
 #include "application.h"
-#include "../scenes/test_scene/test_scene.h"
-#include "renderer.h"
-#include <chrono>
-#include <memory>
 
 Application::Application()
 #ifdef _DEBUG

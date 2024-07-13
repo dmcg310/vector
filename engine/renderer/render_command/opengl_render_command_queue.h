@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../include/render_command_queue.h"
+#include "render_command_queue.h"
 #include <queue>
 
 class OpenGLRenderCommandQueue : public RenderCommandQueue {

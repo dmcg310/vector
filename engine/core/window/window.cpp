@@ -1,4 +1,4 @@
-#include "../include/window.h"
+#include "window.h"
 
 EventManager Window::eventManager;
 GLFWwindow *Window::window = nullptr;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <glad/gl.h>
 #include <memory>
+#include "../opengl_includes.h"
 
 class RenderCommand {
 public:

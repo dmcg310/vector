@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../../../lib_renderer/include/render_api_factory.h"
-#include "../../include/scene_node.h"
+#include "../../renderer/render_api_factory.h"
+#include "../../scene/scene_node.h"
 #include "node3d.h"
-#include "renderer.h"
+#include "../../renderer/renderer.h"
 #include <glm/glm.hpp>
 
 #ifdef _DEBUG
-#include "../../lib_window/include/imgui_manager.h"
+#include "../../core/window/imgui/imgui_manager.h"
 #endif
 
 class Cube3DNode : public Node3D {

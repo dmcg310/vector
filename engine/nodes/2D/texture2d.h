@@ -1,15 +1,16 @@
 #pragma once
 
-#include "../../lib_renderer/include/render_command.h"
-#include "../../lib_renderer/include/render_command_queue.h"
-#include "../../lib_renderer/include/render_pass.h"
-#include "../../lib_renderer/include/shader.h"
-#include "../../lib_renderer/include/texture.h"
-#include "../../lib_renderer/include/vertex_array.h"
+#include "../../renderer/render_command/render_command.h"
+#include "../../renderer/render_command/render_command_queue.h"
+#include "../../renderer/render_pass/render_pass.h"
+#include "../../renderer/shader/shader.h"
+#include "../../renderer/texture/texture.h"
+#include "../../renderer/vertex_array/vertex_array.h"
 #include "node2d.h"
+#include "../../renderer/render_api_factory.h"
 
 #ifdef _DEBUG
-#include "../../lib_window/include/imgui_manager.h"
+#include "../../core/window/imgui/imgui_manager.h"
 #endif
 
 class Texture2DNode : public Node2D {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../lib_log/include/log.h"
+#include "../core/log/log.h"
 #include <algorithm>
 #include <glm/glm.hpp>
 #include <memory>

@@ -1,5 +1,4 @@
 #include "scene_manager.h"
-#include "../../lib_log/include/log.h"
 
 void SceneManager::SetActiveScene(const std::string &sceneName) {
   if (auto it = scenes.find(sceneName); it != scenes.end()) {

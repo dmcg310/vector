@@ -1,12 +1,11 @@
 #pragma once
 
-#include "../../lib_application/include/scene_manager.h"
-#include "../../lib_window/include/window.h"
-#include "context.h"
+#include "../scene/scene_manager.h"
+#include "../core/window/window.h"
 #include "render_api_factory.h"
 
 #ifdef _DEBUG
-#include "../../lib_window/include/imgui_manager.h"
+#include "../core/window/imgui/imgui_manager.h"
 #endif
 
 class Renderer {
