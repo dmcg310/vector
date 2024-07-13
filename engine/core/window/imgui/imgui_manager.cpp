@@ -1,5 +1,5 @@
 #include "imgui_manager.h"
-#include "../../lib_renderer/include/renderer.h"
+#include "../../../renderer/renderer.h"
 
 #ifdef _DEBUG
 

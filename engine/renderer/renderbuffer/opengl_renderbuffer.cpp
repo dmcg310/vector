@@ -1,5 +1,4 @@
 #include "opengl_renderbuffer.h"
-#include "../../../../lib_log/include/log.h"
 
 void OpenGLRenderbuffer::Create() {
   glGenRenderbuffers(1, &renderbufferID);

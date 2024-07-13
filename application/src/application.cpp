@@ -1,4 +1,4 @@
-#include "../../lib_application/include/application.h"
+#include <engine/application.h>
 
 int main() {
   Application app;

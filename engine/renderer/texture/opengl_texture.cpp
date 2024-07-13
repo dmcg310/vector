@@ -1,10 +1,9 @@
 #include "opengl_texture.h"
-#include "../../../../lib_application/include/settings.h" // For filesystem operations
+#include "../../core/settings/settings.h"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "../../../../external/stb_image.h"
+#include "stb_image.h"
 
-#include <filesystem>
 #include <iostream>
 
 OpenGLTexture::OpenGLTexture() : textureID(0) {

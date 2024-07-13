@@ -2,19 +2,16 @@
 
 #ifdef _DEBUG
 
-#include "../../lib_application/nodes/2D/node2d.h"
-#include "../../lib_application/nodes/2D/texture2d.h"
-#include "../../lib_log/include/log.h"
-#include "../../lib_renderer/include/framebuffer.h"
-#include "../../lib_renderer/include/render_api_factory.h"
-#include "../../lib_renderer/include/render_pass.h"
-#include "../../lib_renderer/include/renderbuffer.h"
-#include "../../lib_renderer/include/texture.h"
+#include "../../../nodes/2D/node2d.h"
+#include "../../../nodes/2D/texture2d.h"
+#include "../../log/log.h"
+#include "../../../renderer/framebuffer/framebuffer.h"
+#include "../../../renderer/render_api_factory.h"
+#include "../../../renderer/render_pass/render_pass.h"
+#include "../../../renderer/renderbuffer/renderbuffer.h"
+#include "../../../renderer/texture/texture.h"
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-#include <imgui_internal.h>
 
 class ImGuiManager {
 public:
