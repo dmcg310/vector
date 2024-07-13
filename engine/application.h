@@ -1,22 +1,21 @@
 #pragma once
 
-#include "renderer/context/context.h"
 #include "core/camera/camera.h"
-#include "core/window/event.h"
-#include "renderer/renderer.h"
 #include "core/settings/settings.h"
-#include <unordered_set>
-#include "scene/test_scene/test_scene.h"
+#include "core/window/event.h"
+#include "renderer/context/context.h"
 #include "renderer/renderer.h"
+#include "scene/test_scene/test_scene.h"
 #include <chrono>
 #include <memory>
+#include <unordered_set>
 
 class Application : public IEventObserver {
 public:
   Application();
   bool Initialize();
   void Run();
-  void Shutdown();
+  [[noreturn]] void Shutdown();
 
   void OnKeyPress(int key) override;
   void OnKeyRelease(int key) override;
@@ -29,20 +28,18 @@ private:
   void Render();
   void MainLoopBody();
   void LogFrameInfo(float deltaTime);
+  void ToggleCameraControl();
+  static void ResetCursorPosition();
+  void HandleCameraMovement(float deltaTime);
 
-#ifdef _DEBUG
-  bool isDebugMenuOpen = false;
-  std::chrono::steady_clock::time_point startTime;
-  unsigned int frameCount;
-  double accumulatedTime;
-  double accumulatedFPS;
-  unsigned int sampleFrames;
-  unsigned int frameSamples;
-#endif
+  unsigned int frameCount{0};
+  double accumulatedTime{0.0};
+  double accumulatedFPS{0.0};
+  const unsigned int sampleFrames{100};
+  unsigned int frameSamples{0};
 
-  Renderer *renderer;
   Camera camera;
-  bool cameraControlEnabled = false;
-  bool cursorVisible = true;
+  bool cameraControlEnabled{false};
+  bool cursorVisible{true};
   std::unordered_set<int> pressedKeys;
 };
