@@ -1,5 +1,5 @@
-#include "../include/render_api_factory.h"
-#include "concrete/opengl/opengl_context.h"
+#include "render_api_factory.h"
+#include "context/opengl_context.h"
 
 Context *RenderAPIFactory::CreateContext(API api, GLFWwindow *window) {
   switch (api) {

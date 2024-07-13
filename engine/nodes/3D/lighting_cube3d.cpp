@@ -60,8 +60,8 @@ void LightingCubeNode::Initialize() {
   vao->SetIndexBuffer(indexBuffer);
 
   shader = Shader::CreateShader();
-  shader->LoadFromFile("assets/shaders/vertex_shader.glsl", ShaderType::Vertex);
-  shader->LoadFromFile("assets/shaders/fragment_shader_light.glsl", ShaderType::Fragment);
+  shader->LoadFromFile("application/assets/shaders/vertex_shader.glsl", ShaderType::Vertex);
+  shader->LoadFromFile("application/assets/shaders/fragment_shader_light.glsl", ShaderType::Fragment);
   shader->Link();
 
   renderPass = RenderPass::CreateRenderPass();

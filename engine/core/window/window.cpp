@@ -37,7 +37,7 @@ bool Window::Initialize(int _width, int _height, bool windowedFullscreen,
   glfwSetWindowUserPointer(window, nullptr);
   glfwSwapInterval(0);
 
-  if (!gladLoadGL(glfwGetProcAddress)) {
+  if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
     Log::Write(Log::FATAL,
                "Failed to initialize glad. `gladLoadGLLoader()` returned NULL");
     return false;

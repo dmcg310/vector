@@ -1,9 +1,9 @@
-#include <engine/application.h>
+#include <application.h>
 
 int main() {
-  Application app;
+Application app;
 
-  if (app.Initialize()) { app.Run(); }
+if (app.Initialize()) { app.Run(); }
 
   return 0;
 }

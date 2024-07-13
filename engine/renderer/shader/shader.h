@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <memory>
 #include <string>
+#include <vector>
 
 enum class ShaderType {
   Vertex,

@@ -32,8 +32,8 @@ void Texture2DNode::Initialize(const std::string &textureFile) {
   vao->SetIndexBuffer(indexBuffer);
 
   shader = Shader::CreateShader();
-  shader->LoadFromFile("assets/shaders/vertex_shader.glsl", ShaderType::Vertex);
-  shader->LoadFromFile("assets/shaders/fragment_shader.glsl", ShaderType::Fragment);
+  shader->LoadFromFile("application/assets/shaders/vertex_shader.glsl", ShaderType::Vertex);
+  shader->LoadFromFile("application/assets/shaders/fragment_shader.glsl", ShaderType::Fragment);
   shader->Link();
 
   texture = Texture::CreateTexture();

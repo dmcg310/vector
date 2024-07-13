@@ -8,7 +8,7 @@
 #include "../../nodes/3D/node3d.h"
 #include "../../core/window/imgui/imgui_manager.h"
 #include "../../core/window/window.h"
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <memory>
 
 class TestScene : public Scene {
