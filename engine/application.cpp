@@ -182,18 +182,18 @@ void Application::ResetCursorPosition() {
 
 void Application::HandleCameraMovement(float deltaTime) {
   if (pressedKeys.find(GLFW_KEY_W) != pressedKeys.end()) {
-    camera.ProcessKeyboard(FORWARD, deltaTime);
+    camera.ProcessKeyboard(Camera_Movement::FORWARD, deltaTime);
   }
 
   if (pressedKeys.find(GLFW_KEY_S) != pressedKeys.end()) {
-    camera.ProcessKeyboard(BACKWARD, deltaTime);
+    camera.ProcessKeyboard(Camera_Movement::BACKWARD, deltaTime);
   }
 
   if (pressedKeys.find(GLFW_KEY_A) != pressedKeys.end()) {
-    camera.ProcessKeyboard(LEFT, deltaTime);
+    camera.ProcessKeyboard(Camera_Movement::LEFT, deltaTime);
   }
 
   if (pressedKeys.find(GLFW_KEY_D) != pressedKeys.end()) {
-    camera.ProcessKeyboard(RIGHT, deltaTime);
+    camera.ProcessKeyboard(Camera_Movement::RIGHT, deltaTime);
   }
 }
