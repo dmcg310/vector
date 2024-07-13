@@ -19,21 +19,6 @@ const bool DEFAULT_LOG_TO_FILE = true;
 const bool DEFAULT_LOG_TO_CONSOLE = true;
 const bool DEFAULT_RESET_LOG_FILE = true;
 
-/*
-  config.vector defaults
-  ----------------------
-  [Window]
-  Width=1200
-  Height=800
-  Fullscreen=false
-  Title="Vector Engine"
-
-  [Log]
-  LogToFile=true
-  LogToConsole=true
-  ResetLogFile=true
-*/
-
 class ApplicationSettings {
 public:
   ApplicationSettings();
@@ -59,20 +44,20 @@ public:
     Log log;
   };
 
-  bool CheckIfConfigExists();
-  Config CreateConfig();
-  Config LoadConfig();
+  static bool CheckIfConfigExists();
+  static Config CreateConfig();
+  static Config LoadConfig();
 
-  std::string GetBaseDirectory();
+  static std::string GetBaseDirectory();
 
 private:
   Config config;
 
-  std::string trim(const std::string &str);
-  bool isNumber(const std::string &str);
-  bool isBoolean(const std::string &str);
-  bool isQuotedString(const std::string &str);
+  static std::string trim(const std::string &str);
+  static bool isNumber(const std::string &str);
+  static bool isBoolean(const std::string &str);
+  static bool isQuotedString(const std::string &str);
 
-  std::string GetAbsoluteLogFilePath();
-  std::string GetAbsoluteConfigFilePath();
+  static std::string GetAbsoluteLogFilePath();
+  static std::string GetAbsoluteConfigFilePath();
 };
