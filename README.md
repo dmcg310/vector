@@ -1,6 +1,6 @@
 # vector
 
-Vector is a small, work in progress, 2D/3D game engine written in C++. Currently using OpenGL for rendering, but plan to integrate other graphics APIs in the future.
+Vector is a small, incomplete, 2D/3D game engine written in C++. Currently using OpenGL for rendering.
 
 ## Features
 
